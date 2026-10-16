@@ -677,7 +677,7 @@ class AuthRepository {
     final Object? userIdRaw = json['user_id'];
     final String userId = userIdRaw == null ? '' : userIdRaw.toString();
     if (token.isEmpty || userId.isEmpty) {
-      throw const AuthFailure('Unexpected login response from Fluxer API.');
+      throw const AuthFailure('Unexpected login response from the sanalyer API.');
     }
     final AuthSession session = AuthSession(token: token, userId: userId);
     await _saveSession(session);

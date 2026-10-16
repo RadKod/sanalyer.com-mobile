@@ -7163,13 +7163,13 @@ abstract class FluxerLocalizations {
   /// Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget.
   ///
   /// In en, this message translates to:
-  /// **'Download **fluxer-verification** and place it in your **.well-known** folder so we can validate the domain.'**
+  /// **'Download **sanalyer-verification** and place it in your **.well-known** folder so we can validate the domain.'**
   String get connectionTokenFileDescription;
 
   /// Label on the download button for the verification token file.
   ///
   /// In en, this message translates to:
-  /// **'Download fluxer-verification'**
+  /// **'Download sanalyer-verification'**
   String get connectionTokenFileDownload;
 
   /// Meta text below the download button with the fetch URL. **markers** indicate inline-code styling.
@@ -7181,7 +7181,7 @@ abstract class FluxerLocalizations {
   /// Title of the save-file dialog opened by the download button.
   ///
   /// In en, this message translates to:
-  /// **'Save fluxer-verification'**
+  /// **'Save sanalyer-verification'**
   String get connectionSaveTokenDialogTitle;
 
   /// Primary button on the verify step.
@@ -7307,7 +7307,7 @@ abstract class FluxerLocalizations {
   /// Toast shown after the token file is saved successfully.
   ///
   /// In en, this message translates to:
-  /// **'Saved fluxer-verification'**
+  /// **'Saved sanalyer-verification'**
   String get connectionTokenSavedToast;
 
   /// Toast shown if saving the token file fails.
@@ -15024,7 +15024,7 @@ abstract class FluxerLocalizations {
   /// User settings navigation item for Fluxer Plutonium subscription settings.
   ///
   /// In en, this message translates to:
-  /// **'Fluxer Plutonium'**
+  /// **'sanalyer Premium'**
   String get userSettingsNavFluxerPlutonium;
 
   /// User settings navigation item for gifts and promo codes.
@@ -15498,7 +15498,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @premiumCompletePaymentBody.
   ///
   /// In en, this message translates to:
-  /// **'You are now navigating to Stripe to complete the payment. Return to Fluxer once you\'ve completed it.'**
+  /// **'You are now navigating to Stripe to complete the payment. Return to sanalyer once you\'ve completed it.'**
   String get premiumCompletePaymentBody;
 
   /// No description provided for @premiumChoosePaymentMethodTitle.
@@ -15570,7 +15570,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @premiumExistingSubscriptionBody.
   ///
   /// In en, this message translates to:
-  /// **'We found an existing Fluxer Plutonium subscription for this account. Manage it in the secure billing portal to update payment details or check renewal status. If you just paid, wait a minute and reopen this page.'**
+  /// **'We found an existing sanalyer Premium subscription for this account. Manage it in the secure billing portal to update payment details or check renewal status. If you just paid, wait a minute and reopen this page.'**
   String get premiumExistingSubscriptionBody;
 
   /// No description provided for @premiumPurchasesDisabledTitle.
@@ -15594,13 +15594,13 @@ abstract class FluxerLocalizations {
   /// No description provided for @premiumClaimAccountToPurchase.
   ///
   /// In en, this message translates to:
-  /// **'Claim your account to purchase Fluxer Plutonium.'**
+  /// **'Claim your account to purchase sanalyer Premium.'**
   String get premiumClaimAccountToPurchase;
 
   /// No description provided for @premiumVerifyEmailToPurchase.
   ///
   /// In en, this message translates to:
-  /// **'You need to verify your email before you can purchase Fluxer Plutonium.'**
+  /// **'You need to verify your email before you can purchase sanalyer Premium.'**
   String get premiumVerifyEmailToPurchase;
 
   /// No description provided for @premiumPerkCommunities.
@@ -15852,7 +15852,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @storePlutoniumTagFootnote.
   ///
   /// In en, this message translates to:
-  /// **'You can only pick a tag that nobody else with the same username already has. Usernames aren\'t case sensitive, so Mina#4821 and mina#4821 count as the same. The #0000 tag is reserved for Fluxer Visionary members.'**
+  /// **'You can only pick a tag that nobody else with the same username already has. Usernames aren\'t case sensitive, so Mina#4821 and mina#4821 count as the same. The #0000 tag is reserved for sanalyer Visionary members.'**
   String get storePlutoniumTagFootnote;
 
   /// No description provided for @storePlutoniumLearnVisionary.
@@ -15864,7 +15864,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @storePlutoniumDonatePrompt.
   ///
   /// In en, this message translates to:
-  /// **'Just want to support Fluxer\'s open source development? '**
+  /// **'Just want to support sanalyer\'s open source development? '**
   String get storePlutoniumDonatePrompt;
 
   /// No description provided for @storePlutoniumDonateLink.
@@ -15876,7 +15876,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @storePlutoniumHighlightsLead.
   ///
   /// In en, this message translates to:
-  /// **'Subscribing funds Fluxer and unlocks'**
+  /// **'Subscribing funds sanalyer and unlocks'**
   String get storePlutoniumHighlightsLead;
 
   /// No description provided for @storePlutoniumHighlightEmoji.
@@ -15936,7 +15936,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @storePlutoniumAlreadySubscribed.
   ///
   /// In en, this message translates to:
-  /// **'You already have a Fluxer Plutonium subscription.'**
+  /// **'You already have a sanalyer Premium subscription.'**
   String get storePlutoniumAlreadySubscribed;
 
   /// No description provided for @storePlutoniumSavePercent.
@@ -16728,13 +16728,13 @@ abstract class FluxerLocalizations {
   /// Notification settings section description explaining why the push relay exists.
   ///
   /// In en, this message translates to:
-  /// **'{pushProvider} only delivers push notifications through their own service, so pushes for this device pass through the Fluxer relay.'**
+  /// **'{pushProvider} only delivers push notifications through their own service, so pushes for this device pass through the sanalyer relay.'**
   String notificationsPushRelaySectionDescription(String pushProvider);
 
   /// Toggle label for agreeing to the Fluxer push relay on this device.
   ///
   /// In en, this message translates to:
-  /// **'Use the Fluxer push relay'**
+  /// **'Use the sanalyer push relay'**
   String get notificationsPushRelayConsentLabel;
 
   /// Toggle description explaining that revoking push relay consent unregisters the device.
@@ -16752,7 +16752,7 @@ abstract class FluxerLocalizations {
   /// Subtitle of the push relay consent sheet explaining why the relay exists.
   ///
   /// In en, this message translates to:
-  /// **'{pushProvider} only delivers push notifications through their own service, so pushes for this device pass through the Fluxer relay.'**
+  /// **'{pushProvider} only delivers push notifications through their own service, so pushes for this device pass through the sanalyer relay.'**
   String pushRelayConsentDescription(String pushProvider);
 
   /// Text before the push relay privacy notice link in the consent sheet.
@@ -16932,7 +16932,7 @@ abstract class FluxerLocalizations {
   /// Body for the confirmation sheet before changing the app icon on Android.
   ///
   /// In en, this message translates to:
-  /// **'Fluxer will restart to apply the new home screen icon.'**
+  /// **'sanalyer will restart to apply the new home screen icon.'**
   String get appIconAndroidChangeDescription;
 
   /// Confirm button for changing the app icon on Android.
@@ -17930,7 +17930,7 @@ abstract class FluxerLocalizations {
   /// User settings What's New action to join the Fluxer Labs community.
   ///
   /// In en, this message translates to:
-  /// **'Join Fluxer Labs'**
+  /// **'Join sanalyer Labs'**
   String get userSettingsJoinFluxerLabs;
 
   /// User settings navigation action to open the Fluxer feedback site.
@@ -18386,19 +18386,19 @@ abstract class FluxerLocalizations {
   /// Placeholder for the instance URL input.
   ///
   /// In en, this message translates to:
-  /// **'fluxer.com'**
+  /// **'sanalyer.com'**
   String get instanceUrlPlaceholder;
 
   /// Helper text explaining official vs self-hosted instance URLs.
   ///
   /// In en, this message translates to:
-  /// **'Use fluxer.com for the official instance, or the exact URL of a self-hosted instance.'**
+  /// **'Use sanalyer.com for the official instance, or the exact URL of a self-hosted instance.'**
   String get instanceUrlHelper;
 
   /// Tooltip for the button that resets the instance URL to the official Fluxer instance.
   ///
   /// In en, this message translates to:
-  /// **'Reset to Fluxer'**
+  /// **'Reset to sanalyer'**
   String get resetToDefaultInstance;
 
   /// Button label to connect to a custom Fluxer instance.
@@ -18434,13 +18434,13 @@ abstract class FluxerLocalizations {
   /// Error when the instance api_code_version is below what this client requires.
   ///
   /// In en, this message translates to:
-  /// **'This instance is out of date for this app. Ask whoever runs {domain} to update Fluxer.'**
+  /// **'This instance is out of date for this app. Ask whoever runs {domain} to update sanalyer.'**
   String instanceOutdatedForClient(String domain);
 
   /// Error when the instance speaks a protocol generation this client does not support.
   ///
   /// In en, this message translates to:
-  /// **'{domain} runs a newer version of Fluxer than this app. Update the app, then try again.'**
+  /// **'{domain} runs a newer version of sanalyer than this app. Update the app, then try again.'**
   String instanceRequiresNewerClient(String domain);
 
   /// Title on the full-screen instance compatibility blocker.
@@ -24309,7 +24309,7 @@ abstract class FluxerLocalizations {
   /// Siri/Shortcuts result when the user is logged out.
   ///
   /// In en, this message translates to:
-  /// **'Open Fluxer and sign in first.'**
+  /// **'Open sanalyer and sign in first.'**
   String get assistantNeedsLogin;
 
   /// Siri/Shortcuts result when mute or leave runs with no live call.
@@ -24321,7 +24321,7 @@ abstract class FluxerLocalizations {
   /// Siri/Shortcuts result when a friend, channel, or community cannot be resolved.
   ///
   /// In en, this message translates to:
-  /// **'Fluxer could not find that.'**
+  /// **'sanalyer could not find that.'**
   String get assistantNotFound;
 
   /// Siri/Shortcuts result when DM actions are blocked by instance config.
@@ -24333,7 +24333,7 @@ abstract class FluxerLocalizations {
   /// Siri/Shortcuts fallback when an assistant command fails.
   ///
   /// In en, this message translates to:
-  /// **'Fluxer could not complete that.'**
+  /// **'sanalyer could not complete that.'**
   String get assistantFailed;
 
   /// No description provided for @assistantOkMuted.
@@ -24375,7 +24375,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @assistantOkOpened.
   ///
   /// In en, this message translates to:
-  /// **'Opening Fluxer.'**
+  /// **'Opening sanalyer.'**
   String get assistantOkOpened;
 
   /// No description provided for @assistantOkMessageSent.

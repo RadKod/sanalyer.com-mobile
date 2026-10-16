@@ -5246,11 +5246,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Unduh **fluxer-verification** dan letakkan di folder **.well-known** Anda agar kami dapat memvalidasi domain.",
+    "connectionTokenFileDescription": "Unduh **sanalyer-verification** dan letakkan di folder **.well-known** Anda agar kami dapat memvalidasi domain.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Unduh fluxer-verification",
+    "connectionTokenFileDownload": "Unduh sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -5264,7 +5264,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Simpan verifikasi fluxer",
+    "connectionSaveTokenDialogTitle": "Simpan verifikasi sanalyer",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -5348,7 +5348,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Fluxer-verifikasi tersimpan",
+    "connectionTokenSavedToast": "sanalyer-verifikasi tersimpan",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -10737,7 +10737,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -10880,7 +10880,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Selesaikan pembayaran",
-    "premiumCompletePaymentBody": "Anda sekarang diarahkan ke Stripe untuk menyelesaikan pembayaran. Kembali ke Fluxer setelah selesai.",
+    "premiumCompletePaymentBody": "Anda sekarang diarahkan ke Stripe untuk menyelesaikan pembayaran. Kembali ke sanalyer setelah selesai.",
     "premiumChoosePaymentMethodTitle": "Pilih metode pembayaran",
     "premiumPixPaymentPromptDescription": "Bayar dengan Pix otomatis untuk mengotorisasi tagihan berulang langsung dari bank Brasil Anda. Atau pilih gunakan kartu untuk memasukkan kartu kredit di layar Stripe berikutnya.",
     "premiumUsePix": "Gunakan Pix",
@@ -10892,7 +10892,7 @@
     "premiumAlreadyVisionaryTitle": "Kamu sudah menjadi Visionary",
     "premiumAlreadyVisionaryBody": "Visionary sudah mencakup akses permanen, jadi langganan berulang tidak diperlukan. Kamu masih bisa membeli hadiah untuk orang lain.",
     "premiumExistingSubscriptionTitle": "Langganan sudah ada",
-    "premiumExistingSubscriptionBody": "Kami menemukan langganan Fluxer Plutonium yang sudah ada untuk akun ini. Kelola di portal penagihan aman untuk memperbarui detail pembayaran atau memeriksa status perpanjangan. Jika baru saja membayar, tunggu sebentar dan buka kembali halaman ini.",
+    "premiumExistingSubscriptionBody": "Kami menemukan langganan sanalyer Premium yang sudah ada untuk akun ini. Kelola di portal penagihan aman untuk memperbarui detail pembayaran atau memeriksa status perpanjangan. Jika baru saja membayar, tunggu sebentar dan buka kembali halaman ini.",
     "premiumPurchasesDisabledTitle": "Pembelian tidak tersedia",
     "premiumPurchasesDisabledBody": "Pembelian dinonaktifkan untuk akun ini. Hubungi {supportEmail} jika ini terlihat salah.",
     "@premiumPurchasesDisabledBody": {
@@ -10907,8 +10907,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Klaim akun Anda untuk membeli Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Anda perlu memverifikasi email Anda sebelum dapat membeli Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "Klaim akun Anda untuk membeli sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Anda perlu memverifikasi email Anda sebelum dapat membeli sanalyer Premium.",
     "premiumPerkCommunities": "Komunitas",
     "premiumPerkMessageCharacterLimit": "Batas karakter pesan",
     "premiumPerkBookmarkedMessages": "Pesan di bookmark",
@@ -10960,11 +10960,11 @@
     "storePlutoniumCompareThemes": "Tema kustom untuk aplikasi",
     "storePlutoniumVideoFree": "Hingga 720p pada 30 FPS",
     "storePlutoniumVideoPlutonium": "Hingga 4K pada 60 FPS",
-    "storePlutoniumTagFootnote": "Anda hanya dapat memilih tag yang belum dimiliki oleh orang lain dengan nama pengguna yang sama. Nama pengguna tidak peka huruf besar/kecil, jadi Mina#4821 dan mina#4821 dianggap sama. Tag #0000 dicadangkan untuk anggota Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Anda hanya dapat memilih tag yang belum dimiliki oleh orang lain dengan nama pengguna yang sama. Nama pengguna tidak peka huruf besar/kecil, jadi Mina#4821 dan mina#4821 dianggap sama. Tag #0000 dicadangkan untuk anggota sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Pelajari lebih lanjut tentang Visionary.",
-    "storePlutoniumDonatePrompt": "Hanya ingin mendukung pengembangan sumber terbuka Fluxer? ",
+    "storePlutoniumDonatePrompt": "Hanya ingin mendukung pengembangan sumber terbuka sanalyer? ",
     "storePlutoniumDonateLink": "Donasi saja.",
-    "storePlutoniumHighlightsLead": "Berlangganan mendanai Fluxer dan membuka kunci",
+    "storePlutoniumHighlightsLead": "Berlangganan mendanai sanalyer dan membuka kunci",
     "storePlutoniumHighlightEmoji": "Emoji dan stiker kustom di chat mana pun",
     "storePlutoniumHighlightProfile": "Profil animasi, lencana, dan nomor 4 digit kustom",
     "storePlutoniumHighlightFiles": "Unggah hingga 500 MB",
@@ -10973,7 +10973,7 @@
     "storePlutoniumHighlightsMore": "Dan lainnya",
     "storePlutoniumRenewsThroughPlay": "Diperbarui secara otomatis melalui Google Play sampai Anda membatalkan.",
     "storePlutoniumRenewsThroughAppStore": "Diperbarui secara otomatis melalui App Store sampai Anda membatalkan.",
-    "storePlutoniumAlreadySubscribed": "Anda sudah memiliki langganan Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Anda sudah memiliki langganan sanalyer Premium.",
     "storePlutoniumSavePercent": "Hemat {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -11547,7 +11547,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} hanya mengirim notifikasi push lewat layanannya sendiri, jadi notifikasi untuk perangkat ini melewati relai Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} hanya mengirim notifikasi push lewat layanannya sendiri, jadi notifikasi untuk perangkat ini melewati relai sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11556,7 +11556,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Gunakan relai push Fluxer",
+    "notificationsPushRelayConsentLabel": "Gunakan relai push sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11568,7 +11568,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} hanya mengirim notifikasi push lewat layanannya sendiri, jadi notifikasi untuk perangkat ini melewati relai Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} hanya mengirim notifikasi push lewat layanannya sendiri, jadi notifikasi untuk perangkat ini melewati relai sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -11908,7 +11908,7 @@
     "@userSettingsNavWhatsNew": {
         "description": "User settings navigation item for release notes."
     },
-    "userSettingsJoinFluxerLabs": "Gabung Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Gabung sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -12203,15 +12203,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Masukkan URL instance (contoh: fluxer.com)",
+    "instanceUrlPlaceholder": "Masukkan URL instance (contoh: sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Gunakan fluxer.com untuk instance resmi, atau URL persis dari instance yang di-host sendiri.",
+    "instanceUrlHelper": "Gunakan sanalyer.com untuk instance resmi, atau URL persis dari instance yang di-host sendiri.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Atur ulang ke Fluxer",
+    "resetToDefaultInstance": "Atur ulang ke sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -15861,7 +15861,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Buka Fluxer dan masuk terlebih dahulu.",
+    "assistantNeedsLogin": "Buka sanalyer dan masuk terlebih dahulu.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15869,7 +15869,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer tidak dapat menemukan itu.",
+    "assistantNotFound": "sanalyer tidak dapat menemukan itu.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15877,7 +15877,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer tidak dapat menyelesaikan itu.",
+    "assistantFailed": "sanalyer tidak dapat menyelesaikan itu.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15894,7 +15894,7 @@
             }
         }
     },
-    "assistantOkOpened": "Membuka Fluxer.",
+    "assistantOkOpened": "Membuka sanalyer.",
     "lookAndFeelChatWallpaperTitle": "Wallpaper Obrolan",
     "@lookAndFeelChatWallpaperTitle": {
         "description": "Look and Feel section title for chat wallpaper presets."

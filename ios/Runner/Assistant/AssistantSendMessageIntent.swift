@@ -3,7 +3,7 @@ import Foundation
 
 struct SendDirectMessageIntent: AppIntent {
   static var title: LocalizedStringResource = "Send Message"
-  static var description = IntentDescription("Send a Fluxer direct message.")
+  static var description = IntentDescription("Send a sanalyer direct message.")
   static var openAppWhenRun = true
 
   @Parameter(title: "Friend", requestValueDialog: IntentDialog("Who should receive the message?"))

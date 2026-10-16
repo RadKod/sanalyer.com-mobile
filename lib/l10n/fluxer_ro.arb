@@ -5246,11 +5246,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Descarcă **fluxer-verification** și plasează-l în folderul **.well-known** pentru a valida domeniul.",
+    "connectionTokenFileDescription": "Descarcă **sanalyer-verification** și plasează-l în folderul **.well-known** pentru a valida domeniul.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Descarcă fluxer-verification",
+    "connectionTokenFileDownload": "Descarcă sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -5264,7 +5264,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Salvează fluxer-verificare",
+    "connectionSaveTokenDialogTitle": "Salvează sanalyer-verificare",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -5348,7 +5348,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Fluxer-verification salvat",
+    "connectionTokenSavedToast": "sanalyer-verification salvat",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -10737,7 +10737,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -10880,7 +10880,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Finalizează plata",
-    "premiumCompletePaymentBody": "Acum vei fi redirecționat către Stripe pentru a finaliza plata. Revino la Fluxer după ce ai terminat.",
+    "premiumCompletePaymentBody": "Acum vei fi redirecționat către Stripe pentru a finaliza plata. Revino la sanalyer după ce ai terminat.",
     "premiumChoosePaymentMethodTitle": "Alege metoda de plată",
     "premiumPixPaymentPromptDescription": "Plătește cu Pix automat pentru a autoriza direct de pe banca ta braziliană taxele recurente. Sau alege să folosești cardul pentru a introduce un card de credit pe ecranul următor al Stripe.",
     "premiumUsePix": "Folosește Pix",
@@ -10892,7 +10892,7 @@
     "premiumAlreadyVisionaryTitle": "Ești deja Visionary",
     "premiumAlreadyVisionaryBody": "Visionary include deja acces permanent, deci nu este necesar un abonament recurent. Poți cumpăra în continuare cadouri pentru alții.",
     "premiumExistingSubscriptionTitle": "Abonamentul există deja",
-    "premiumExistingSubscriptionBody": "Am găsit un abonament Fluxer Plutonium existent pentru acest cont. Gestionați-l în portalul de facturare securizat pentru a actualiza detaliile de plată sau pentru a verifica starea reînnoirii. Dacă tocmai ați plătit, așteptați un minut și redeschideți această pagină.",
+    "premiumExistingSubscriptionBody": "Am găsit un abonament sanalyer Premium existent pentru acest cont. Gestionați-l în portalul de facturare securizat pentru a actualiza detaliile de plată sau pentru a verifica starea reînnoirii. Dacă tocmai ați plătit, așteptați un minut și redeschideți această pagină.",
     "premiumPurchasesDisabledTitle": "Achizițiile nu sunt disponibile",
     "premiumPurchasesDisabledBody": "Achizițiile sunt dezactivate pentru acest cont. Contactați {supportEmail} dacă credeți că este o greșeală.",
     "@premiumPurchasesDisabledBody": {
@@ -10907,8 +10907,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Revendică-ți contul pentru a cumpăra Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Trebuie să îți verifici emailul înainte de a putea achiziționa Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "Revendică-ți contul pentru a cumpăra sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Trebuie să îți verifici emailul înainte de a putea achiziționa sanalyer Premium.",
     "premiumPerkCommunities": "Comunități",
     "premiumPerkMessageCharacterLimit": "Limită de caractere mesaj",
     "premiumPerkBookmarkedMessages": "Mesaje salvate",
@@ -10960,11 +10960,11 @@
     "storePlutoniumCompareThemes": "Teme personalizate pentru aplicație",
     "storePlutoniumVideoFree": "Până la 720p la 30 FPS",
     "storePlutoniumVideoPlutonium": "Până la 4K la 60 FPS",
-    "storePlutoniumTagFootnote": "Poți alege doar un tag pe care nimeni altcineva cu același nume de utilizator nu-l are deja. Numele de utilizator nu sunt sensibile la majuscule, așa că Mina#4821 și mina#4821 sunt considerate la fel. Tagul #0000 este rezervat membrilor Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Poți alege doar un tag pe care nimeni altcineva cu același nume de utilizator nu-l are deja. Numele de utilizator nu sunt sensibile la majuscule, așa că Mina#4821 și mina#4821 sunt considerate la fel. Tagul #0000 este rezervat membrilor sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Află mai multe despre Visionary.",
-    "storePlutoniumDonatePrompt": "Vrei doar să susții dezvoltarea open source a Fluxer? ",
+    "storePlutoniumDonatePrompt": "Vrei doar să susții dezvoltarea open source a sanalyer? ",
     "storePlutoniumDonateLink": "Donează în schimb.",
-    "storePlutoniumHighlightsLead": "Abonarea finanțează Fluxer și deblochează",
+    "storePlutoniumHighlightsLead": "Abonarea finanțează sanalyer și deblochează",
     "storePlutoniumHighlightEmoji": "Emoji și stickere personalizate în orice chat",
     "storePlutoniumHighlightProfile": "Profil animat, insignă și număr personalizat din 4 cifre",
     "storePlutoniumHighlightFiles": "Încărcări de până la 500 MB",
@@ -10973,7 +10973,7 @@
     "storePlutoniumHighlightsMore": "Și multe altele",
     "storePlutoniumRenewsThroughPlay": "Se reînnoiește automat prin Google Play până la anulare.",
     "storePlutoniumRenewsThroughAppStore": "Se reînnoiește automat prin App Store până la anulare.",
-    "storePlutoniumAlreadySubscribed": "Ai deja un abonament Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Ai deja un abonament sanalyer Premium.",
     "storePlutoniumSavePercent": "Economisește {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -11547,7 +11547,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} livrează notificări push doar prin propriul serviciu, așa că notificările pentru acest dispozitiv trec prin releul Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} livrează notificări push doar prin propriul serviciu, așa că notificările pentru acest dispozitiv trec prin releul sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11556,7 +11556,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Folosește releul push Fluxer",
+    "notificationsPushRelayConsentLabel": "Folosește releul push sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11568,7 +11568,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} livrează notificări push doar prin propriul serviciu, așa că notificările pentru acest dispozitiv trec prin releul Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} livrează notificări push doar prin propriul serviciu, așa că notificările pentru acest dispozitiv trec prin releul sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -11908,7 +11908,7 @@
     "@userSettingsNavWhatsNew": {
         "description": "User settings navigation item for release notes."
     },
-    "userSettingsJoinFluxerLabs": "Alătură-te Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Alătură-te sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -12203,15 +12203,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Introdu adresa URL a instanței (ex. fluxer.com)",
+    "instanceUrlPlaceholder": "Introdu adresa URL a instanței (ex. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Folosește fluxer.com pentru instanța oficială sau URL-ul exact al unei instanțe auto-găzduite.",
+    "instanceUrlHelper": "Folosește sanalyer.com pentru instanța oficială sau URL-ul exact al unei instanțe auto-găzduite.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Resetează la Fluxer",
+    "resetToDefaultInstance": "Resetează la sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -15861,7 +15861,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Deschide Fluxer și conectează-te mai întâi.",
+    "assistantNeedsLogin": "Deschide sanalyer și conectează-te mai întâi.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15869,7 +15869,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer nu a putut găsi asta.",
+    "assistantNotFound": "sanalyer nu a putut găsi asta.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15877,7 +15877,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer nu a putut finaliza asta.",
+    "assistantFailed": "sanalyer nu a putut finaliza asta.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15894,7 +15894,7 @@
             }
         }
     },
-    "assistantOkOpened": "Deschid Fluxer.",
+    "assistantOkOpened": "Deschid sanalyer.",
     "lookAndFeelChatWallpaperTitle": "Fundal chat",
     "@lookAndFeelChatWallpaperTitle": {
         "description": "Look and Feel section title for chat wallpaper presets."

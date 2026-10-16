@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "**fluxer-verification**을 다운로드하여 **.well-known** 폴더에 배치하면 도메인을 확인할 수 있습니다.",
+    "connectionTokenFileDescription": "**sanalyer-verification**을 다운로드하여 **.well-known** 폴더에 배치하면 도메인을 확인할 수 있습니다.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "fluxer-verification 다운로드",
+    "connectionTokenFileDownload": "sanalyer-verification 다운로드",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "fluxer-verification 저장",
+    "connectionSaveTokenDialogTitle": "sanalyer-verification 저장",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "fluxer-verification 저장됨",
+    "connectionTokenSavedToast": "sanalyer-verification 저장됨",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "인스턴스 URL 입력 (예: fluxer.com)",
+    "instanceUrlPlaceholder": "인스턴스 URL 입력 (예: sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "공식 인스턴스에는 fluxer.com을 사용하거나 자체 호스팅 인스턴스의 정확한 URL을 사용하세요.",
+    "instanceUrlHelper": "공식 인스턴스에는 sanalyer.com을 사용하거나 자체 호스팅 인스턴스의 정확한 URL을 사용하세요.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Fluxer로 재설정",
+    "resetToDefaultInstance": "sanalyer로 재설정",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -8949,7 +8949,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider}은(는) 자사 서비스를 통해서만 푸시 알림을 전달하므로 이 기기의 푸시는 Fluxer 릴레이를 거칩니다.",
+    "notificationsPushRelaySectionDescription": "{pushProvider}은(는) 자사 서비스를 통해서만 푸시 알림을 전달하므로 이 기기의 푸시는 sanalyer 릴레이를 거칩니다.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -8958,7 +8958,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Fluxer 푸시 릴레이 사용",
+    "notificationsPushRelayConsentLabel": "sanalyer 푸시 릴레이 사용",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -8970,7 +8970,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider}은(는) 자사 서비스를 통해서만 푸시 알림을 전달하므로 이 기기의 푸시는 Fluxer 릴레이를 거칩니다.",
+    "pushRelayConsentDescription": "{pushProvider}은(는) 자사 서비스를 통해서만 푸시 알림을 전달하므로 이 기기의 푸시는 sanalyer 릴레이를 거칩니다.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14673,7 +14673,7 @@
         "description": "Note next to the subscription plans when the user still has gifted Plutonium time left."
     },
     "premiumComparisonFeatureColumn": "기능",
-    "premiumDisclaimerRefund": "결제 후 3일 이내, 30일마다 한 번씩 직접 환불할 수 있습니다. 구독을 환불하면 구독이 취소됩니다. EU/EEA 구매자는 콘텐츠에 즉시 액세스하기 위해 결제 시 14일 철회 권리를 포기합니다. 차지백 대신 앱 내 환불 버튼을 사용하세요. 차지백은 계정을 영구적으로 제한할 수 있습니다. Stripe가 결제를 안전하게 처리하며, Fluxer는 고객님의 전체 카드 번호를 볼 수 없습니다.",
+    "premiumDisclaimerRefund": "결제 후 3일 이내, 30일마다 한 번씩 직접 환불할 수 있습니다. 구독을 환불하면 구독이 취소됩니다. EU/EEA 구매자는 콘텐츠에 즉시 액세스하기 위해 결제 시 14일 철회 권리를 포기합니다. 차지백 대신 앱 내 환불 버튼을 사용하세요. 차지백은 계정을 영구적으로 제한할 수 있습니다. Stripe가 결제를 안전하게 처리하며, sanalyer는 고객님의 전체 카드 번호를 볼 수 없습니다.",
     "premiumTermsOfService": "이용약관",
     "premiumPrivacyPolicy": "개인정보처리방침",
     "premiumCheckoutStartFailedTitle": "결제를 시작할 수 없습니다",
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "결제 완료하기",
-    "premiumCompletePaymentBody": "결제를 완료하기 위해 Stripe로 이동합니다. 완료 후 Fluxer로 돌아오세요.",
+    "premiumCompletePaymentBody": "결제를 완료하기 위해 Stripe로 이동합니다. 완료 후 sanalyer로 돌아오세요.",
     "premiumChoosePaymentMethodTitle": "결제 수단 선택",
     "premiumPixPaymentPromptDescription": "자동 Pix 결제로 브라질 은행에서 직접 정기 결제를 승인하세요. 또는 카드 사용을 선택하여 Stripe의 다음 화면에서 신용카드를 입력하세요.",
     "premiumUsePix": "Pix 사용",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "이미 Visionary이시네요",
     "premiumAlreadyVisionaryBody": "Visionary에는 이미 영구 이용 권한이 포함되어 있어 반복 구독이 필요하지 않습니다. 다른 사람에게 줄 선물은 계속 구매할 수 있습니다.",
     "premiumExistingSubscriptionTitle": "이미 구독 중입니다",
-    "premiumExistingSubscriptionBody": "이 계정에 기존 Fluxer Plutonium 구독이 있습니다. 결제 정보 업데이트 또는 갱신 상태 확인은 보안 결제 포털에서 관리하세요. 방금 결제하셨다면 1분 정도 기다렸다가 이 페이지를 다시 열어주세요.",
+    "premiumExistingSubscriptionBody": "이 계정에 기존 sanalyer Premium 구독이 있습니다. 결제 정보 업데이트 또는 갱신 상태 확인은 보안 결제 포털에서 관리하세요. 방금 결제하셨다면 1분 정도 기다렸다가 이 페이지를 다시 열어주세요.",
     "premiumPurchasesDisabledTitle": "구매 불가",
     "premiumPurchasesDisabledBody": "이 계정에서는 구매가 비활성화되어 있습니다. 문제가 잘못된 것으로 보이면 {supportEmail}으로 문의하세요.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Fluxer Plutonium을 구매하려면 계정을 등록하세요.",
-    "premiumVerifyEmailToPurchase": "Fluxer Plutonium을 구매하려면 먼저 이메일을 인증해야 합니다.",
+    "premiumClaimAccountToPurchase": "sanalyer Premium을 구매하려면 계정을 등록하세요.",
+    "premiumVerifyEmailToPurchase": "sanalyer Premium을 구매하려면 먼저 이메일을 인증해야 합니다.",
     "premiumPerkCommunities": "커뮤니티",
     "premiumPerkMessageCharacterLimit": "메시지 글자 수 제한",
     "premiumPerkBookmarkedMessages": "북마크한 메시지",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "앱의 맞춤 테마",
     "storePlutoniumVideoFree": "최대 720p, 30 FPS",
     "storePlutoniumVideoPlutonium": "최대 4K, 60 FPS",
-    "storePlutoniumTagFootnote": "동일한 사용자 이름을 가진 다른 사람이 사용하지 않는 태그만 선택할 수 있습니다. 사용자 이름은 대소문자를 구분하지 않으므로 Mina#4821과 mina#4821은 동일하게 간주됩니다. #0000 태그는 Fluxer Visionary 멤버를 위해 예약되어 있습니다.",
+    "storePlutoniumTagFootnote": "동일한 사용자 이름을 가진 다른 사람이 사용하지 않는 태그만 선택할 수 있습니다. 사용자 이름은 대소문자를 구분하지 않으므로 Mina#4821과 mina#4821은 동일하게 간주됩니다. #0000 태그는 sanalyer Visionary 멤버를 위해 예약되어 있습니다.",
     "storePlutoniumLearnVisionary": "Visionary에 대해 자세히 알아보기.",
-    "storePlutoniumDonatePrompt": "Fluxer의 오픈 소스 개발만 후원하고 싶으신가요? ",
+    "storePlutoniumDonatePrompt": "sanalyer의 오픈 소스 개발만 후원하고 싶으신가요? ",
     "storePlutoniumDonateLink": "대신 기부하기",
-    "storePlutoniumHighlightsLead": "구독하시면 Fluxer를 후원하고 다음 기능을 이용하실 수 있습니다",
+    "storePlutoniumHighlightsLead": "구독하시면 sanalyer를 후원하고 다음 기능을 이용하실 수 있습니다",
     "storePlutoniumHighlightEmoji": "모든 채팅에서 사용자 지정 이모티콘 및 스티커",
     "storePlutoniumHighlightProfile": "애니메이션 프로필, 배지, 맞춤 4자리 숫자",
     "storePlutoniumHighlightFiles": "최대 500MB 업로드",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "그 외 더 많은 혜택",
     "storePlutoniumRenewsThroughPlay": "취소할 때까지 Google Play를 통해 자동 갱신됩니다.",
     "storePlutoniumRenewsThroughAppStore": "취소할 때까지 App Store를 통해 자동 갱신됩니다.",
-    "storePlutoniumAlreadySubscribed": "이미 Fluxer Plutonium을 구독 중입니다.",
+    "storePlutoniumAlreadySubscribed": "이미 sanalyer Premium을 구독 중입니다.",
     "storePlutoniumSavePercent": "{percent}% 절약",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Fluxer Labs 가입하기",
+    "userSettingsJoinFluxerLabs": "sanalyer Labs 가입하기",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Fluxer를 열고 먼저 로그인하세요.",
+    "assistantNeedsLogin": "sanalyer를 열고 먼저 로그인하세요.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer에서 찾을 수 없습니다.",
+    "assistantNotFound": "sanalyer에서 찾을 수 없습니다.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer가 작업을 완료할 수 없습니다.",
+    "assistantFailed": "sanalyer가 작업을 완료할 수 없습니다.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Fluxer를 엽니다.",
+    "assistantOkOpened": "sanalyer를 엽니다.",
     "applicationsTitle": "앱",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

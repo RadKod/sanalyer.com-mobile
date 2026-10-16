@@ -5246,11 +5246,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "הורד את **fluxer-verification** והצב אותו בתיקיית **.well-known** שלך כדי שנוכל לאמת את הדומיין.",
+    "connectionTokenFileDescription": "הורד את **sanalyer-verification** והצב אותו בתיקיית **.well-known** שלך כדי שנוכל לאמת את הדומיין.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "הורד את fluxer-verification",
+    "connectionTokenFileDownload": "הורד את sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -5264,7 +5264,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "שמור אימות Fluxer",
+    "connectionSaveTokenDialogTitle": "שמור אימות sanalyer",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -5348,7 +5348,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "אימות Fluxer נשמר",
+    "connectionTokenSavedToast": "אימות sanalyer נשמר",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -10737,7 +10737,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -10880,7 +10880,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "השלם תשלום",
-    "premiumCompletePaymentBody": "אתה מועבר כעת ל-Stripe להשלמת התשלום. חזור ל-Fluxer לאחר שתסיים.",
+    "premiumCompletePaymentBody": "אתה מועבר כעת ל-Stripe להשלמת התשלום. חזור ל-sanalyer לאחר שתסיים.",
     "premiumChoosePaymentMethodTitle": "בחירת אמצעי תשלום",
     "premiumPixPaymentPromptDescription": "שלם באמצעות Pix אוטומטי כדי לאשר חיובים חוזרים ישירות מהבנק הברזילאי שלך. לחלופין, בחר להשתמש בכרטיס כדי להזין פרטי כרטיס אשראי במסך הבא של Stripe.",
     "premiumUsePix": "השתמש בפיקס",
@@ -10892,7 +10892,7 @@
     "premiumAlreadyVisionaryTitle": "אתה כבר Visionary",
     "premiumAlreadyVisionaryBody": "Visionary כבר כולל גישה קבועה, ולכן אין צורך במנוי מתחדש. עדיין אפשר לקנות מתנות לאחרים.",
     "premiumExistingSubscriptionTitle": "המנוי כבר קיים",
-    "premiumExistingSubscriptionBody": "מצאנו מנוי קיים של Fluxer Plutonium עבור חשבון זה. נהלו אותו בפורטל החיוב המאובטח כדי לעדכן פרטי תשלום או לבדוק את סטטוס החידוש. אם שילמתם זה עתה, המתינו דקה ופתחו מחדש את הדף הזה.",
+    "premiumExistingSubscriptionBody": "מצאנו מנוי קיים של sanalyer Premium עבור חשבון זה. נהלו אותו בפורטל החיוב המאובטח כדי לעדכן פרטי תשלום או לבדוק את סטטוס החידוש. אם שילמתם זה עתה, המתינו דקה ופתחו מחדש את הדף הזה.",
     "premiumPurchasesDisabledTitle": "רכישות אינן זמינות",
     "premiumPurchasesDisabledBody": "הרכישות מושבתות עבור חשבון זה. צור קשר עם {supportEmail} אם זה נראה שגוי.",
     "@premiumPurchasesDisabledBody": {
@@ -10907,8 +10907,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "אמת את חשבונך כדי לרכוש Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "עליך לאמת את כתובת הדוא\"ל שלך לפני שתוכל לרכוש Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "אמת את חשבונך כדי לרכוש sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "עליך לאמת את כתובת הדוא\"ל שלך לפני שתוכל לרכוש sanalyer Premium.",
     "premiumPerkCommunities": "קהילות",
     "premiumPerkMessageCharacterLimit": "מגבלת תווים בהודעה",
     "premiumPerkBookmarkedMessages": "הודעות בסימניות",
@@ -10960,11 +10960,11 @@
     "storePlutoniumCompareThemes": "ערכות נושא מותאמות אישית לאפליקציה",
     "storePlutoniumVideoFree": "עד 720p ב-30 FPS",
     "storePlutoniumVideoPlutonium": "עד 4K ב-60 FPS",
-    "storePlutoniumTagFootnote": "ניתן לבחור תגית שאין לאף אחד אחר עם אותו שם משתמש. שמות משתמש אינם תלויי רישיות, כך ש-Mina#4821 ו-mina#4821 נחשבים זהים. התגית #0000 שמורה לחברי Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "ניתן לבחור תגית שאין לאף אחד אחר עם אותו שם משתמש. שמות משתמש אינם תלויי רישיות, כך ש-Mina#4821 ו-mina#4821 נחשבים זהים. התגית #0000 שמורה לחברי sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "למידע נוסף על Visionary.",
-    "storePlutoniumDonatePrompt": "רק רוצה לתמוך בפיתוח הקוד הפתוח של Fluxer? ",
+    "storePlutoniumDonatePrompt": "רק רוצה לתמוך בפיתוח הקוד הפתוח של sanalyer? ",
     "storePlutoniumDonateLink": "לתרום במקום זאת.",
-    "storePlutoniumHighlightsLead": "המינוי מממן את Fluxer ופותח",
+    "storePlutoniumHighlightsLead": "המינוי מממן את sanalyer ופותח",
     "storePlutoniumHighlightEmoji": "אימוג'י ומדבקות מותאמים אישית בכל צ'אט",
     "storePlutoniumHighlightProfile": "פרופיל מונפש, תג ומספר 4-ספרתי מותאם אישית",
     "storePlutoniumHighlightFiles": "העלאות עד 500 מגה-בייט",
@@ -10973,7 +10973,7 @@
     "storePlutoniumHighlightsMore": "ועוד",
     "storePlutoniumRenewsThroughPlay": "מתחדש אוטומטית דרך Google Play עד שתבטל.",
     "storePlutoniumRenewsThroughAppStore": "מתחדש אוטומטית דרך App Store עד לביטול.",
-    "storePlutoniumAlreadySubscribed": "כבר יש לך מנוי ל-Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "כבר יש לך מנוי ל-sanalyer Premium.",
     "storePlutoniumSavePercent": "חסוך {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -11547,7 +11547,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} מספקת התראות דחיפה רק דרך השירות שלה, ולכן ההתראות למכשיר הזה עוברות דרך הממסר של Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} מספקת התראות דחיפה רק דרך השירות שלה, ולכן ההתראות למכשיר הזה עוברות דרך הממסר של sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11556,7 +11556,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "שימוש בממסר הדחיפה של Fluxer",
+    "notificationsPushRelayConsentLabel": "שימוש בממסר הדחיפה של sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11568,7 +11568,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} מספקת התראות דחיפה רק דרך השירות שלה, ולכן ההתראות למכשיר הזה עוברות דרך הממסר של Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} מספקת התראות דחיפה רק דרך השירות שלה, ולכן ההתראות למכשיר הזה עוברות דרך הממסר של sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -11908,7 +11908,7 @@
     "@userSettingsNavWhatsNew": {
         "description": "User settings navigation item for release notes."
     },
-    "userSettingsJoinFluxerLabs": "הצטרפו ל-Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "הצטרפו ל-sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -12203,15 +12203,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "הזן כתובת URL של מופע (לדוגמה, fluxer.com)",
+    "instanceUrlPlaceholder": "הזן כתובת URL של מופע (לדוגמה, sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "השתמש ב-fluxer.com עבור המופע הרשמי, או בכתובת ה-URL המדויקת של מופע באירוח עצמי.",
+    "instanceUrlHelper": "השתמש ב-sanalyer.com עבור המופע הרשמי, או בכתובת ה-URL המדויקת של מופע באירוח עצמי.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "אפס ל-Fluxer",
+    "resetToDefaultInstance": "אפס ל-sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -15861,7 +15861,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "פתח את Fluxer והיכנס קודם.",
+    "assistantNeedsLogin": "פתח את sanalyer והיכנס קודם.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15869,7 +15869,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer לא מצא את זה.",
+    "assistantNotFound": "sanalyer לא מצא את זה.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15877,7 +15877,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer לא הצליח להשלים זאת.",
+    "assistantFailed": "sanalyer לא הצליח להשלים זאת.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15894,7 +15894,7 @@
             }
         }
     },
-    "assistantOkOpened": "פותח את Fluxer.",
+    "assistantOkOpened": "פותח את sanalyer.",
     "lookAndFeelChatWallpaperTitle": "טפט צ'אט",
     "@lookAndFeelChatWallpaperTitle": {
         "description": "Look and Feel section title for chat wallpaper presets."

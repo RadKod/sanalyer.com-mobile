@@ -3,7 +3,7 @@ import Foundation
 
 struct MuteVoiceIntent: AppIntent {
   static var title: LocalizedStringResource = "Mute Microphone"
-  static var description = IntentDescription("Mute in the current Fluxer call.")
+  static var description = IntentDescription("Mute in the current sanalyer call.")
   static var openAppWhenRun = false
 
   static var parameterSummary: some ParameterSummary {
@@ -17,7 +17,7 @@ struct MuteVoiceIntent: AppIntent {
 
 struct UnmuteVoiceIntent: AppIntent {
   static var title: LocalizedStringResource = "Unmute Microphone"
-  static var description = IntentDescription("Unmute in the current Fluxer call.")
+  static var description = IntentDescription("Unmute in the current sanalyer call.")
   static var openAppWhenRun = false
 
   static var parameterSummary: some ParameterSummary {
@@ -31,7 +31,7 @@ struct UnmuteVoiceIntent: AppIntent {
 
 struct LeaveVoiceIntent: AppIntent {
   static var title: LocalizedStringResource = "Leave Voice"
-  static var description = IntentDescription("Leave the current Fluxer voice channel.")
+  static var description = IntentDescription("Leave the current sanalyer voice channel.")
   static var openAppWhenRun = false
 
   static var parameterSummary: some ParameterSummary {
@@ -46,7 +46,7 @@ struct LeaveVoiceIntent: AppIntent {
 struct JoinVoiceIntent: AppIntent {
   static var title: LocalizedStringResource = "Join Voice Channel"
   static var description = IntentDescription(
-    "Join a Fluxer voice channel after naming the community and channel."
+    "Join a sanalyer voice channel after naming the community and channel."
   )
   static var openAppWhenRun = true
 
@@ -86,10 +86,10 @@ struct JoinVoiceIntent: AppIntent {
 
 struct StartDmCallIntent: AppIntent {
   static var title: LocalizedStringResource = "Call Friend"
-  static var description = IntentDescription("Start a Fluxer voice call with a friend.")
+  static var description = IntentDescription("Start a sanalyer voice call with a friend.")
   static var openAppWhenRun = true
 
-  @Parameter(title: "Friend", requestValueDialog: IntentDialog("Who should Fluxer call?"))
+  @Parameter(title: "Friend", requestValueDialog: IntentDialog("Who should sanalyer call?"))
   var friend: AssistantFriendEntity
 
   static var parameterSummary: some ParameterSummary {
@@ -100,7 +100,7 @@ struct StartDmCallIntent: AppIntent {
   func perform() async throws -> some IntentResult {
     let name = friend.name.trimmingCharacters(in: .whitespacesAndNewlines)
     try await confirmAssistantAction(
-      name.isEmpty ? "Start this call?" : "Call \(name) on Fluxer?"
+      name.isEmpty ? "Start this call?" : "Call \(name) on sanalyer?"
     )
     AssistantPendingCommand.queueCall(friendId: friend.id)
     return .result()

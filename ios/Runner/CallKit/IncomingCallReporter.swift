@@ -477,7 +477,7 @@ final class IncomingCallReporter: NSObject, CXProviderDelegate {
       "id": uuid.uuidString.lowercased(),
       "nameCaller": call.name,
       "handle": call.handle,
-      "appName": "Fluxer",
+      "appName": "sanalyer",
       "type": 0,
       "isAccepted": accepted,
       "extra": extraFields(call),

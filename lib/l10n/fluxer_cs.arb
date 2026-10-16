@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Stáhněte si **fluxer-verification** a umístěte jej do složky **.well-known**, abychom mohli ověřit doménu.",
+    "connectionTokenFileDescription": "Stáhněte si **sanalyer-verification** a umístěte jej do složky **.well-known**, abychom mohli ověřit doménu.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Stáhnout fluxer-verification",
+    "connectionTokenFileDownload": "Stáhnout sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Uložit fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Uložit sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Soubor fluxer-verification uložen",
+    "connectionTokenSavedToast": "Soubor sanalyer-verification uložen",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Zadejte URL instance (např. fluxer.com)",
+    "instanceUrlPlaceholder": "Zadejte URL instance (např. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Použijte fluxer.com pro oficiální instanci nebo přesnou URL instance hostované na vlastním serveru.",
+    "instanceUrlHelper": "Použijte sanalyer.com pro oficiální instanci nebo přesnou URL instance hostované na vlastním serveru.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Obnovit na Fluxer",
+    "resetToDefaultInstance": "Obnovit na sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -9909,7 +9909,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} doručuje push oznámení jen přes vlastní službu, takže oznámení pro toto zařízení procházejí přes přenos Fluxeru.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} doručuje push oznámení jen přes vlastní službu, takže oznámení pro toto zařízení procházejí přes přenos sanalyeru.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -9918,7 +9918,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Používat push přenos Fluxeru",
+    "notificationsPushRelayConsentLabel": "Používat push přenos sanalyeru",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -9930,7 +9930,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} doručuje push oznámení jen přes vlastní službu, takže oznámení pro toto zařízení procházejí přes přenos Fluxeru.",
+    "pushRelayConsentDescription": "{pushProvider} doručuje push oznámení jen přes vlastní službu, takže oznámení pro toto zařízení procházejí přes přenos sanalyeru.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Dokončit platbu",
-    "premiumCompletePaymentBody": "Nyní budete přesměrováni na Stripe k dokončení platby. Po dokončení se vraťte do Fluxeru.",
+    "premiumCompletePaymentBody": "Nyní budete přesměrováni na Stripe k dokončení platby. Po dokončení se vraťte do sanalyeru.",
     "premiumChoosePaymentMethodTitle": "Zvolte způsob platby",
     "premiumPixPaymentPromptDescription": "Zaplaťte pomocí Pix automático a povolte opakované platby přímo z vaší brazilské banky. Nebo zvolte platbu kartou a zadejte údaje o kreditní kartě na další obrazovce Stripe.",
     "premiumUsePix": "Použít Pix",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "Už máte Visionary",
     "premiumAlreadyVisionaryBody": "Visionary už zahrnuje trvalý přístup, takže opakované předplatné není potřeba. Stále můžete kupovat dárky pro ostatní.",
     "premiumExistingSubscriptionTitle": "Předplatné už existuje",
-    "premiumExistingSubscriptionBody": "Našli jsme existující předplatné Fluxer Plutonium pro tento účel. Spravujte ho v zabezpečeném platebním portálu pro aktualizaci platebních údajů nebo kontrolu stavu obnovení. Pokud jste právě zaplatili, počkejte minutu a znovu otevřete tuto stránku.",
+    "premiumExistingSubscriptionBody": "Našli jsme existující předplatné sanalyer Premium pro tento účel. Spravujte ho v zabezpečeném platebním portálu pro aktualizaci platebních údajů nebo kontrolu stavu obnovení. Pokud jste právě zaplatili, počkejte minutu a znovu otevřete tuto stránku.",
     "premiumPurchasesDisabledTitle": "Nákupy nejsou k dispozici",
     "premiumPurchasesDisabledBody": "Nákupy jsou pro tento účet zakázány. Pokud se vám to nezdá, kontaktujte {supportEmail}.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Získejte svůj účet a kupte si Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Před nákupem Fluxer Plutonium si musíte ověřit svůj e-mail.",
+    "premiumClaimAccountToPurchase": "Získejte svůj účet a kupte si sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Před nákupem sanalyer Premium si musíte ověřit svůj e-mail.",
     "premiumPerkCommunities": "Komunity",
     "premiumPerkMessageCharacterLimit": "Limit znaků zprávy",
     "premiumPerkBookmarkedMessages": "Zprávy se záložkou",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "Vlastní motivy pro aplikaci",
     "storePlutoniumVideoFree": "Až 720p při 30 snímcích za sekundu",
     "storePlutoniumVideoPlutonium": "Až 4K při 60 snímcích za sekundu",
-    "storePlutoniumTagFootnote": "Můžete si vybrat pouze takový tag, který ještě nikdo jiný se stejným uživatelským jménem nemá. Uživatelská jména nerozlišují velká a malá písmena, takže Mina#4821 a mina#4821 se počítají jako stejná. Tag #0000 je vyhrazen pro členy Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Můžete si vybrat pouze takový tag, který ještě nikdo jiný se stejným uživatelským jménem nemá. Uživatelská jména nerozlišují velká a malá písmena, takže Mina#4821 a mina#4821 se počítají jako stejná. Tag #0000 je vyhrazen pro členy sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Zjistěte více o Visionary.",
-    "storePlutoniumDonatePrompt": "Chcete jen podpořit open source vývoj Fluxeru? ",
+    "storePlutoniumDonatePrompt": "Chcete jen podpořit open source vývoj sanalyeru? ",
     "storePlutoniumDonateLink": "Místo toho přispějte.",
-    "storePlutoniumHighlightsLead": "Předplacením podpoříte Fluxer a odemknete si",
+    "storePlutoniumHighlightsLead": "Předplacením podpoříte sanalyer a odemknete si",
     "storePlutoniumHighlightEmoji": "Vlastní emoji a samolepky v jakémkoli chatu",
     "storePlutoniumHighlightProfile": "Animovaný profil, odznak a vybrané čtyřmístné číslo",
     "storePlutoniumHighlightFiles": "Nahrávání souborů až do 500 MB",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "A další",
     "storePlutoniumRenewsThroughPlay": "Automaticky se obnovuje přes Google Play, dokud předplatné nezrušíte.",
     "storePlutoniumRenewsThroughAppStore": "Automaticky se obnovuje přes App Store, dokud předplatné nezrušíte.",
-    "storePlutoniumAlreadySubscribed": "Už máte předplatné Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Už máte předplatné sanalyer Premium.",
     "storePlutoniumSavePercent": "Ušetřete {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Připojte se k Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Připojte se k sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Nejprve otevřete Fluxer a přihlaste se.",
+    "assistantNeedsLogin": "Nejprve otevřete sanalyer a přihlaste se.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer to nenašel.",
+    "assistantNotFound": "sanalyer to nenašel.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer to nemohl dokončit.",
+    "assistantFailed": "sanalyer to nemohl dokončit.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Otevírám Fluxer.",
+    "assistantOkOpened": "Otevírám sanalyer.",
     "applicationsTitle": "Aplikace",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

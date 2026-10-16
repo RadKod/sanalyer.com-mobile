@@ -117,7 +117,7 @@ Future<void> _bootstrapFluxer(List<String> args) async {
           minimumSize: Size(200, 200),
           center: true,
           titleBarStyle: TitleBarStyle.hidden,
-          title: 'Fluxer',
+          title: 'sanalyer',
         );
 
         await windowManager.waitUntilReadyToShow(windowOptions);

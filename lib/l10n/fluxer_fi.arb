@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Lataa **fluxer-verification** ja sijoita se **.well-known** -kansioosi, jotta voimme vahvistaa verkkotunnuksen.",
+    "connectionTokenFileDescription": "Lataa **sanalyer-verification** ja sijoita se **.well-known** -kansioosi, jotta voimme vahvistaa verkkotunnuksen.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Lataa fluxer-verification",
+    "connectionTokenFileDownload": "Lataa sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Tallenna fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Tallenna sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "fluxer-verification tallennettu",
+    "connectionTokenSavedToast": "sanalyer-verification tallennettu",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Syötä instanssin URL (esim. fluxer.com)",
+    "instanceUrlPlaceholder": "Syötä instanssin URL (esim. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Käytä virallisen instanssin osoitetta fluxer.com tai itse ylläpidetyn instanssin tarkkaa URL-osoitetta.",
+    "instanceUrlHelper": "Käytä virallisen instanssin osoitetta sanalyer.com tai itse ylläpidetyn instanssin tarkkaa URL-osoitetta.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Nollaa Fluxeriin",
+    "resetToDefaultInstance": "Nollaa sanalyeriin",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -9076,7 +9076,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} toimittaa push-ilmoituksia vain oman palvelunsa kautta, joten tämän laitteen ilmoitukset kulkevat Fluxerin välityspalvelimen kautta.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} toimittaa push-ilmoituksia vain oman palvelunsa kautta, joten tämän laitteen ilmoitukset kulkevat sanalyerin välityspalvelimen kautta.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -9085,7 +9085,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Käytä Fluxerin push-välityspalvelinta",
+    "notificationsPushRelayConsentLabel": "Käytä sanalyerin push-välityspalvelinta",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -9097,7 +9097,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} toimittaa push-ilmoituksia vain oman palvelunsa kautta, joten tämän laitteen ilmoitukset kulkevat Fluxerin välityspalvelimen kautta.",
+    "pushRelayConsentDescription": "{pushProvider} toimittaa push-ilmoituksia vain oman palvelunsa kautta, joten tämän laitteen ilmoitukset kulkevat sanalyerin välityspalvelimen kautta.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Suorita maksu",
-    "premiumCompletePaymentBody": "Siirryt nyt Stripeen maksun suorittamiseksi. Palaa Fluxeriin, kun olet suorittanut sen.",
+    "premiumCompletePaymentBody": "Siirryt nyt Stripeen maksun suorittamiseksi. Palaa sanalyeriin, kun olet suorittanut sen.",
     "premiumChoosePaymentMethodTitle": "Valitse maksutapa",
     "premiumPixPaymentPromptDescription": "Maksa automaattisella Pixillä valtuuttaaksesi toistuvat veloitukset suoraan brasilialaiselta pankkitililtäsi. Tai valitse käytä korttia syöttääksesi luottokorttitiedot Stripen seuraavalla näytöllä.",
     "premiumUsePix": "Käytä Pixiä",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "Olet jo Visionary",
     "premiumAlreadyVisionaryBody": "Visionary sisältää jo pysyvän käyttöoikeuden, joten toistuvaa tilausta ei tarvita. Voit silti ostaa lahjoja muille.",
     "premiumExistingSubscriptionTitle": "Tilaus on jo olemassa",
-    "premiumExistingSubscriptionBody": "Löysimme tilillesi jo olemassa olevan Fluxer Plutonium -tilauksen. Hallinnoi sitä suojatussa laskutusportaalissa päivittääksesi maksutietoja tai tarkistaaksesi uusimisen tilan. Jos maksoit juuri, odota hetki ja avaa sivu uudelleen.",
+    "premiumExistingSubscriptionBody": "Löysimme tilillesi jo olemassa olevan sanalyer Premium -tilauksen. Hallinnoi sitä suojatussa laskutusportaalissa päivittääksesi maksutietoja tai tarkistaaksesi uusimisen tilan. Jos maksoit juuri, odota hetki ja avaa sivu uudelleen.",
     "premiumPurchasesDisabledTitle": "Ostaminen ei ole käytettävissä",
     "premiumPurchasesDisabledBody": "Ostokset on poistettu käytöstä tältä tililtä. Ota yhteyttä osoitteeseen {supportEmail}, jos tämä näyttää virheelliseltä.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Lunasta tilisi ostaaksesi Fluxer Plutoniumia.",
-    "premiumVerifyEmailToPurchase": "Sinun täytyy vahvistaa sähköpostisi ennen kuin voit ostaa Fluxer Plutoniumia.",
+    "premiumClaimAccountToPurchase": "Lunasta tilisi ostaaksesi sanalyer Premiumia.",
+    "premiumVerifyEmailToPurchase": "Sinun täytyy vahvistaa sähköpostisi ennen kuin voit ostaa sanalyer Premiumia.",
     "premiumPerkCommunities": "Yhteisöt",
     "premiumPerkMessageCharacterLimit": "Viestin merkkirajoitus",
     "premiumPerkBookmarkedMessages": "Kirjanmerkityt viestit",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "Mukautetut teemat sovellukselle",
     "storePlutoniumVideoFree": "Jopa 720p 30 FPS",
     "storePlutoniumVideoPlutonium": "Jopa 4K 60 FPS",
-    "storePlutoniumTagFootnote": "Voit valita vain tunnisteen, jota kenelläkään muulla samalla käyttäjänimellä ei vielä ole. Käyttäjänimissä isoilla ja pienillä kirjaimilla ei ole eroa, joten Mina#4821 ja mina#4821 lasketaan samaksi. Tunniste #0000 on varattu Fluxer Visionary -jäsenille.",
+    "storePlutoniumTagFootnote": "Voit valita vain tunnisteen, jota kenelläkään muulla samalla käyttäjänimellä ei vielä ole. Käyttäjänimissä isoilla ja pienillä kirjaimilla ei ole eroa, joten Mina#4821 ja mina#4821 lasketaan samaksi. Tunniste #0000 on varattu sanalyer Visionary -jäsenille.",
     "storePlutoniumLearnVisionary": "Lue lisää Visionarysta.",
-    "storePlutoniumDonatePrompt": "Haluatko vain tukea Fluxerin avoimen lähdekoodin kehitystä? ",
+    "storePlutoniumDonatePrompt": "Haluatko vain tukea sanalyerin avoimen lähdekoodin kehitystä? ",
     "storePlutoniumDonateLink": "Lahjoita sen sijaan.",
-    "storePlutoniumHighlightsLead": "Tilaamalla tuet Fluxeria ja saat käyttöösi",
+    "storePlutoniumHighlightsLead": "Tilaamalla tuet sanalyeria ja saat käyttöösi",
     "storePlutoniumHighlightEmoji": "Mukautetut emojit ja tarrat missä tahansa chatissa",
     "storePlutoniumHighlightProfile": "Animoitu profiili, merkki ja valitsemasi 4-numeroinen tunniste",
     "storePlutoniumHighlightFiles": "Lähetykset enintään 500 Mt",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "Ja paljon muuta",
     "storePlutoniumRenewsThroughPlay": "Uusiutuu automaattisesti Google Playn kautta, kunnes peruutat tilauksen.",
     "storePlutoniumRenewsThroughAppStore": "Uusiutuu automaattisesti App Storen kautta, kunnes peruutat tilauksen.",
-    "storePlutoniumAlreadySubscribed": "Sinulla on jo Fluxer Plutonium -tilaus.",
+    "storePlutoniumAlreadySubscribed": "Sinulla on jo sanalyer Premium -tilaus.",
     "storePlutoniumSavePercent": "Säästä {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Liity Fluxer Labsiin",
+    "userSettingsJoinFluxerLabs": "Liity sanalyer Labsiin",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Avaa Fluxer ja kirjaudu ensin sisään.",
+    "assistantNeedsLogin": "Avaa sanalyer ja kirjaudu ensin sisään.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer ei löytänyt sitä.",
+    "assistantNotFound": "sanalyer ei löytänyt sitä.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer ei voinut suorittaa sitä.",
+    "assistantFailed": "sanalyer ei voinut suorittaa sitä.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Avataan Fluxer.",
+    "assistantOkOpened": "Avataan sanalyer.",
     "applicationsTitle": "Sovellukset",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

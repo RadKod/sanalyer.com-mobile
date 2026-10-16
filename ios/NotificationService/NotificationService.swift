@@ -206,7 +206,7 @@ private extension NotificationService {
             return content
         }
         let userInfo = content.userInfo
-        let title = content.title.isEmpty ? "Fluxer" : content.title
+        let title = content.title.isEmpty ? "sanalyer" : content.title
         let senderId = PushNotificationPayload.resolveSenderIdentifier(from: userInfo) ?? title
         let avatar = avatarData.map { INImage(imageData: $0) }
         let sender = INPerson(

@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "**fluxer-verification** dosyasını indirip **.well-known** klasörünüze yerleştirin, böylece alan adını doğrulayabiliriz.",
+    "connectionTokenFileDescription": "**sanalyer-verification** dosyasını indirip **.well-known** klasörünüze yerleştirin, böylece alan adını doğrulayabiliriz.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "fluxer-verification dosyasını indir",
+    "connectionTokenFileDownload": "sanalyer-verification dosyasını indir",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "fluxer-verification'ı kaydet",
+    "connectionSaveTokenDialogTitle": "sanalyer-verification'ı kaydet",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "fluxer-verification kaydedildi",
+    "connectionTokenSavedToast": "sanalyer-verification kaydedildi",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Kurulum URL'sini girin (ör. fluxer.com)",
+    "instanceUrlPlaceholder": "Kurulum URL'sini girin (ör. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Resmi kurulum için fluxer.com'i veya kendi barındırdığınız bir kurulumun tam URL'sini kullanın.",
+    "instanceUrlHelper": "Resmi kurulum için sanalyer.com'u veya kendi barındırdığınız bir kurulumun tam URL'sini kullanın.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Fluxer'a sıfırla",
+    "resetToDefaultInstance": "sanalyer'e sıfırla",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -11866,7 +11866,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} anlık bildirimleri yalnızca kendi hizmeti üzerinden iletir, bu yüzden bu cihazın bildirimleri Fluxer aktarıcısından geçer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} anlık bildirimleri yalnızca kendi hizmeti üzerinden iletir, bu yüzden bu cihazın bildirimleri sanalyer aktarıcısından geçer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11875,7 +11875,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Fluxer anlık bildirim aktarıcısını kullan",
+    "notificationsPushRelayConsentLabel": "sanalyer anlık bildirim aktarıcısını kullan",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11887,7 +11887,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} anlık bildirimleri yalnızca kendi hizmeti üzerinden iletir, bu yüzden bu cihazın bildirimleri Fluxer aktarıcısından geçer.",
+    "pushRelayConsentDescription": "{pushProvider} anlık bildirimleri yalnızca kendi hizmeti üzerinden iletir, bu yüzden bu cihazın bildirimleri sanalyer aktarıcısından geçer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Ödemeyi tamamla",
-    "premiumCompletePaymentBody": "Ödemeyi tamamlamak için şimdi Stripe'a yönlendiriliyorsunuz. Tamamladıktan sonra Fluxer'a geri dönün.",
+    "premiumCompletePaymentBody": "Ödemeyi tamamlamak için şimdi Stripe'a yönlendiriliyorsunuz. Tamamladıktan sonra sanalyer'e geri dönün.",
     "premiumChoosePaymentMethodTitle": "Ödeme yöntemi seçin",
     "premiumPixPaymentPromptDescription": "Otomatik Pix ile Brezilya bankanızdan doğrudan yinelenen ödemeleri yetkilendirin. Veya bir sonraki ekranda Stripe'a kredi kartı bilgilerinizi girmek için kart kullanmayı seçin.",
     "premiumUsePix": "Pix'i kullan",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "Zaten Visionary'siniz",
     "premiumAlreadyVisionaryBody": "Visionary zaten kalıcı erişim içerir, bu yüzden yinelenen bir aboneliğe gerek yok. Yine de başkalarına hediye alabilirsiniz.",
     "premiumExistingSubscriptionTitle": "Abonelik zaten mevcut",
-    "premiumExistingSubscriptionBody": "Bu hesap için mevcut bir Fluxer Plutonium aboneliği bulduk. Ödeme ayrıntılarını güncellemek veya yenileme durumunu kontrol etmek için güvenli faturalandırma portalında yönetin. Az önce ödeme yaptıysanız, bir dakika bekleyip bu sayfayı yeniden açın.",
+    "premiumExistingSubscriptionBody": "Bu hesap için mevcut bir sanalyer Premium aboneliği bulduk. Ödeme ayrıntılarını güncellemek veya yenileme durumunu kontrol etmek için güvenli faturalandırma portalında yönetin. Az önce ödeme yaptıysanız, bir dakika bekleyip bu sayfayı yeniden açın.",
     "premiumPurchasesDisabledTitle": "Satın alımlar kullanılamıyor",
     "premiumPurchasesDisabledBody": "Bu hesap için satın alımlar devre dışı bırakıldı. Yanlış görünüyorsa {supportEmail} ile iletişime geçin.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Fluxer Plutonium satın almak için hesabını talep et.",
-    "premiumVerifyEmailToPurchase": "Fluxer Plutonium satın almadan önce e-postanı doğrulaman gerekiyor.",
+    "premiumClaimAccountToPurchase": "sanalyer Premium satın almak için hesabını talep et.",
+    "premiumVerifyEmailToPurchase": "sanalyer Premium satın almadan önce e-postanı doğrulaman gerekiyor.",
     "premiumPerkCommunities": "Topluluklar",
     "premiumPerkMessageCharacterLimit": "Mesaj karakter sınırı",
     "premiumPerkBookmarkedMessages": "Yer işaretli mesajlar",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "Uygulama için özel temalar",
     "storePlutoniumVideoFree": "30 FPS ile 720p'ye kadar",
     "storePlutoniumVideoPlutonium": "60 FPS ile 4K'ya kadar",
-    "storePlutoniumTagFootnote": "Aynı kullanıcı adına sahip başka kimsenin kullanmadığı bir etiket seçebilirsiniz. Kullanıcı adları büyük/küçük harfe duyarlı değildir, bu nedenle Mina#4821 ve mina#4821 aynı kabul edilir. #0000 etiketi Fluxer Visionary üyeleri için ayrılmıştır.",
+    "storePlutoniumTagFootnote": "Aynı kullanıcı adına sahip başka kimsenin kullanmadığı bir etiket seçebilirsiniz. Kullanıcı adları büyük/küçük harfe duyarlı değildir, bu nedenle Mina#4821 ve mina#4821 aynı kabul edilir. #0000 etiketi sanalyer Visionary üyeleri için ayrılmıştır.",
     "storePlutoniumLearnVisionary": "Visionary hakkında daha fazla bilgi edinin.",
-    "storePlutoniumDonatePrompt": "Sadece Fluxer'ın açık kaynak geliştirmesini mi desteklemek istiyorsunuz? ",
+    "storePlutoniumDonatePrompt": "Sadece sanalyer'in açık kaynak geliştirmesini mi desteklemek istiyorsunuz? ",
     "storePlutoniumDonateLink": "Bunun yerine bağış yapın.",
-    "storePlutoniumHighlightsLead": "Abone olmak Fluxer'ı finanse eder ve şunların kilidini açar",
+    "storePlutoniumHighlightsLead": "Abone olmak sanalyer'i finanse eder ve şunların kilidini açar",
     "storePlutoniumHighlightEmoji": "Tüm sohbetlerde özel emojiler ve çıkartmalar",
     "storePlutoniumHighlightProfile": "Hareketli profil, rozet ve özel 4 haneli numara",
     "storePlutoniumHighlightFiles": "500 MB'a kadar yükleme",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "Ve daha fazlası",
     "storePlutoniumRenewsThroughPlay": "İptal edene kadar Google Play üzerinden otomatik olarak yenilenir.",
     "storePlutoniumRenewsThroughAppStore": "Siz iptal edene kadar App Store üzerinden otomatik olarak yenilenir.",
-    "storePlutoniumAlreadySubscribed": "Zaten bir Fluxer Plutonium aboneliğiniz var.",
+    "storePlutoniumAlreadySubscribed": "Zaten bir sanalyer Premium aboneliğiniz var.",
     "storePlutoniumSavePercent": "% {percent} tasarruf edin",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Fluxer Labs'a Katıl",
+    "userSettingsJoinFluxerLabs": "sanalyer Labs'a Katıl",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Önce Fluxer'ı açın ve oturum açın.",
+    "assistantNeedsLogin": "Önce sanalyer'i açın ve oturum açın.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer bunu bulamadı.",
+    "assistantNotFound": "sanalyer bunu bulamadı.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer bunu tamamlayamadı.",
+    "assistantFailed": "sanalyer bunu tamamlayamadı.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Fluxer açılıyor.",
+    "assistantOkOpened": "sanalyer açılıyor.",
     "applicationsTitle": "Uygulamalar",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

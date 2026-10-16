@@ -32,7 +32,7 @@ CallKitParams buildVoiceCallKitParams({
   return CallKitParams(
     id: callKitId,
     nameCaller: display.nameCaller,
-    appName: 'Fluxer',
+    appName: 'sanalyer',
     avatar: display.avatar,
     handle: display.handle,
     type: kVoiceCallKitAudioType,
@@ -97,7 +97,7 @@ CallKitParams buildIncomingCallRingParams({
   return CallKitParams(
     id: callKitId,
     nameCaller: display.nameCaller,
-    appName: 'Fluxer',
+    appName: 'sanalyer',
     avatar: display.avatar,
     handle: display.handle,
     type: kVoiceCallKitAudioType,

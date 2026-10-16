@@ -19,7 +19,7 @@ enum PresenceStatusOption: String, AppEnum {
 
 struct SetPresenceStatusIntent: AppIntent {
   static var title: LocalizedStringResource = "Set Status"
-  static var description = IntentDescription("Set your Fluxer status.")
+  static var description = IntentDescription("Set your sanalyer status.")
   static var openAppWhenRun = false
 
   @Parameter(title: "Status", requestValueDialog: IntentDialog("Which status?"))
@@ -40,7 +40,7 @@ struct SetPresenceStatusIntent: AppIntent {
 struct SetCustomStatusIntent: AppIntent {
   static var title: LocalizedStringResource = "Set Custom Status"
   static var description = IntentDescription(
-    "Set your Fluxer custom status. Leave it blank to clear."
+    "Set your sanalyer custom status. Leave it blank to clear."
   )
   static var openAppWhenRun = false
 

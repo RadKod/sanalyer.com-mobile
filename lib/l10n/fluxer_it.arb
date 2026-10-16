@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Scarica **fluxer-verification** e inseriscilo nella tua cartella **.well-known** in modo che possiamo convalidare il dominio.",
+    "connectionTokenFileDescription": "Scarica **sanalyer-verification** e inseriscilo nella tua cartella **.well-known** in modo che possiamo convalidare il dominio.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Scarica fluxer-verification",
+    "connectionTokenFileDownload": "Scarica sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Salva fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Salva sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Salvato fluxer-verification",
+    "connectionTokenSavedToast": "Salvato sanalyer-verification",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Inserisci URL istanza (es. fluxer.com)",
+    "instanceUrlPlaceholder": "Inserisci URL istanza (es. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Usa fluxer.com per l'istanza ufficiale o l'URL esatto di un'istanza self-hosted.",
+    "instanceUrlHelper": "Usa sanalyer.com per l'istanza ufficiale o l'URL esatto di un'istanza self-hosted.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Ripristina a Fluxer",
+    "resetToDefaultInstance": "Ripristina a sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -11539,7 +11539,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} recapita le notifiche push solo tramite il proprio servizio, quindi quelle di questo dispositivo passano dal relay di Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} recapita le notifiche push solo tramite il proprio servizio, quindi quelle di questo dispositivo passano dal relay di sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11548,7 +11548,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Usa il relay push di Fluxer",
+    "notificationsPushRelayConsentLabel": "Usa il relay push di sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11560,7 +11560,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} recapita le notifiche push solo tramite il proprio servizio, quindi quelle di questo dispositivo passano dal relay di Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} recapita le notifiche push solo tramite il proprio servizio, quindi quelle di questo dispositivo passano dal relay di sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Completa il pagamento",
-    "premiumCompletePaymentBody": "Ora verrai reindirizzato a Stripe per completare il pagamento. Torna su Fluxer una volta terminato.",
+    "premiumCompletePaymentBody": "Ora verrai reindirizzato a Stripe per completare il pagamento. Torna su sanalyer una volta terminato.",
     "premiumChoosePaymentMethodTitle": "Scegli un metodo di pagamento",
     "premiumPixPaymentPromptDescription": "Paga con Pix automatico per autorizzare addebiti ricorrenti direttamente dal tuo conto bancario brasiliano. Oppure scegli usa carta per inserire una carta di credito nella schermata successiva di Stripe.",
     "premiumUsePix": "Usa Pix",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "Sei già Visionary",
     "premiumAlreadyVisionaryBody": "Visionary include già l'accesso permanente, quindi non è necessario un abbonamento ricorrente. Puoi comunque acquistare regali per altri.",
     "premiumExistingSubscriptionTitle": "Abbonamento già esistente",
-    "premiumExistingSubscriptionBody": "Abbiamo trovato un abbonamento Fluxer Plutonium esistente per questo account. Gestiscilo nel portale di fatturazione sicuro per aggiornare i dettagli di pagamento o verificare lo stato del rinnovo. Se hai appena pagato, attendi un minuto e riapri questa pagina.",
+    "premiumExistingSubscriptionBody": "Abbiamo trovato un abbonamento sanalyer Premium esistente per questo account. Gestiscilo nel portale di fatturazione sicuro per aggiornare i dettagli di pagamento o verificare lo stato del rinnovo. Se hai appena pagato, attendi un minuto e riapri questa pagina.",
     "premiumPurchasesDisabledTitle": "Acquisti non disponibili",
     "premiumPurchasesDisabledBody": "Gli acquisti sono disabilitati per questo account. Contatta {supportEmail} se pensi ci sia un errore.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Rivendica il tuo account per acquistare Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Devi verificare la tua email prima di poter acquistare Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "Rivendica il tuo account per acquistare sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Devi verificare la tua email prima di poter acquistare sanalyer Premium.",
     "premiumPerkCommunities": "Community",
     "premiumPerkMessageCharacterLimit": "Limite di caratteri per messaggio",
     "premiumPerkBookmarkedMessages": "Messaggi salvati",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "Temi personalizzati per l'app",
     "storePlutoniumVideoFree": "Fino a 720p a 30 FPS",
     "storePlutoniumVideoPlutonium": "Fino a 4K a 60 FPS",
-    "storePlutoniumTagFootnote": "Puoi scegliere solo un tag che nessun altro con lo stesso nome utente ha già. I nomi utente non fanno distinzione tra maiuscole e minuscole, quindi Mina#4821 e mina#4821 contano come uguali. Il tag #0000 è riservato ai membri Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Puoi scegliere solo un tag che nessun altro con lo stesso nome utente ha già. I nomi utente non fanno distinzione tra maiuscole e minuscole, quindi Mina#4821 e mina#4821 contano come uguali. Il tag #0000 è riservato ai membri sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Scopri di più su Visionary.",
-    "storePlutoniumDonatePrompt": "Vuoi solo supportare lo sviluppo open source di Fluxer? ",
+    "storePlutoniumDonatePrompt": "Vuoi solo supportare lo sviluppo open source di sanalyer? ",
     "storePlutoniumDonateLink": "Fai invece una donazione.",
-    "storePlutoniumHighlightsLead": "L'abbonamento finanzia Fluxer e sblocca",
+    "storePlutoniumHighlightsLead": "L'abbonamento finanzia sanalyer e sblocca",
     "storePlutoniumHighlightEmoji": "Emoji e sticker personalizzati in qualsiasi chat",
     "storePlutoniumHighlightProfile": "Profilo animato, badge e numero personalizzato di 4 cifre",
     "storePlutoniumHighlightFiles": "Caricamenti fino a 500 MB",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "E altro ancora",
     "storePlutoniumRenewsThroughPlay": "Si rinnova automaticamente tramite Google Play finché non annulli.",
     "storePlutoniumRenewsThroughAppStore": "Si rinnova automaticamente tramite l'App Store finché non annulli.",
-    "storePlutoniumAlreadySubscribed": "Hai già un abbonamento a Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Hai già un abbonamento a sanalyer Premium.",
     "storePlutoniumSavePercent": "Risparmia il {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Partecipa a Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Partecipa a sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Prima apri Fluxer ed effettua l'accesso.",
+    "assistantNeedsLogin": "Prima apri sanalyer ed effettua l'accesso.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer non è riuscito a trovarlo.",
+    "assistantNotFound": "sanalyer non è riuscito a trovarlo.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer non è riuscito a completare l'operazione.",
+    "assistantFailed": "sanalyer non è riuscito a completare l'operazione.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Apertura di Fluxer.",
+    "assistantOkOpened": "Apertura di sanalyer.",
     "applicationsTitle": "Applicazioni",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

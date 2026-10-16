@@ -5246,11 +5246,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Tải xuống **fluxer-verification** và đặt nó vào thư mục **.well-known** của bạn để chúng tôi có thể xác thực miền.",
+    "connectionTokenFileDescription": "Tải xuống **sanalyer-verification** và đặt nó vào thư mục **.well-known** của bạn để chúng tôi có thể xác thực miền.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Tải xuống fluxer-verification",
+    "connectionTokenFileDownload": "Tải xuống sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -5264,7 +5264,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Lưu fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Lưu sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -5348,7 +5348,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Đã lưu fluxer-verification",
+    "connectionTokenSavedToast": "Đã lưu sanalyer-verification",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -10737,7 +10737,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -10880,7 +10880,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Hoàn tất thanh toán",
-    "premiumCompletePaymentBody": "Bạn sẽ được chuyển hướng đến Stripe để hoàn tất thanh toán. Quay lại Fluxer sau khi hoàn tất.",
+    "premiumCompletePaymentBody": "Bạn sẽ được chuyển hướng đến Stripe để hoàn tất thanh toán. Quay lại sanalyer sau khi hoàn tất.",
     "premiumChoosePaymentMethodTitle": "Chọn phương thức thanh toán",
     "premiumPixPaymentPromptDescription": "Thanh toán bằng Pix tự động để ủy quyền các khoản phí định kỳ trực tiếp từ ngân hàng Brazil của bạn. Hoặc chọn sử dụng thẻ để nhập thẻ tín dụng trên màn hình tiếp theo của Stripe.",
     "premiumUsePix": "Sử dụng Pix",
@@ -10892,7 +10892,7 @@
     "premiumAlreadyVisionaryTitle": "Bạn đã là Visionary rồi",
     "premiumAlreadyVisionaryBody": "Visionary đã bao gồm quyền truy cập vĩnh viễn, nên bạn không cần đăng ký định kỳ. Bạn vẫn có thể mua quà tặng cho người khác.",
     "premiumExistingSubscriptionTitle": "Gói đăng ký đã tồn tại",
-    "premiumExistingSubscriptionBody": "Chúng tôi tìm thấy một gói đăng ký Fluxer Plutonium hiện có cho tài khoản này. Quản lý gói đăng ký đó trong cổng thanh toán bảo mật để cập nhật chi tiết thanh toán hoặc kiểm tra trạng thái gia hạn. Nếu bạn vừa thanh toán, hãy đợi một phút và mở lại trang này.",
+    "premiumExistingSubscriptionBody": "Chúng tôi tìm thấy một gói đăng ký sanalyer Premium hiện có cho tài khoản này. Quản lý gói đăng ký đó trong cổng thanh toán bảo mật để cập nhật chi tiết thanh toán hoặc kiểm tra trạng thái gia hạn. Nếu bạn vừa thanh toán, hãy đợi một phút và mở lại trang này.",
     "premiumPurchasesDisabledTitle": "Tính năng mua hàng không khả dụng",
     "premiumPurchasesDisabledBody": "Giao dịch đã bị tắt cho tài khoản này. Liên hệ {supportEmail} nếu bạn thấy có gì đó không đúng.",
     "@premiumPurchasesDisabledBody": {
@@ -10907,8 +10907,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Xác nhận tài khoản của bạn để mua Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Bạn cần xác minh email trước khi có thể mua Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "Xác nhận tài khoản của bạn để mua sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Bạn cần xác minh email trước khi có thể mua sanalyer Premium.",
     "premiumPerkCommunities": "Cộng đồng",
     "premiumPerkMessageCharacterLimit": "Giới hạn ký tự tin nhắn",
     "premiumPerkBookmarkedMessages": "Tin nhắn đã lưu",
@@ -10960,11 +10960,11 @@
     "storePlutoniumCompareThemes": "Chủ đề tùy chỉnh cho ứng dụng",
     "storePlutoniumVideoFree": "Lên đến 720p ở 30 FPS",
     "storePlutoniumVideoPlutonium": "Lên đến 4K ở 60 FPS",
-    "storePlutoniumTagFootnote": "Bạn chỉ có thể chọn một thẻ mà chưa có ai khác có cùng tên người dùng. Tên người dùng không phân biệt chữ hoa chữ thường, vì vậy Mina#4821 và mina#4821 được tính là giống nhau. Thẻ #0000 được dành riêng cho thành viên Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Bạn chỉ có thể chọn một thẻ mà chưa có ai khác có cùng tên người dùng. Tên người dùng không phân biệt chữ hoa chữ thường, vì vậy Mina#4821 và mina#4821 được tính là giống nhau. Thẻ #0000 được dành riêng cho thành viên sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Tìm hiểu thêm về Visionary.",
-    "storePlutoniumDonatePrompt": "Chỉ muốn ủng hộ việc phát triển mã nguồn mở của Fluxer? ",
+    "storePlutoniumDonatePrompt": "Chỉ muốn ủng hộ việc phát triển mã nguồn mở của sanalyer? ",
     "storePlutoniumDonateLink": "Hoặc quyên góp.",
-    "storePlutoniumHighlightsLead": "Đăng ký tài trợ cho Fluxer và mở khóa",
+    "storePlutoniumHighlightsLead": "Đăng ký tài trợ cho sanalyer và mở khóa",
     "storePlutoniumHighlightEmoji": "Biểu tượng cảm xúc và nhãn dán tùy chỉnh trong mọi cuộc trò chuyện",
     "storePlutoniumHighlightProfile": "Hồ sơ động, huy hiệu và số tùy chỉnh gồm 4 chữ số",
     "storePlutoniumHighlightFiles": "Tải lên tối đa 500 MB",
@@ -10973,7 +10973,7 @@
     "storePlutoniumHighlightsMore": "Và nhiều hơn nữa",
     "storePlutoniumRenewsThroughPlay": "Tự động gia hạn qua Google Play cho đến khi bạn hủy.",
     "storePlutoniumRenewsThroughAppStore": "Tự động gia hạn qua App Store cho đến khi bạn hủy.",
-    "storePlutoniumAlreadySubscribed": "Bạn đã có gói đăng ký Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Bạn đã có gói đăng ký sanalyer Premium.",
     "storePlutoniumSavePercent": "Tiết kiệm {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -11547,7 +11547,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} chỉ gửi thông báo đẩy qua dịch vụ của riêng họ, nên thông báo cho thiết bị này đi qua bộ chuyển tiếp của Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} chỉ gửi thông báo đẩy qua dịch vụ của riêng họ, nên thông báo cho thiết bị này đi qua bộ chuyển tiếp của sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11556,7 +11556,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Dùng bộ chuyển tiếp đẩy của Fluxer",
+    "notificationsPushRelayConsentLabel": "Dùng bộ chuyển tiếp đẩy của sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11568,7 +11568,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} chỉ gửi thông báo đẩy qua dịch vụ của riêng họ, nên thông báo cho thiết bị này đi qua bộ chuyển tiếp của Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} chỉ gửi thông báo đẩy qua dịch vụ của riêng họ, nên thông báo cho thiết bị này đi qua bộ chuyển tiếp của sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -11908,7 +11908,7 @@
     "@userSettingsNavWhatsNew": {
         "description": "User settings navigation item for release notes."
     },
-    "userSettingsJoinFluxerLabs": "Tham gia Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Tham gia sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -12203,15 +12203,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Nhập URL của máy chủ (ví dụ: fluxer.com)",
+    "instanceUrlPlaceholder": "Nhập URL của máy chủ (ví dụ: sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Sử dụng fluxer.com cho máy chủ chính thức hoặc URL chính xác của máy chủ tự lưu trữ.",
+    "instanceUrlHelper": "Sử dụng sanalyer.com cho máy chủ chính thức hoặc URL chính xác của máy chủ tự lưu trữ.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Đặt lại về Fluxer",
+    "resetToDefaultInstance": "Đặt lại về sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -15861,7 +15861,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Mở Fluxer và đăng nhập trước.",
+    "assistantNeedsLogin": "Mở sanalyer và đăng nhập trước.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15869,7 +15869,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer không thể tìm thấy mục đó.",
+    "assistantNotFound": "sanalyer không thể tìm thấy mục đó.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15877,7 +15877,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer không thể hoàn thành tác vụ đó.",
+    "assistantFailed": "sanalyer không thể hoàn thành tác vụ đó.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15894,7 +15894,7 @@
             }
         }
     },
-    "assistantOkOpened": "Đang mở Fluxer.",
+    "assistantOkOpened": "Đang mở sanalyer.",
     "lookAndFeelChatWallpaperTitle": "Hình nền trò chuyện",
     "@lookAndFeelChatWallpaperTitle": {
         "description": "Look and Feel section title for chat wallpaper presets."

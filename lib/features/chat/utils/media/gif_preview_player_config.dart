@@ -7,7 +7,7 @@ const int gifPreviewPlayerBufferSize = 4 * 1024 * 1024;
 const PlayerConfiguration gifPreviewPlayerConfiguration = PlayerConfiguration(
   muted: true,
   bufferSize: gifPreviewPlayerBufferSize,
-  title: 'Fluxer GIF preview',
+  title: 'sanalyer GIF preview',
 );
 
 mkv.VideoControllerConfiguration gifPreviewVideoControllerConfiguration() =>

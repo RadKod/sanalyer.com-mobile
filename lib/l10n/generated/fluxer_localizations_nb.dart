@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3805,10 +3806,8 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Dette vil logge ut de valgte enhetene fra kontoen din. Du må logge inn igjen på disse enhetene.',
-      one:
-          'Dette vil logge ut den valgte enheten fra kontoen din. Du må logge inn igjen på den enheten.',
+      other: 'Dette vil logge ut de valgte enhetene fra kontoen din. Du må logge inn igjen på disse enhetene.',
+      one: 'Dette vil logge ut den valgte enheten fra kontoen din. Du må logge inn igjen på den enheten.',
     );
     return '$_temp0';
   }
@@ -4411,10 +4410,10 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get connectionTokenFileDescription =>
-      'Last ned **fluxer-verification** og plasser den i **.well-known**-mappen din slik at vi kan validere domenet.';
+      'Last ned **sanalyer-verification** og plasser den i **.well-known**-mappen din slik at vi kan validere domenet.';
 
   @override
-  String get connectionTokenFileDownload => 'Last ned fluxer-verification';
+  String get connectionTokenFileDownload => 'Last ned sanalyer-verification';
 
   @override
   String connectionTokenFileMeta(String dnsUrl) {
@@ -4422,7 +4421,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   }
 
   @override
-  String get connectionSaveTokenDialogTitle => 'Lagre fluxer-verification';
+  String get connectionSaveTokenDialogTitle => 'Lagre sanalyer-verification';
 
   @override
   String get connectionVerifyButton => 'Bekreft';
@@ -4493,7 +4492,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   String get connectionRemoveFailed => 'Kunne ikke fjerne tilkobling';
 
   @override
-  String get connectionTokenSavedToast => 'Lagret fluxer-verification';
+  String get connectionTokenSavedToast => 'Lagret sanalyer-verification';
 
   @override
   String get connectionTokenSaveFailedToast => 'Kunne ikke lagre fil';
@@ -4820,8 +4819,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count fellesskap er midlertidig utilgjengelige på grunn av en feil med fluxkondensatoren.',
-      one:
-          '1 fellesskap er midlertidig utilgjengelig på grunn av en feil med fluxkondensatoren.',
+      one: '1 fellesskap er midlertidig utilgjengelig på grunn av en feil med fluxkondensatoren.',
     );
     return '$_temp0';
   }
@@ -5707,8 +5705,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
       locale: localeName,
       other:
           'Du er allerede koblet til denne stemmekanalen fra $count andre enheter. Hva vil du gjøre?',
-      one:
-          'Du er allerede koblet til denne stemmekanalen fra én annen enhet. Hva vil du gjøre?',
+      one: 'Du er allerede koblet til denne stemmekanalen fra én annen enhet. Hva vil du gjøre?',
     );
     return '$_temp0';
   }
@@ -9165,7 +9162,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   String get userSettingsNavSecurityLogin => 'Sikkerhet og innlogging';
 
   @override
-  String get userSettingsNavFluxerPlutonium => 'Fluxer Plutonium';
+  String get userSettingsNavFluxerPlutonium => 'sanalyer Premium';
 
   @override
   String get userSettingsNavGiftsAndCodes => 'Gaver';
@@ -9435,7 +9432,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get premiumCompletePaymentBody =>
-      'Du navigerer nå til Stripe for å fullføre betalingen. Gå tilbake til Fluxer når du er ferdig.';
+      'Du navigerer nå til Stripe for å fullføre betalingen. Gå tilbake til sanalyer når du er ferdig.';
 
   @override
   String get premiumChoosePaymentMethodTitle => 'Velg betalingsmåte';
@@ -9477,7 +9474,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get premiumExistingSubscriptionBody =>
-      'Vi fant et eksisterende Fluxer Plutonium-abonnement for denne kontoen. Administrer det i den sikre faktureringsportalen for å oppdatere betalingsdetaljer eller sjekke fornyelsesstatus. Hvis du nettopp betalte, vent et minutt og lukk denne siden på nytt.';
+      'Vi fant et eksisterende sanalyer Premium-abonnement for denne kontoen. Administrer det i den sikre faktureringsportalen for å oppdatere betalingsdetaljer eller sjekke fornyelsesstatus. Hvis du nettopp betalte, vent et minutt og lukk denne siden på nytt.';
 
   @override
   String get premiumPurchasesDisabledTitle => 'Kjøp er ikke tilgjengelig';
@@ -9493,11 +9490,11 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get premiumClaimAccountToPurchase =>
-      'Gjør krav på kontoen din for å kjøpe Fluxer Plutonium.';
+      'Gjør krav på kontoen din for å kjøpe sanalyer Premium.';
 
   @override
   String get premiumVerifyEmailToPurchase =>
-      'Du må bekrefte e-posten din før du kan kjøpe Fluxer Plutonium.';
+      'Du må bekrefte e-posten din før du kan kjøpe sanalyer Premium.';
 
   @override
   String get premiumPerkCommunities => 'Fellesskap';
@@ -9638,21 +9635,21 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get storePlutoniumTagFootnote =>
-      'Du kan bare velge en tag som ingen andre med samme brukernavn allerede har. Brukernavn skiller ikke mellom store og små bokstaver, så Mina#4821 og mina#4821 regnes som det samme. Taggen #0000 er reservert for Fluxer Visionary-medlemmer.';
+      'Du kan bare velge en tag som ingen andre med samme brukernavn allerede har. Brukernavn skiller ikke mellom store og små bokstaver, så Mina#4821 og mina#4821 regnes som det samme. Taggen #0000 er reservert for sanalyer Visionary-medlemmer.';
 
   @override
   String get storePlutoniumLearnVisionary => 'Lær mer om Visionary.';
 
   @override
   String get storePlutoniumDonatePrompt =>
-      'Vil du bare støtte Fluxers åpen kildekode-utvikling? ';
+      'Vil du bare støtte sanalyers åpen kildekode-utvikling? ';
 
   @override
   String get storePlutoniumDonateLink => 'Doner i stedet.';
 
   @override
   String get storePlutoniumHighlightsLead =>
-      'Abonnementet finansierer Fluxer og låser opp';
+      'Abonnementet finansierer sanalyer og låser opp';
 
   @override
   String get storePlutoniumHighlightEmoji =>
@@ -9689,7 +9686,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get storePlutoniumAlreadySubscribed =>
-      'Du har allerede et Fluxer Plutonium-abonnement.';
+      'Du har allerede et sanalyer Premium-abonnement.';
 
   @override
   String storePlutoniumSavePercent(int percent) {
@@ -10149,11 +10146,11 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String notificationsPushRelaySectionDescription(String pushProvider) {
-    return '$pushProvider leverer bare push-varsler via sin egen tjeneste, så varsler til denne enheten går gjennom Fluxer-reléet.';
+    return '$pushProvider leverer bare push-varsler via sin egen tjeneste, så varsler til denne enheten går gjennom sanalyer-reléet.';
   }
 
   @override
-  String get notificationsPushRelayConsentLabel => 'Bruk Fluxers push-relé';
+  String get notificationsPushRelayConsentLabel => 'Bruk sanalyers push-relé';
 
   @override
   String get notificationsPushRelayConsentDescription =>
@@ -10164,7 +10161,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String pushRelayConsentDescription(String pushProvider) {
-    return '$pushProvider leverer bare push-varsler via sin egen tjeneste, så varsler til denne enheten går gjennom Fluxer-reléet.';
+    return '$pushProvider leverer bare push-varsler via sin egen tjeneste, så varsler til denne enheten går gjennom sanalyer-reléet.';
   }
 
   @override
@@ -10270,7 +10267,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get appIconAndroidChangeDescription =>
-      'Fluxer will restart to apply the new home screen icon.';
+      'sanalyer will restart to apply the new home screen icon.';
 
   @override
   String get appIconAndroidChangeConfirm => 'Change icon';
@@ -10876,7 +10873,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   String get userSettingsNavWhatsNew => 'Nyheter';
 
   @override
-  String get userSettingsJoinFluxerLabs => 'Bli med i Fluxer Labs';
+  String get userSettingsJoinFluxerLabs => 'Bli med i sanalyer Labs';
 
   @override
   String get userSettingsGiveFeedback => 'Give feedback';
@@ -11127,14 +11124,14 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String get instanceUrlPlaceholder =>
-      'Skriv inn instans-URL (f.eks. fluxer.com)';
+      'Skriv inn instans-URL (f.eks. sanalyer.com)';
 
   @override
   String get instanceUrlHelper =>
-      'Bruk fluxer.com for den offisielle instansen, eller den nøyaktige URL-en til en selvhostet instans.';
+      'Bruk sanalyer.com for den offisielle instansen, eller den nøyaktige URL-en til en selvhostet instans.';
 
   @override
-  String get resetToDefaultInstance => 'Tilbakestill til Fluxer';
+  String get resetToDefaultInstance => 'Tilbakestill til sanalyer';
 
   @override
   String get instanceConnect => 'Koble til';
@@ -11156,12 +11153,12 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
 
   @override
   String instanceOutdatedForClient(String domain) {
-    return 'This instance is out of date for this app. Ask whoever runs $domain to update Fluxer.';
+    return 'This instance is out of date for this app. Ask whoever runs $domain to update sanalyer.';
   }
 
   @override
   String instanceRequiresNewerClient(String domain) {
-    return '$domain runs a newer version of Fluxer than this app. Update the app, then try again.';
+    return '$domain runs a newer version of sanalyer than this app. Update the app, then try again.';
   }
 
   @override
@@ -14698,20 +14695,20 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   String get homeQuickActionDms => 'Direktemeldinger';
 
   @override
-  String get assistantNeedsLogin => 'Åpne Fluxer og logg på først.';
+  String get assistantNeedsLogin => 'Åpne sanalyer og logg på først.';
 
   @override
   String get assistantNotInVoice => 'Du er ikke i en samtale.';
 
   @override
-  String get assistantNotFound => 'Fluxer fant ikke det.';
+  String get assistantNotFound => 'sanalyer fant ikke det.';
 
   @override
   String get assistantDmsDisabled =>
       'Direktemeldinger er deaktivert på denne instansen.';
 
   @override
-  String get assistantFailed => 'Fluxer kunne ikke fullføre dette.';
+  String get assistantFailed => 'sanalyer kunne ikke fullføre dette.';
 
   @override
   String get assistantOkMuted => 'Mikrofonen er dempet.';
@@ -14734,7 +14731,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
   }
 
   @override
-  String get assistantOkOpened => 'Åpner Fluxer.';
+  String get assistantOkOpened => 'Åpner sanalyer.';
 
   @override
   String get assistantOkMessageSent => 'Melding sendt.';
@@ -14774,8 +14771,7 @@ class FluxerLocalizationsNb extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count kanaler følger denne kanalen. Hvis du konverterer den til en tekstkanal, slutter de kanalene å følge den.',
-      one:
-          '1 kanal følger denne kanalen. Hvis du konverterer den til en tekstkanal, slutter den kanalen å følge den.',
+      one: '1 kanal følger denne kanalen. Hvis du konverterer den til en tekstkanal, slutter den kanalen å følge den.',
     );
     return '$_temp0';
   }

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3839,10 +3840,8 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Ez kijelentkezteti a kijelölt eszközöket a fiókodból. Újra be kell jelentkezned azokon az eszközökön.',
-      one:
-          'Ez kijelentkezteti a kijelölt eszközt a fiókodból. Újra be kell jelentkezned azon az eszközön.',
+      other: 'Ez kijelentkezteti a kijelölt eszközöket a fiókodból. Újra be kell jelentkezned azokon az eszközökön.',
+      one: 'Ez kijelentkezteti a kijelölt eszközt a fiókodból. Újra be kell jelentkezned azon az eszközön.',
     );
     return '$_temp0';
   }
@@ -4449,10 +4448,10 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get connectionTokenFileDescription =>
-      'Töltsd le a **fluxer-verification** fájlt, és helyezd el a **.well-known** mappába, hogy érvényesíteni tudjuk a tartományt.';
+      'Töltsd le a **sanalyer-verification** fájlt, és helyezd el a **.well-known** mappába, hogy érvényesíteni tudjuk a tartományt.';
 
   @override
-  String get connectionTokenFileDownload => 'fluxer-verification letöltése';
+  String get connectionTokenFileDownload => 'sanalyer-verification letöltése';
 
   @override
   String connectionTokenFileMeta(String dnsUrl) {
@@ -4460,7 +4459,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
   }
 
   @override
-  String get connectionSaveTokenDialogTitle => 'fluxer-verification mentése';
+  String get connectionSaveTokenDialogTitle => 'sanalyer-verification mentése';
 
   @override
   String get connectionVerifyButton => 'Ellenőrzés';
@@ -4532,7 +4531,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
       'Nem sikerült eltávolítani a kapcsolatot';
 
   @override
-  String get connectionTokenSavedToast => 'fluxer-verification mentve';
+  String get connectionTokenSavedToast => 'sanalyer-verification mentve';
 
   @override
   String get connectionTokenSaveFailedToast => 'Nem sikerült a fájl mentése';
@@ -4861,8 +4860,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count közösség átmenetileg nem elérhető egy fluxus kondenzátor meghibásodása miatt.',
-      one:
-          '1 közösség átmenetileg nem elérhető egy fluxus kondenzátor meghibásodása miatt.',
+      one: '1 közösség átmenetileg nem elérhető egy fluxus kondenzátor meghibásodása miatt.',
     );
     return '$_temp0';
   }
@@ -5749,8 +5747,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
       locale: localeName,
       other:
           'Már $count másik eszközről csatlakoztál ehhez a hangcsatornához. Mit szeretnél tenni?',
-      one:
-          'Már 1 másik eszközről csatlakoztál ehhez a hangcsatornához. Mit szeretnél tenni?',
+      one: 'Már 1 másik eszközről csatlakoztál ehhez a hangcsatornához. Mit szeretnél tenni?',
     );
     return '$_temp0';
   }
@@ -9226,7 +9223,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
   String get userSettingsNavSecurityLogin => 'Biztonság és bejelentkezés';
 
   @override
-  String get userSettingsNavFluxerPlutonium => 'Fluxer Plutonium';
+  String get userSettingsNavFluxerPlutonium => 'sanalyer Premium';
 
   @override
   String get userSettingsNavGiftsAndCodes => 'Ajándékok';
@@ -9500,7 +9497,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get premiumCompletePaymentBody =>
-      'Most a rendszer átirányít a Stripe oldalára a fizetés befejezéséhez. Miután befejezted, térj vissza a Fluxerbe.';
+      'Most a rendszer átirányít a Stripe oldalára a fizetés befejezéséhez. Miután befejezted, térj vissza a sanalyerbe.';
 
   @override
   String get premiumChoosePaymentMethodTitle => 'Fizetési mód kiválasztása';
@@ -9542,7 +9539,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get premiumExistingSubscriptionBody =>
-      'Már találtunk egy meglévő Fluxer Plutonium előfizetést ehhez a fiókhoz. Kezeld a biztonságos számlázási portálon a fizetési adatok frissítéséhez vagy az újítási állapot ellenőrzéséhez. Ha most fizettél, várj egy percet, és nyisd meg újra ezt az oldalt.';
+      'Már találtunk egy meglévő sanalyer Premium előfizetést ehhez a fiókhoz. Kezeld a biztonságos számlázási portálon a fizetési adatok frissítéséhez vagy az újítási állapot ellenőrzéséhez. Ha most fizettél, várj egy percet, és nyisd meg újra ezt az oldalt.';
 
   @override
   String get premiumPurchasesDisabledTitle => 'Vásárlások nem elérhetők';
@@ -9558,11 +9555,11 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get premiumClaimAccountToPurchase =>
-      'Igényeld a fiókodat a Fluxer Plutonium megvásárlásához.';
+      'Igényeld a fiókodat a sanalyer Premium megvásárlásához.';
 
   @override
   String get premiumVerifyEmailToPurchase =>
-      'A Fluxer Plutonium megvásárlásához először igazolnod kell az e-mail címedet.';
+      'A sanalyer Premium megvásárlásához először igazolnod kell az e-mail címedet.';
 
   @override
   String get premiumPerkCommunities => 'Közösségek';
@@ -9707,21 +9704,21 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get storePlutoniumTagFootnote =>
-      'Csak olyan címkét választhatsz, amellyel még senki más nem rendelkezik ugyanazzal a felhasználónévvel. A felhasználónevek nem különböztetik meg a kis- és nagybetűket, így a Mina#4821 és a mina#4821 ugyanannak számít. A #0000 címke a Fluxer Visionary tagok számára van fenntartva.';
+      'Csak olyan címkét választhatsz, amellyel még senki más nem rendelkezik ugyanazzal a felhasználónévvel. A felhasználónevek nem különböztetik meg a kis- és nagybetűket, így a Mina#4821 és a mina#4821 ugyanannak számít. A #0000 címke a sanalyer Visionary tagok számára van fenntartva.';
 
   @override
   String get storePlutoniumLearnVisionary => 'Tudj meg többet a Visionaryról.';
 
   @override
   String get storePlutoniumDonatePrompt =>
-      'Csak a Fluxer nyílt forráskódú fejlesztését szeretnéd támogatni? ';
+      'Csak a sanalyer nyílt forráskódú fejlesztését szeretnéd támogatni? ';
 
   @override
   String get storePlutoniumDonateLink => 'Adományozz inkább.';
 
   @override
   String get storePlutoniumHighlightsLead =>
-      'Az előfizetéssel támogatod a Fluxert, és feloldod a következőket';
+      'Az előfizetéssel támogatod a sanalyert, és feloldod a következőket';
 
   @override
   String get storePlutoniumHighlightEmoji =>
@@ -9758,7 +9755,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get storePlutoniumAlreadySubscribed =>
-      'Már van Fluxer Plutonium előfizetésed.';
+      'Már van sanalyer Premium előfizetésed.';
 
   @override
   String storePlutoniumSavePercent(int percent) {
@@ -10230,12 +10227,12 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String notificationsPushRelaySectionDescription(String pushProvider) {
-    return 'A(z) $pushProvider csak a saját szolgáltatásán keresztül kézbesít push-értesítéseket, ezért az eszköz értesítései a Fluxer továbbítóján haladnak át.';
+    return 'A(z) $pushProvider csak a saját szolgáltatásán keresztül kézbesít push-értesítéseket, ezért az eszköz értesítései a sanalyer továbbítóján haladnak át.';
   }
 
   @override
   String get notificationsPushRelayConsentLabel =>
-      'A Fluxer push-továbbítójának használata';
+      'A sanalyer push-továbbítójának használata';
 
   @override
   String get notificationsPushRelayConsentDescription =>
@@ -10246,7 +10243,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String pushRelayConsentDescription(String pushProvider) {
-    return 'A(z) $pushProvider csak a saját szolgáltatásán keresztül kézbesít push-értesítéseket, ezért az eszköz értesítései a Fluxer továbbítóján haladnak át.';
+    return 'A(z) $pushProvider csak a saját szolgáltatásán keresztül kézbesít push-értesítéseket, ezért az eszköz értesítései a sanalyer továbbítóján haladnak át.';
   }
 
   @override
@@ -10353,7 +10350,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get appIconAndroidChangeDescription =>
-      'Fluxer will restart to apply the new home screen icon.';
+      'sanalyer will restart to apply the new home screen icon.';
 
   @override
   String get appIconAndroidChangeConfirm => 'Change icon';
@@ -10967,7 +10964,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
   String get userSettingsNavWhatsNew => 'Újdonságok';
 
   @override
-  String get userSettingsJoinFluxerLabs => 'Csatlakozz a Fluxer Labshoz';
+  String get userSettingsJoinFluxerLabs => 'Csatlakozz a sanalyer Labshoz';
 
   @override
   String get userSettingsGiveFeedback => 'Give feedback';
@@ -11220,14 +11217,14 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get instanceUrlPlaceholder =>
-      'Add meg a példány URL-jét (pl. fluxer.com)';
+      'Add meg a példány URL-jét (pl. sanalyer.com)';
 
   @override
   String get instanceUrlHelper =>
-      'Használd a fluxer.com címet a hivatalos példányhoz, vagy egy saját üzemeltetésű példány pontos URL-jét.';
+      'Használd a sanalyer.com címet a hivatalos példányhoz, vagy egy saját üzemeltetésű példány pontos URL-jét.';
 
   @override
-  String get resetToDefaultInstance => 'Visszaállítás Fluxer-re';
+  String get resetToDefaultInstance => 'Visszaállítás sanalyer-re';
 
   @override
   String get instanceConnect => 'Csatlakozás';
@@ -11249,12 +11246,12 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String instanceOutdatedForClient(String domain) {
-    return 'This instance is out of date for this app. Ask whoever runs $domain to update Fluxer.';
+    return 'This instance is out of date for this app. Ask whoever runs $domain to update sanalyer.';
   }
 
   @override
   String instanceRequiresNewerClient(String domain) {
-    return '$domain runs a newer version of Fluxer than this app. Update the app, then try again.';
+    return '$domain runs a newer version of sanalyer than this app. Update the app, then try again.';
   }
 
   @override
@@ -14816,20 +14813,20 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
 
   @override
   String get assistantNeedsLogin =>
-      'Először nyisd meg a Fluxert, és jelentkezz be.';
+      'Először nyisd meg a sanalyert, és jelentkezz be.';
 
   @override
   String get assistantNotInVoice => 'Nem vagy hívásban.';
 
   @override
-  String get assistantNotFound => 'A Fluxer nem találta.';
+  String get assistantNotFound => 'A sanalyer nem találta.';
 
   @override
   String get assistantDmsDisabled =>
       'A közvetlen üzenetek le vannak tiltva ezen a példányon.';
 
   @override
-  String get assistantFailed => 'A Fluxer nem tudta befejezni.';
+  String get assistantFailed => 'A sanalyer nem tudta befejezni.';
 
   @override
   String get assistantOkMuted => 'Mikrofon némítva.';
@@ -14852,7 +14849,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
   }
 
   @override
-  String get assistantOkOpened => 'Fluxer megnyitása.';
+  String get assistantOkOpened => 'sanalyer megnyitása.';
 
   @override
   String get assistantOkMessageSent => 'Üzenet elküldve.';
@@ -14891,8 +14888,7 @@ class FluxerLocalizationsHu extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count csatorna követi ezt a csatornát. Szöveges csatornává alakítva megszűnnek ezek a követések.',
-      one:
-          '1 csatorna követi ezt a csatornát. Szöveges csatornává alakítva megszűnik ez a követés.',
+      one: '1 csatorna követi ezt a csatornát. Szöveges csatornává alakítva megszűnik ez a követés.',
     );
     return '$_temp0';
   }

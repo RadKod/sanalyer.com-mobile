@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -4263,10 +4264,10 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get connectionTokenFileDescription =>
-      '**fluxer-verification**をダウンロードし、**well-known**フォルダに配置してドメインを検証できるようにしてください。';
+      '**sanalyer-verification**をダウンロードし、**well-known**フォルダに配置してドメインを検証できるようにしてください。';
 
   @override
-  String get connectionTokenFileDownload => 'fluxer-verificationをダウンロード';
+  String get connectionTokenFileDownload => 'sanalyer-verificationをダウンロード';
 
   @override
   String connectionTokenFileMeta(String dnsUrl) {
@@ -4274,7 +4275,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   }
 
   @override
-  String get connectionSaveTokenDialogTitle => 'fluxer-verificationを保存';
+  String get connectionSaveTokenDialogTitle => 'sanalyer-verificationを保存';
 
   @override
   String get connectionVerifyButton => '認証';
@@ -4338,7 +4339,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   String get connectionRemoveFailed => '接続を削除できませんでした';
 
   @override
-  String get connectionTokenSavedToast => 'fluxer-verificationを保存しました';
+  String get connectionTokenSavedToast => 'sanalyer-verificationを保存しました';
 
   @override
   String get connectionTokenSaveFailedToast => 'ファイルの保存に失敗しました';
@@ -8795,7 +8796,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   String get userSettingsNavSecurityLogin => 'セキュリティとログイン';
 
   @override
-  String get userSettingsNavFluxerPlutonium => 'Fluxer Plutonium';
+  String get userSettingsNavFluxerPlutonium => 'sanalyer Premium';
 
   @override
   String get userSettingsNavGiftsAndCodes => 'ギフト';
@@ -9060,7 +9061,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get premiumCompletePaymentBody =>
-      '支払いを完了するためにStripeに移動します。完了したらFluxerに戻ってください。';
+      '支払いを完了するためにStripeに移動します。完了したらsanalyerに戻ってください。';
 
   @override
   String get premiumChoosePaymentMethodTitle => '支払い方法を選択';
@@ -9101,7 +9102,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get premiumExistingSubscriptionBody =>
-      'このアカウントには、既存のFluxer Plutoniumサブスクリプションが見つかりました。支払い方法の更新や更新状況の確認は、安全な請求ポータルで管理してください。最近お支払いいただいた場合は、1分ほど待ってからこのページを再度開いてください。';
+      'このアカウントには、既存のsanalyer Premiumサブスクリプションが見つかりました。支払い方法の更新や更新状況の確認は、安全な請求ポータルで管理してください。最近お支払いいただいた場合は、1分ほど待ってからこのページを再度開いてください。';
 
   @override
   String get premiumPurchasesDisabledTitle => '購入できません';
@@ -9117,11 +9118,11 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get premiumClaimAccountToPurchase =>
-      'Fluxer Plutonium を購入するためにアカウントを請求してください。';
+      'sanalyer Premium を購入するためにアカウントを請求してください。';
 
   @override
   String get premiumVerifyEmailToPurchase =>
-      'Fluxer Plutonium を購入するには、メールアドレスの認証が必要です。';
+      'sanalyer Premium を購入するには、メールアドレスの認証が必要です。';
 
   @override
   String get premiumPerkCommunities => 'コミュニティ';
@@ -9255,20 +9256,20 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get storePlutoniumTagFootnote =>
-      '他のユーザーが同じユーザー名でまだ使用していないタグのみを選択できます。ユーザー名は大文字と小文字を区別しないため、Mina#4821とmina#4821は同じものとして扱われます。#0000タグはFluxer Visionaryメンバー専用です。';
+      '他のユーザーが同じユーザー名でまだ使用していないタグのみを選択できます。ユーザー名は大文字と小文字を区別しないため、Mina#4821とmina#4821は同じものとして扱われます。#0000タグはsanalyer Visionaryメンバー専用です。';
 
   @override
   String get storePlutoniumLearnVisionary => 'Visionaryについて詳しくはこちら。';
 
   @override
-  String get storePlutoniumDonatePrompt => 'Fluxerのオープンソース開発を支援したいだけですか？ ';
+  String get storePlutoniumDonatePrompt => 'sanalyerのオープンソース開発を支援したいだけですか？ ';
 
   @override
   String get storePlutoniumDonateLink => '寄付する';
 
   @override
   String get storePlutoniumHighlightsLead =>
-      '購読するとFluxerの活動を支援でき、以下の特典が利用可能になります';
+      '購読するとsanalyerの活動を支援でき、以下の特典が利用可能になります';
 
   @override
   String get storePlutoniumHighlightEmoji => 'どのチャットでもカスタム絵文字とスタンプ';
@@ -9301,7 +9302,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get storePlutoniumAlreadySubscribed =>
-      'すでにFluxer Plutoniumサブスクリプションをご利用中です。';
+      'すでにsanalyer Premiumサブスクリプションをご利用中です。';
 
   @override
   String storePlutoniumSavePercent(int percent) {
@@ -9742,11 +9743,11 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String notificationsPushRelaySectionDescription(String pushProvider) {
-    return '$pushProvider は自社のサービス経由でしかプッシュ通知を配信しないため、このデバイスへの通知は Fluxer のリレーを経由します。';
+    return '$pushProvider は自社のサービス経由でしかプッシュ通知を配信しないため、このデバイスへの通知は sanalyer のリレーを経由します。';
   }
 
   @override
-  String get notificationsPushRelayConsentLabel => 'Fluxer のプッシュリレーを使う';
+  String get notificationsPushRelayConsentLabel => 'sanalyer のプッシュリレーを使う';
 
   @override
   String get notificationsPushRelayConsentDescription =>
@@ -9757,7 +9758,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String pushRelayConsentDescription(String pushProvider) {
-    return '$pushProvider は自社のサービス経由でしかプッシュ通知を配信しないため、このデバイスへの通知は Fluxer のリレーを経由します。';
+    return '$pushProvider は自社のサービス経由でしかプッシュ通知を配信しないため、このデバイスへの通知は sanalyer のリレーを経由します。';
   }
 
   @override
@@ -9856,7 +9857,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String get appIconAndroidChangeDescription =>
-      'Fluxer will restart to apply the new home screen icon.';
+      'sanalyer will restart to apply the new home screen icon.';
 
   @override
   String get appIconAndroidChangeConfirm => 'Change icon';
@@ -10418,7 +10419,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   String get userSettingsNavWhatsNew => '新機能';
 
   @override
-  String get userSettingsJoinFluxerLabs => 'Fluxer Labsに参加する';
+  String get userSettingsJoinFluxerLabs => 'sanalyer Labsに参加する';
 
   @override
   String get userSettingsGiveFeedback => 'Give feedback';
@@ -10662,14 +10663,14 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   String get instanceUrlLabel => 'インスタンスURL';
 
   @override
-  String get instanceUrlPlaceholder => 'インスタンスURLを入力 (例: fluxer.com)';
+  String get instanceUrlPlaceholder => 'インスタンスURLを入力 (例: sanalyer.com)';
 
   @override
   String get instanceUrlHelper =>
-      '公式インスタンスにはfluxer.comを、セルフホスト型インスタンスには正確なURLを使用してください。';
+      '公式インスタンスにはsanalyer.comを、セルフホスト型インスタンスには正確なURLを使用してください。';
 
   @override
-  String get resetToDefaultInstance => 'Fluxerにリセット';
+  String get resetToDefaultInstance => 'sanalyerにリセット';
 
   @override
   String get instanceConnect => '接続';
@@ -10691,12 +10692,12 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
 
   @override
   String instanceOutdatedForClient(String domain) {
-    return 'This instance is out of date for this app. Ask whoever runs $domain to update Fluxer.';
+    return 'This instance is out of date for this app. Ask whoever runs $domain to update sanalyer.';
   }
 
   @override
   String instanceRequiresNewerClient(String domain) {
-    return '$domain runs a newer version of Fluxer than this app. Update the app, then try again.';
+    return '$domain runs a newer version of sanalyer than this app. Update the app, then try again.';
   }
 
   @override
@@ -14097,19 +14098,19 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   String get homeQuickActionDms => 'ダイレクトメッセージ';
 
   @override
-  String get assistantNeedsLogin => 'まずFluxerを開いてサインインしてください。';
+  String get assistantNeedsLogin => 'まずsanalyerを開いてサインインしてください。';
 
   @override
   String get assistantNotInVoice => '通話に参加していません。';
 
   @override
-  String get assistantNotFound => 'Fluxerでそれを見つけられませんでした。';
+  String get assistantNotFound => 'sanalyerでそれを見つけられませんでした。';
 
   @override
   String get assistantDmsDisabled => 'このインスタンスではダイレクトメッセージが無効になっています。';
 
   @override
-  String get assistantFailed => 'Fluxerがその操作を完了できませんでした。';
+  String get assistantFailed => 'sanalyerがその操作を完了できませんでした。';
 
   @override
   String get assistantOkMuted => 'マイクをミュートしました。';
@@ -14132,7 +14133,7 @@ class FluxerLocalizationsJa extends FluxerLocalizations {
   }
 
   @override
-  String get assistantOkOpened => 'Fluxerを開いています。';
+  String get assistantOkOpened => 'sanalyerを開いています。';
 
   @override
   String get assistantOkMessageSent => 'メッセージを送信しました。';

@@ -4271,11 +4271,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Λήψη του **fluxer-verification** και τοποθέτησή του στον φάκελο **.well-known** ώστε να μπορούμε να επικυρώσουμε τον τομέα.",
+    "connectionTokenFileDescription": "Λήψη του **sanalyer-verification** και τοποθέτησή του στον φάκελο **.well-known** ώστε να μπορούμε να επικυρώσουμε τον τομέα.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Λήψη fluxer-verification",
+    "connectionTokenFileDownload": "Λήψη sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -4289,7 +4289,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Αποθήκευση fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Αποθήκευση sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -4373,7 +4373,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Το fluxer-verification αποθηκεύτηκε",
+    "connectionTokenSavedToast": "Το sanalyer-verification αποθηκεύτηκε",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -6202,7 +6202,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -6518,15 +6518,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "Εισαγάγετε διεύθυνση URL παρουσίας (π.χ. fluxer.com)",
+    "instanceUrlPlaceholder": "Εισαγάγετε διεύθυνση URL παρουσίας (π.χ. sanalyer.com)",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the self-hosted instance URL input."
     },
-    "instanceUrlHelper": "Χρησιμοποιήστε το fluxer.com για την επίσημη παρουσία ή την ακριβή διεύθυνση URL μιας αυτο-φιλοξενούμενης παρουσίας.",
+    "instanceUrlHelper": "Χρησιμοποιήστε το sanalyer.com για την επίσημη παρουσία ή την ακριβή διεύθυνση URL μιας αυτο-φιλοξενούμενης παρουσίας.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Επαναφορά στο Fluxer",
+    "resetToDefaultInstance": "Επαναφορά στο sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -11629,7 +11629,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "Η {pushProvider} παραδίδει ειδοποιήσεις push μόνο μέσω της δικής της υπηρεσίας, οπότε οι ειδοποιήσεις αυτής της συσκευής περνούν από την αναμετάδοση του Fluxer.",
+    "notificationsPushRelaySectionDescription": "Η {pushProvider} παραδίδει ειδοποιήσεις push μόνο μέσω της δικής της υπηρεσίας, οπότε οι ειδοποιήσεις αυτής της συσκευής περνούν από την αναμετάδοση του sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -11638,7 +11638,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Χρήση της αναμετάδοσης push του Fluxer",
+    "notificationsPushRelayConsentLabel": "Χρήση της αναμετάδοσης push του sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -11650,7 +11650,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "Η {pushProvider} παραδίδει ειδοποιήσεις push μόνο μέσω της δικής της υπηρεσίας, οπότε οι ειδοποιήσεις αυτής της συσκευής περνούν από την αναμετάδοση του Fluxer.",
+    "pushRelayConsentDescription": "Η {pushProvider} παραδίδει ειδοποιήσεις push μόνο μέσω της δικής της υπηρεσίας, οπότε οι ειδοποιήσεις αυτής της συσκευής περνούν από την αναμετάδοση του sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -14684,7 +14684,7 @@
         "description": "Error shown on a self-hosted instance when the selected Plutonium plan is not available. Names no support mailbox."
     },
     "premiumCompletePaymentTitle": "Ολοκλήρωση πληρωμής",
-    "premiumCompletePaymentBody": "Μεταβαίνετε τώρα στο Stripe για να ολοκληρώσετε την πληρωμή. Επιστρέψτε στο Fluxer μόλις την ολοκληρώσετε.",
+    "premiumCompletePaymentBody": "Μεταβαίνετε τώρα στο Stripe για να ολοκληρώσετε την πληρωμή. Επιστρέψτε στο sanalyer μόλις την ολοκληρώσετε.",
     "premiumChoosePaymentMethodTitle": "Επιλέξτε τρόπο πληρωμής",
     "premiumPixPaymentPromptDescription": "Πληρώστε με Pix αυτόματο για να εξουσιοδοτήσετε επαναλαμβανόμενες χρεώσεις απευθείας από την τράπεζά σας στη Βραζιλία. Εναλλακτικά, επιλέξτε χρήση κάρτας για να εισαγάγετε μια πιστωτική κάρτα στην επόμενη οθόνη του Stripe.",
     "premiumUsePix": "Χρησιμοποιήστε Pix",
@@ -14696,7 +14696,7 @@
     "premiumAlreadyVisionaryTitle": "Είστε ήδη Visionary",
     "premiumAlreadyVisionaryBody": "Το Visionary περιλαμβάνει ήδη μόνιμη πρόσβαση, οπότε δεν χρειάζεται επαναλαμβανόμενη συνδρομή. Μπορείτε να αγοράσετε δώρα για άλλους.",
     "premiumExistingSubscriptionTitle": "Η συνδρομή υπάρχει ήδη",
-    "premiumExistingSubscriptionBody": "Βρήκαμε μια υπάρχουσα συνδρομή Fluxer Plutonium για αυτόν τον λογαριασμό. Διαχειριστείτε την στην ασφαλή πύλη χρεώσεων για να ενημερώσετε τα στοιχεία πληρωμής ή να ελέγξετε την κατάσταση ανανέωσης. Αν μόλις πληρώσατε, περιμένετε ένα λεπτό και ξανανοίξτε αυτήν τη σελίδα.",
+    "premiumExistingSubscriptionBody": "Βρήκαμε μια υπάρχουσα συνδρομή sanalyer Premium για αυτόν τον λογαριασμό. Διαχειριστείτε την στην ασφαλή πύλη χρεώσεων για να ενημερώσετε τα στοιχεία πληρωμής ή να ελέγξετε την κατάσταση ανανέωσης. Αν μόλις πληρώσατε, περιμένετε ένα λεπτό και ξανανοίξτε αυτήν τη σελίδα.",
     "premiumPurchasesDisabledTitle": "Οι αγορές δεν είναι διαθέσιμες",
     "premiumPurchasesDisabledBody": "Οι αγορές έχουν απενεργοποιηθεί για αυτόν τον λογαριασμό. Επικοινωνήστε με το {supportEmail} αν αυτό φαίνεται λάθος.",
     "@premiumPurchasesDisabledBody": {
@@ -14711,8 +14711,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Διεκδίκησε τον λογαριασμό σου για να αγοράσεις Fluxer Plutonium.",
-    "premiumVerifyEmailToPurchase": "Πρέπει να επαληθεύσεις το email σου πριν αγοράσεις το Fluxer Plutonium.",
+    "premiumClaimAccountToPurchase": "Διεκδίκησε τον λογαριασμό σου για να αγοράσεις sanalyer Premium.",
+    "premiumVerifyEmailToPurchase": "Πρέπει να επαληθεύσεις το email σου πριν αγοράσεις το sanalyer Premium.",
     "premiumPerkCommunities": "Κοινότητες",
     "premiumPerkMessageCharacterLimit": "Όριο χαρακτήρων μηνύματος",
     "premiumPerkBookmarkedMessages": "Μηνύματα με σελιδοδείκτη",
@@ -14764,11 +14764,11 @@
     "storePlutoniumCompareThemes": "Προσαρμοσμένα θέματα για την εφαρμογή",
     "storePlutoniumVideoFree": "Έως 720p στα 30 FPS",
     "storePlutoniumVideoPlutonium": "Έως 4K στα 60 FPS",
-    "storePlutoniumTagFootnote": "Μπορείτε να επιλέξετε μόνο μια ετικέτα που δεν έχει ήδη κάποιος άλλος με το ίδιο όνομα χρήστη. Τα ονόματα χρήστη δεν κάνουν διάκριση πεζών-κεφαλαίων, οπότε τα Mina#4821 και mina#4821 θεωρούνται ίδια. Η ετικέτα #0000 είναι δεσμευμένη για τα μέλη Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Μπορείτε να επιλέξετε μόνο μια ετικέτα που δεν έχει ήδη κάποιος άλλος με το ίδιο όνομα χρήστη. Τα ονόματα χρήστη δεν κάνουν διάκριση πεζών-κεφαλαίων, οπότε τα Mina#4821 και mina#4821 θεωρούνται ίδια. Η ετικέτα #0000 είναι δεσμευμένη για τα μέλη sanalyer Visionary.",
     "storePlutoniumLearnVisionary": "Μάθετε περισσότερα για το Visionary.",
-    "storePlutoniumDonatePrompt": "Θέλετε απλώς να υποστηρίξετε την ανάπτυξη ανοιχτού κώδικα του Fluxer; ",
+    "storePlutoniumDonatePrompt": "Θέλετε απλώς να υποστηρίξετε την ανάπτυξη ανοιχτού κώδικα του sanalyer; ",
     "storePlutoniumDonateLink": "Κάντε δωρεά αντ' αυτού.",
-    "storePlutoniumHighlightsLead": "Η συνδρομή χρηματοδοτεί το Fluxer και ξεκλειδώνει",
+    "storePlutoniumHighlightsLead": "Η συνδρομή χρηματοδοτεί το sanalyer και ξεκλειδώνει",
     "storePlutoniumHighlightEmoji": "Προσαρμοσμένα emoji και αυτοκόλλητα σε οποιαδήποτε συνομιλία",
     "storePlutoniumHighlightProfile": "Κινούμενο προφίλ, σήμα και προσαρμοσμένος 4ψήφιος αριθμός",
     "storePlutoniumHighlightFiles": "Μεταφορτώσεις έως 500 MB",
@@ -14777,7 +14777,7 @@
     "storePlutoniumHighlightsMore": "Και άλλα πολλά",
     "storePlutoniumRenewsThroughPlay": "Ανανεώνεται αυτόματα μέσω του Google Play μέχρι να ακυρώσετε.",
     "storePlutoniumRenewsThroughAppStore": "Ανανεώνεται αυτόματα μέσω του App Store μέχρι να το ακυρώσετε.",
-    "storePlutoniumAlreadySubscribed": "Έχετε ήδη συνδρομή Fluxer Plutonium.",
+    "storePlutoniumAlreadySubscribed": "Έχετε ήδη συνδρομή sanalyer Premium.",
     "storePlutoniumSavePercent": "Εξοικονόμηση {percent}%",
     "@storePlutoniumSavePercent": {
         "placeholders": {
@@ -15048,7 +15048,7 @@
             }
         }
     },
-    "userSettingsJoinFluxerLabs": "Εγγραφή στο Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Εγγραφή στο sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -15890,7 +15890,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Ανοίξτε πρώτα το Fluxer και συνδεθείτε.",
+    "assistantNeedsLogin": "Ανοίξτε πρώτα το sanalyer και συνδεθείτε.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -15898,7 +15898,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Το Fluxer δεν μπόρεσε να το βρει.",
+    "assistantNotFound": "Το sanalyer δεν μπόρεσε να το βρει.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -15906,7 +15906,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Το Fluxer δεν μπόρεσε να το ολοκληρώσει.",
+    "assistantFailed": "Το sanalyer δεν μπόρεσε να το ολοκληρώσει.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -15923,7 +15923,7 @@
             }
         }
     },
-    "assistantOkOpened": "Ανοίγω το Fluxer.",
+    "assistantOkOpened": "Ανοίγω το sanalyer.",
     "applicationsTitle": "Εφαρμογές",
     "@applicationsTitle": {
         "description": "Title for the developer Applications settings tab."

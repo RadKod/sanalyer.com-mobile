@@ -8,7 +8,7 @@ final class AssistantBridge: NSObject {
   private static let methodChannelName = "fluxer_app/assistant"
   static let readyWaitNanoseconds: UInt64 = 20_000_000_000
   private static let pollNanoseconds: UInt64 = 50_000_000
-  private static let fallbackSpoken = "Fluxer could not complete that."
+  private static let fallbackSpoken = "sanalyer could not complete that."
 
   private var methodChannel: FlutterMethodChannel?
   private var isRegisteredWithEngine = false

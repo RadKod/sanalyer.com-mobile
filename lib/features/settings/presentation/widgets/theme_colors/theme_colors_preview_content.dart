@@ -1,5 +1,5 @@
 abstract final class ThemeColorsPreviewContent {
-  static const communityName = 'Fluxerverse';
+  static const communityName = 'sanalyer';
 
   static const selectedChannel = 'general';
   static const channelMemes = 'memes';
@@ -18,18 +18,18 @@ abstract final class ThemeColorsPreviewContent {
   static const buttonPrimary = 'Join voice';
   static const buttonSecondary = 'Share invite';
 
-  static const textPrimarySample = 'Fluxerverse';
+  static const textPrimarySample = 'sanalyer';
   static const textSecondarySample = 'Hang out with friends, your way';
   static const textLinkSample = 'youtube.com/watch?v=y6120QOlsfU';
 
-  static const appHeaderSample = 'Fluxerverse';
+  static const appHeaderSample = 'sanalyer';
   static const String channelHeaderSample = selectedChannel;
 
   static const embedTitle = 'Stay in touch with your friends';
-  static const embedProvider = 'Fluxer';
+  static const embedProvider = 'sanalyer';
   static const mentionLabel = '@Mateo';
 
-  static const discoveryBannerTitle = 'Welcome to Fluxerverse';
+  static const discoveryBannerTitle = 'Welcome to sanalyer';
   static const discoveryBannerMessage =
       'Say hi in #general—check #rules if you are new here.';
 
