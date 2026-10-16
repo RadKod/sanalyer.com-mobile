@@ -238,7 +238,7 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
             title: 'Crash reporting test',
             description:
                 'Throws an uncaught exception after 2 seconds. Talker always '
-                "logs it. Fluxer's error tracker gets it only when crash and "
+                "logs it. sanalyer's error tracker gets it only when crash and "
                 'performance reports are on.',
             children: [
               FluxerButton.primary(

@@ -5,16 +5,8 @@ const int kMaxGiftCodesPerMessage = 10;
 
 const String _giftCodeCapture = r'([a-zA-Z0-9\-]{2,32})(?![a-zA-Z0-9\-])';
 
-const List<String> kOfficialGiftUrlBases = <String>[
-  'https://fluxer.app/gift',
-  'https://canary.fluxer.app/gift',
-  'https://web.fluxer.app/gift',
-  'https://web.canary.fluxer.app/gift',
-  'https://fluxer.com/gift',
-  'https://canary.fluxer.com/gift',
-  'https://fluxer.gift',
-  'https://fluxer.gift/gift',
-];
+// sanalyer: only sanalyer.com gift links are recognised as official.
+const List<String> kOfficialGiftUrlBases = <String>['https://sanalyer.com/gift'];
 
 String? _cachedGiftKey;
 RegExp? _cachedGiftRegExp;

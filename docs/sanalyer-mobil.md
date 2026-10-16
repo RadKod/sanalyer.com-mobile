@@ -3,6 +3,11 @@
 Bu branch (`sanalyer`), Fluxer'ın Flutter istemcisinden sanalyer uygulamasını çıkarıyor.
 Uygulama açılışta doğrudan https://sanalyer.com'a bağlanır, adı, ikonu ve rengi sanalyer'dir.
 
+Repo: https://github.com/RadKod/sanalyer.com-mobile (eski adı RadKod/flutter_client, GitHub
+eski adresi yönlendiriyor). Upstream: https://github.com/fluxerapp/flutter_client, branch
+`canary`. Son senkron: upstream `b06250ca8` (2026-10-16); fork'un `canary` branch'i bu commit'te,
+`sanalyer` branch'ine merge edildi.
+
 ## Ne değişti
 
 - **Instance.** Varsayılan sunucu `sanalyer.com` (API `https://sanalyer.com/api`, gateway
@@ -121,4 +126,19 @@ Android için `aarch64-linux-android armv7-linux-androideabi x86_64-linux-androi
   adları (`fluxer-symbol.svg` gibi) ve kod içi sınıf adları upstream'le aynı. Kullanıcı bunları
   görmüyor; değiştirmek her upstream merge'de çakışma demek.
 - README ve CONTRIBUTING upstream'in. AGPL gereği kaynak `github.com/RadKod/flutter_client`.
-- Upstream merge'den sonra `lib/l10n/*.arb` değerlerinde yeniden Fluxer taraması yapılmalı.
+- Upstream merge'den sonra `lib/l10n/*.arb` değerlerinde ve Dart/Swift metinlerinde yeniden Fluxer
+  taraması yapılmalı. `b06250ca8` merge'ünde gelen yeni metinler: çökme raporlama ayarı (iki arb
+  metni, geliştirici araçlarındaki açıklama) ve hediye linki host listesi
+  (`gift_code_utils.dart`). Çökme raporları Measure'a gidiyor; bizim build'lerde Measure anahtarı
+  olmadığı için ayar açılsa da rapor gönderilmez.
+
+## Upstream senkron rutini
+
+```sh
+git fetch upstream --tags
+git checkout canary && git merge --ff-only upstream/canary && git push origin canary
+git checkout sanalyer && git merge upstream/canary
+git submodule update --init --recursive
+flutter pub get && dart run build_runner build --delete-conflicting-outputs
+# marka taraması, flutter analyze, değişen dosyaların testleri
+```
