@@ -6030,6 +6030,12 @@ class FluxerLocalizationsEn extends FluxerLocalizations {
       'Stop watching the current stream';
 
   @override
+  String get voiceScreenShareEnterFullscreenTooltip => 'Full screen';
+
+  @override
+  String get voiceScreenShareExitFullscreenTooltip => 'Exit full screen';
+
+  @override
   String get voiceOwnScreenShareTitle => 'You are broadcasting';
 
   @override
@@ -21859,6 +21865,12 @@ class FluxerLocalizationsEnGb extends FluxerLocalizationsEn {
       'Stop watching the current stream';
 
   @override
+  String get voiceScreenShareEnterFullscreenTooltip => 'Full screen';
+
+  @override
+  String get voiceScreenShareExitFullscreenTooltip => 'Exit full screen';
+
+  @override
   String get voiceOwnScreenShareTitle => 'You are broadcasting';
 
   @override
@@ -35633,6 +35645,12 @@ class FluxerLocalizationsEnUs extends FluxerLocalizationsEn {
   @override
   String get voiceStopWatchingCurrentStreamTooltip =>
       'Stop watching the current stream';
+
+  @override
+  String get voiceScreenShareEnterFullscreenTooltip => 'Full screen';
+
+  @override
+  String get voiceScreenShareExitFullscreenTooltip => 'Exit full screen';
 
   @override
   String get voiceOwnScreenShareTitle => 'You are broadcasting';
