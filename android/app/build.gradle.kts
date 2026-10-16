@@ -105,6 +105,7 @@ val measureApiUrl = readMeasureApiUrl(
 )
 
 android {
+    // Kotlin package stays com.fluxer (upstream code); the store id is applicationId.
     namespace = "com.fluxer"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -130,16 +131,16 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.fluxer"
+        applicationId = "com.sanalyer.mobile"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
-        manifestPlaceholders["appLabel"] = "Fluxer"
+        manifestPlaceholders["appLabel"] = "sanalyer"
         manifestPlaceholders["buildEnvironment"] = "stable"
         manifestPlaceholders["pushProvider"] = "fcm"
-        manifestPlaceholders["appIconAliasPrefix"] = "com.fluxer.MainActivity"
+        manifestPlaceholders["appIconAliasPrefix"] = "com.sanalyer.mobile.MainActivity"
         manifestPlaceholders["measureApiKey"] = ""
         manifestPlaceholders["measureApiUrl"] = measureApiUrl
     }
@@ -149,9 +150,9 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".canary"
             versionNameSuffix = "-canary"
-            manifestPlaceholders["appLabel"] = "Fluxer Canary"
+            manifestPlaceholders["appLabel"] = "sanalyer Canary"
             manifestPlaceholders["buildEnvironment"] = "canary"
-            manifestPlaceholders["appIconAliasPrefix"] = "com.fluxer.canary.MainActivity"
+            manifestPlaceholders["appIconAliasPrefix"] = "com.sanalyer.mobile.canary.MainActivity"
             manifestPlaceholders["measureApiKey"] =
                 readMeasureAndroidApiKey(
                     environment = "canary",
@@ -161,7 +162,7 @@ android {
         }
         create("stable") {
             dimension = "environment"
-            manifestPlaceholders["appLabel"] = "Fluxer"
+            manifestPlaceholders["appLabel"] = "sanalyer"
             manifestPlaceholders["buildEnvironment"] = "stable"
             manifestPlaceholders["measureApiKey"] =
                 readMeasureAndroidApiKey(
@@ -172,7 +173,7 @@ android {
         }
         create("beta") {
             dimension = "environment"
-            manifestPlaceholders["appLabel"] = "Fluxer Beta"
+            manifestPlaceholders["appLabel"] = "sanalyer Beta"
             manifestPlaceholders["buildEnvironment"] = "beta"
             manifestPlaceholders["measureApiKey"] =
                 readMeasureAndroidApiKey(

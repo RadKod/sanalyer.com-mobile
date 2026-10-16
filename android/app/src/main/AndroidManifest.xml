@@ -89,44 +89,14 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/channels" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/invite" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/gift" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/users" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/settings/user" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/reset" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/notifications" />
-                <data android:scheme="https" android:host="web.fluxer.app" android:pathPrefix="/you" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/channels" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/invite" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/gift" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/users" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/settings/user" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/reset" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/notifications" />
-                <data android:scheme="https" android:host="web.canary.fluxer.app" android:pathPrefix="/you" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/channels" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/invite" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/gift" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/users" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/settings/user" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/reset" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/notifications" />
-                <data android:scheme="https" android:host="web.fluxer.com" android:pathPrefix="/you" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/channels" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/invite" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/gift" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/users" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/settings/user" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/reset" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/notifications" />
-                <data android:scheme="https" android:host="web.canary.fluxer.com" android:pathPrefix="/you" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="fluxer.gg" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/channels" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/invite" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/gift" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/users" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/settings/user" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/reset" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/notifications" />
+                <data android:scheme="https" android:host="sanalyer.com" android:pathPrefix="/you" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

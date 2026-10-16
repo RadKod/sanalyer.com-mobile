@@ -1,7 +1,7 @@
 import Foundation
 
 enum AssistantDefaults {
-  static let suiteName = "group.com.fluxer"
+  static let suiteName = "group.com.sanalyer.mobile"
 
   static var store: UserDefaults {
     UserDefaults(suiteName: suiteName) ?? .standard

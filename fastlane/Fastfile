@@ -283,7 +283,7 @@ platform :ios do
       key_content: ENV.fetch("APPSTORE_PRIVATE_KEY")
     )
 
-    app_identifier = "com.fluxer"
+    app_identifier = "com.sanalyer.mobile"
     flutter_build_name = flutter_marketing_version
     flutter_build_number = next_testflight_build_number(
       api_key: api_key,
@@ -354,10 +354,10 @@ platform :ios do
         teamID: ENV.fetch("APPLE_TEAM_ID"),
         signingCertificate: "Apple Distribution",
         provisioningProfiles: {
-          "com.fluxer" => runner_profile_uuid,
-          "com.fluxer.BroadcastExtension" => extension_profile_uuid,
-          "com.fluxer.NotificationService" => notification_service_profile_uuid,
-          "com.fluxer.ShareExtension" => share_extension_profile_uuid
+          "com.sanalyer.mobile" => runner_profile_uuid,
+          "com.sanalyer.mobile.BroadcastExtension" => extension_profile_uuid,
+          "com.sanalyer.mobile.NotificationService" => notification_service_profile_uuid,
+          "com.sanalyer.mobile.ShareExtension" => share_extension_profile_uuid
         }
       },
       xcargs: [
@@ -392,7 +392,7 @@ platform :ios do
     end
   end
 
-  desc "Build canary archive and upload to TestFlight (com.fluxer.canary)"
+  desc "Build canary archive and upload to TestFlight (com.sanalyer.mobile.canary)"
   lane :testflight_canary do
     ENV["MEASURE_RELEASE_CHANNEL"] = "canary"
     profile_path = File.expand_path("~/Library/MobileDevice/Provisioning Profiles/profile.mobileprovision")
@@ -416,7 +416,7 @@ platform :ios do
       key_content: ENV.fetch("APPSTORE_PRIVATE_KEY")
     )
 
-    app_identifier = "com.fluxer.canary"
+    app_identifier = "com.sanalyer.mobile.canary"
     flutter_build_name = flutter_marketing_version
     flutter_build_number = next_testflight_build_number(
       api_key: api_key,
@@ -487,10 +487,10 @@ platform :ios do
         teamID: ENV.fetch("APPLE_TEAM_ID"),
         signingCertificate: "Apple Distribution",
         provisioningProfiles: {
-          "com.fluxer.canary" => runner_profile_uuid,
-          "com.fluxer.canary.BroadcastExtension" => extension_profile_uuid,
-          "com.fluxer.canary.NotificationService" => notification_service_profile_uuid,
-          "com.fluxer.canary.ShareExtension" => share_extension_profile_uuid
+          "com.sanalyer.mobile.canary" => runner_profile_uuid,
+          "com.sanalyer.mobile.canary.BroadcastExtension" => extension_profile_uuid,
+          "com.sanalyer.mobile.canary.NotificationService" => notification_service_profile_uuid,
+          "com.sanalyer.mobile.canary.ShareExtension" => share_extension_profile_uuid
         }
       },
       xcargs: [
@@ -545,7 +545,7 @@ platform :ios do
       key_content: ENV.fetch("APPSTORE_PRIVATE_KEY")
     )
 
-    app_identifier = "com.fluxer"
+    app_identifier = "com.sanalyer.mobile"
     flutter_build_name = flutter_marketing_version
     flutter_build_number = next_testflight_build_number(
       api_key: api_key,
@@ -615,10 +615,10 @@ platform :ios do
         teamID: ENV.fetch("APPLE_TEAM_ID"),
         signingCertificate: "Apple Distribution",
         provisioningProfiles: {
-          "com.fluxer" => runner_profile_uuid,
-          "com.fluxer.BroadcastExtension" => extension_profile_uuid,
-          "com.fluxer.NotificationService" => notification_service_profile_uuid,
-          "com.fluxer.ShareExtension" => share_extension_profile_uuid
+          "com.sanalyer.mobile" => runner_profile_uuid,
+          "com.sanalyer.mobile.BroadcastExtension" => extension_profile_uuid,
+          "com.sanalyer.mobile.NotificationService" => notification_service_profile_uuid,
+          "com.sanalyer.mobile.ShareExtension" => share_extension_profile_uuid
         }
       },
       xcargs: [
