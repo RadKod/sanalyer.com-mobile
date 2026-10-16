@@ -77,7 +77,8 @@ FluxerColorTheme buildDarkLegacyColorTheme({double saturationFactor = 1.0}) {
     ],
   ).build(saturationFactor: saturationFactor);
 
-  final brandPrimary = tone(FluxerColorFamilies.brand, 55);
+  // sanalyer: lightness 40 gives exactly #B5179E.
+  final brandPrimary = tone(FluxerColorFamilies.brand, 40);
   final statusOnline = tone(FluxerColorFamilies.legacyStatusOnline, 40);
   final statusIdle = tone(FluxerColorFamilies.statusIdle, 50);
   final statusDnd = tone(FluxerColorFamilies.statusDnd, 60);
@@ -132,8 +133,8 @@ FluxerColorTheme buildDarkLegacyColorTheme({double saturationFactor = 1.0}) {
     ),
 
     brandPrimary: brandPrimary,
-    brandSecondary: tone(FluxerColorFamilies.brand, 49, saturation: 60),
-    brandPrimaryLight: toneDirect(hue: 242, saturation: 100, lightness: 84),
+    brandSecondary: tone(FluxerColorFamilies.brand, 34, saturation: 60),
+    brandPrimaryLight: toneDirect(hue: 309, saturation: 77, lightness: 84),
     brandPrimaryFill: toneDirect(
       hue: 0,
       saturation: 0,

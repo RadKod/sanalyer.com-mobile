@@ -35,7 +35,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 const int _kMaxDisplayNameLength = 32;
 const int _kMaxPronounsLength = 40;
 const int _kMaxBioLength = 320;
-const int _kDefaultProfileAccentColor = 0x4641D9;
+const int _kDefaultProfileAccentColor = 0xB5179E;
 
 int _accentColorPickerValue(UserSettingsViewState state) {
   if (state.isPerGuildProfile) {

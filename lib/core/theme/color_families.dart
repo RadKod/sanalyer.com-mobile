@@ -4,7 +4,8 @@ abstract final class FluxerColorFamilies {
   static const neutralDark = ColorFamily(hue: 258, saturation: 10);
   static const legacyDark = ColorFamily(hue: 220, saturation: 13);
   static const neutralLight = ColorFamily(hue: 220, saturation: 10);
-  static const brand = ColorFamily(hue: 242, saturation: 70);
+  // sanalyer: #B5179E (hsl 309, 77%, 40%).
+  static const brand = ColorFamily(hue: 309, saturation: 77);
   static const link = ColorFamily(hue: 198, saturation: 92);
   static const legacyLink = ColorFamily(hue: 210, saturation: 100);
   static const accentPurple = ColorFamily(hue: 278, saturation: 85);
