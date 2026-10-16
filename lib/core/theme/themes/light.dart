@@ -77,8 +77,9 @@ FluxerColorTheme buildLightColorTheme({double saturationFactor = 1.0}) {
     ],
   ).build(saturationFactor: saturationFactor);
 
-  // sanalyer: lightness 40 gives exactly #B5179E.
-  final brandPrimary = tone(FluxerColorFamilies.brand, 40);
+  // sanalyer: #B5179E itself (lightness 40) is too light for brand-coloured
+  // text on tinted light surfaces (WCAG AA); 34 keeps the hue and passes.
+  final brandPrimary = tone(FluxerColorFamilies.brand, 34);
   final statusOnline = tone(
     FluxerColorFamilies.statusOnline,
     40,
@@ -142,7 +143,7 @@ FluxerColorTheme buildLightColorTheme({double saturationFactor = 1.0}) {
     ),
 
     brandPrimary: brandPrimary,
-    brandSecondary: tone(FluxerColorFamilies.brand, 34, saturation: 60),
+    brandSecondary: tone(FluxerColorFamilies.brand, 30, saturation: 60),
     brandPrimaryLight: toneDirect(hue: 309, saturation: 77, lightness: 84),
     brandPrimaryFill: toneDirect(
       hue: 0,
