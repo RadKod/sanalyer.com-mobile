@@ -660,6 +660,117 @@ platform :ios do
       retry
     end
   end
+
+  # sanalyer: local TestFlight lane. Reads the App Store Connect API key from ~/.config/sanalyer
+  # (asc.env + asc_key.p8, never in the repo), creates or reuses the Apple Distribution certificate
+  # and the four App Store profiles with that key, and builds the stable flavor. Push stays off
+  # until push.sanalyer.com exists, so aps-environment is dropped from Runner.entitlements for the
+  # duration of the build only.
+  desc "Build stable for com.sanalyer.mobile and upload to TestFlight (local, API key)"
+  lane :sanalyer_testflight do
+    config_dir = File.expand_path("~/.config/sanalyer")
+    asc_env = File.readlines(File.join(config_dir, "asc.env")).each_with_object({}) do |line, env|
+      key, value = line.strip.split("=", 2)
+      env[key] = value if key && !key.empty? && value
+    end
+    api_key = app_store_connect_api_key(
+      key_id: asc_env.fetch("ASC_KEY_ID"),
+      issuer_id: asc_env.fetch("ASC_ISSUER_ID"),
+      key_filepath: File.join(config_dir, "asc_key.p8")
+    )
+    team_id = ENV.fetch("APPLE_TEAM_ID", "9XYJ4H8U3Y")
+    app_identifier = "com.sanalyer.mobile"
+    build_name = ENV.fetch("SANALYER_VERSION", "1.0.0")
+    now = Time.now
+    build_number = ENV.fetch("SANALYER_BUILD_NUMBER", "#{now.strftime('%Y%m%d')}.#{now.strftime('%H%M').to_i}")
+    UI.message("Building #{app_identifier} #{build_name} (#{build_number})")
+
+    signing_dir = File.join(config_dir, "signing")
+    FileUtils.mkdir_p(signing_dir)
+    get_certificates(api_key: api_key, team_id: team_id, development: false, output_path: signing_dir)
+
+    targets = {
+      "Runner" => app_identifier,
+      "ShareExtension" => "#{app_identifier}.ShareExtension",
+      "NotificationService" => "#{app_identifier}.NotificationService",
+      "BroadcastExtension" => "#{app_identifier}.BroadcastExtension"
+    }
+    profiles = {}
+    targets.each do |target, bundle_id|
+      get_provisioning_profile(
+        api_key: api_key,
+        team_id: team_id,
+        app_identifier: bundle_id,
+        platform: "ios",
+        filename: "sanalyer_#{target}.mobileprovision",
+        output_path: signing_dir
+      )
+      profiles[target] = {
+        bundle_id: bundle_id,
+        uuid: lane_context[SharedValues::SIGH_UUID],
+        path: lane_context[SharedValues::SIGH_PROFILE_PATH]
+      }
+    end
+
+    project_file = File.join(project_root_path, "ios/Runner.xcodeproj/project.pbxproj")
+    entitlements_file = File.join(project_root_path, "ios/Runner/Runner.entitlements")
+    original_project = File.read(project_file)
+    original_entitlements = File.read(entitlements_file)
+    begin
+      sh("/usr/libexec/PlistBuddy", "-c", "Delete :aps-environment", entitlements_file)
+      profiles.each do |target, profile|
+        update_project_provisioning(
+          xcodeproj: "ios/Runner.xcodeproj",
+          profile: profile[:path],
+          target_filter: "^#{target}$",
+          build_configuration: "Release-stable",
+          code_signing_identity: "Apple Distribution"
+        )
+      end
+
+      sh(
+        "flutter", "build", "ios", "--release", "--flavor", "stable", "--no-codesign",
+        "--build-name", build_name,
+        "--build-number", build_number,
+        "--dart-define-from-file=#{File.join(project_root_path, "tool/dart_defines/stable.json")}",
+        "--dart-define=PUSH_PROVIDER=apns",
+        "--dart-define=BUILD_TIMESTAMP=#{now.utc.iso8601}"
+      )
+      build_app(
+        workspace: "ios/Runner.xcworkspace",
+        scheme: "stable",
+        configuration: "Release-stable",
+        clean: false,
+        output_directory: "build/ios/ipa",
+        output_name: "sanalyer-#{build_name}-#{build_number}.ipa",
+        export_method: "app-store",
+        codesigning_identity: "Apple Distribution",
+        export_options: {
+          signingStyle: "manual",
+          teamID: team_id,
+          signingCertificate: "Apple Distribution",
+          provisioningProfiles: profiles.values.to_h { |profile| [profile[:bundle_id], profile[:uuid]] }
+        },
+        xcargs: [
+          "DEVELOPMENT_TEAM=#{team_id}",
+          "FLUTTER_BUILD_NAME=#{build_name}",
+          "FLUTTER_BUILD_NUMBER=#{build_number}",
+          "CODE_SIGN_STYLE=Manual"
+        ].join(" ")
+      )
+    ensure
+      File.write(project_file, original_project)
+      File.write(entitlements_file, original_entitlements)
+    end
+
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
+      app_identifier: app_identifier,
+      skip_waiting_for_build_processing: true
+    )
+    UI.success("Uploaded #{app_identifier} #{build_name} (#{build_number}) to TestFlight")
+  end
 end
 
 platform :mac do

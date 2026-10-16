@@ -120,6 +120,53 @@ Android için `aarch64-linux-android armv7-linux-androideabi x86_64-linux-androi
 6. **Mağaza metinleri ve görseller.** Store açıklaması, ekran görüntüleri ve gizlilik formu bu
    repoda yok; Play Console ve App Store Connect'te elle girilecek.
 
+## iOS TestFlight (2026-10-16)
+
+İlk sürüm TestFlight'ta: `com.sanalyer.mobile` 1.0.0 (20261016.1007). App Store Connect'te uygulama
+`sanalyer` (Apple ID 6823436012, SKU `sanalyer-mobile`, birincil dil Türkçe). Ekip içi test grubu
+"sanalyer ekibi", otomatik dağıtım açık.
+
+Apple tarafında kayıtlı olanlar (takım 9XYJ4H8U3Y):
+
+- App Group `group.com.sanalyer.mobile`.
+- App ID'ler: `com.sanalyer.mobile` (App Groups, Associated Domains, Communication Notifications),
+  `.ShareExtension` ve `.BroadcastExtension` (App Groups), `.NotificationService` (App Groups,
+  Communication Notifications). Push Notifications hiçbirinde açık değil; relay kurulunca açılacak.
+- Apple Distribution sertifikası `JRVM9YYNHH` ve dört App Store profili (fastlane üretti).
+- App Store Connect API anahtarı `sanalyer-mobile` (Admin).
+
+Yerel dosyalar, hiçbiri repoda değil: `~/.config/sanalyer/asc.env` (ASC_KEY_ID, ASC_ISSUER_ID),
+`~/.config/sanalyer/asc_key.p8`, `~/.config/sanalyer/signing/` (sertifika, CSR, p12, profiller).
+Sertifikanın özel anahtarı login keychain'de; codesign'ın her dosyada şifre sormaması için bir kez
+`security set-key-partition-list -S apple-tool:,apple:,codesign: -s ~/Library/Keychains/login.keychain-db`
+çalıştırıldı.
+
+Eklentiler kapatılmadı: Share, Broadcast ve NotificationService ilk sürümde de imzalanıp gidiyor.
+
+### Yeni build göndermek
+
+```sh
+export LANG=en_US.UTF-8
+export PATH=~/.cache/flutter-stable-sanalyer/bin:~/.local/share/gem/ruby/3.4.0/bin:/opt/homebrew/opt/ruby/bin:~/.cargo/bin:$PATH
+dart tool/configure_build.dart --profile=ios-store && flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+(cd ios && pod install)
+APPLE_TEAM_ID=9XYJ4H8U3Y fastlane ios sanalyer_testflight
+```
+
+Lane (`fastlane/Fastfile`, `sanalyer_testflight`) API anahtarını `~/.config/sanalyer`'den okur,
+sertifika ve profilleri gerekirse üretir, `aps-environment`'ı yalnız derleme süresince
+`Runner.entitlements`'tan çıkarır ve bitince proje ile entitlements dosyasını eski hâline döndürür.
+Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_NUMBER` (varsayılan
+`YYYYMMDD.HHMM`). CocoaPods 1.17 ve fastlane, Homebrew Ruby 3.4 ile `gem install --user-install` kuruldu.
+
+### Bu turda düzeltilenler
+
+- `packages/fluxer_markdown_native/hook/build.dart`: Xcode altında PATH toolchain'in çıplak
+  clang'ıyla başlıyor, macOS SDK'sını bulamadığı için Rust build script'leri (serde, proc-macro2...)
+  link edilemiyordu. Mac hedefinin linker'ı `/usr/bin/cc` yapıldı.
+- `Podfile.lock`: yalnız Podfile checksum'ı güncellendi.
+
 ## Bilerek bırakılanlar
 
 - Paket adı `fluxer_app`, Kotlin paketi `com.fluxer`, `fluxer://` URL şeması, asset dosya

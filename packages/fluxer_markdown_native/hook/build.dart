@@ -32,6 +32,13 @@ void main(List<String> args) async {
     if (code.targetOS == OS.iOS) {
       environment['IPHONEOS_DEPLOYMENT_TARGET'] = '${code.iOS.targetVersion}';
     }
+    // sanalyer: under an Xcode build PATH starts with the toolchain's bare clang, which cannot
+    // find the macOS SDK, so host build scripts (serde, proc-macro2, ...) fail to link. The
+    // /usr/bin/cc shim resolves the SDK through xcrun.
+    if (Platform.isMacOS) {
+      environment['CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER'] = '/usr/bin/cc';
+      environment['CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER'] = '/usr/bin/cc';
+    }
 
     final ProcessResult result;
     try {
