@@ -6050,10 +6050,10 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
       'Mevcut akışı izlemeyi durdur';
 
   @override
-  String get voiceScreenShareEnterFullscreenTooltip => 'Full screen';
+  String get voiceScreenShareEnterFullscreenTooltip => 'Tam ekran';
 
   @override
-  String get voiceScreenShareExitFullscreenTooltip => 'Exit full screen';
+  String get voiceScreenShareExitFullscreenTooltip => 'Tam ekrandan çık';
 
   @override
   String get voiceOwnScreenShareTitle => 'Yayın yapıyorsunuz';

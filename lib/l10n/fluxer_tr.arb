@@ -16634,5 +16634,7 @@
     "favoritesRenameCategory": "Kategoriyi yeniden adlandır",
     "@favoritesRenameCategory": {
         "description": "Favorites category context menu action and sheet title for renaming a favorites category."
-    }
+    },
+    "voiceScreenShareEnterFullscreenTooltip": "Tam ekran",
+    "voiceScreenShareExitFullscreenTooltip": "Tam ekrandan çık"
 }
