@@ -1,4 +1,7 @@
-const String kPushRelayOrigin = 'https://push.fluxer.com';
+// sanalyer: our own relay (APNs/FCM keys for com.sanalyer.mobile) is not
+// deployed yet. Pointing at Fluxer's relay would ship device tokens to a third
+// party and could not deliver to our bundle id anyway.
+const String kPushRelayOrigin = 'https://push.sanalyer.com';
 
 String fcmRelayUrl({required String appId, required String deviceToken}) {
   return '$kPushRelayOrigin/relay/v1/fcm/${_segment(appId)}/${_segment(deviceToken)}';
