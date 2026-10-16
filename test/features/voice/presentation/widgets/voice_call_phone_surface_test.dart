@@ -73,7 +73,7 @@ void main() {
         matching: find.byType(FadeTransition),
       ),
     );
-    expect(fade.opacity.value, 0);
+    expect(fade.opacity.value, 1);
     await exit;
   });
 
@@ -109,4 +109,69 @@ void main() {
     expect(fade.opacity.value, 1);
     expect(peekVoicePipSkipPhoneEnter(), isFalse);
   });
+
+  testWidgets('keeps the child mounted when active toggles on', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [voiceSessionProvider.overrideWith(_IdleVoiceSession.new)],
+        child: MaterialApp(
+          locale: kTestLocale,
+          localizationsDelegates: fluxerLocalizationsDelegates,
+          supportedLocales: FluxerLocalizations.supportedLocales,
+          theme: buildFluxerTheme(
+            colorTheme: buildDarkColorTheme(),
+            textTheme: FluxerTextTheme.fromColors(buildDarkColorTheme()),
+            layoutTheme: FluxerLayoutTheme.scaled(),
+          ),
+          home: const _ActiveToggleHarness(),
+        ),
+      ),
+    );
+    await tester.pump();
+    final Element contentBefore = tester.element(find.text('call'));
+    await tester.tap(find.text('activate'));
+    await tester.pump();
+    await tester.pump(kVoiceCallPhoneTransitionDuration);
+    expect(tester.element(find.text('call')), same(contentBefore));
+    expect(
+      find.descendant(
+        of: find.byType(VoiceCallPhoneSurface),
+        matching: find.byType(FadeTransition),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(VoiceCallPhoneSurface),
+        matching: find.byType(SlideTransition),
+      ),
+      findsOneWidget,
+    );
+  });
+}
+
+class _ActiveToggleHarness extends StatefulWidget {
+  const _ActiveToggleHarness();
+
+  @override
+  State<_ActiveToggleHarness> createState() => _ActiveToggleHarnessState();
+}
+
+class _ActiveToggleHarnessState extends State<_ActiveToggleHarness> {
+  bool _active = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        VoiceCallPhoneSurface(active: _active, child: const Text('call')),
+        TextButton(
+          onPressed: () => setState(() => _active = true),
+          child: const Text('activate'),
+        ),
+      ],
+    );
+  }
 }

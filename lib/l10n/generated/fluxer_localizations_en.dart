@@ -4801,7 +4801,7 @@ class FluxerLocalizationsEn extends FluxerLocalizations {
 
   @override
   String get lookAndFeelGuildSidebarDescription =>
-      'Configure how the guild sidebar displays direct messages.';
+      'Configure how direct messages and communities behave in the sidebar.';
 
   @override
   String guildUnavailableOutageTooltip(int count) {
@@ -4850,6 +4850,14 @@ class FluxerLocalizationsEn extends FluxerLocalizations {
   String lookAndFeelCollapseDMsDescription(String productName) {
     return 'When enabled, unread DMs in the guild sidebar are collapsed into a folder on the $productName button. Click the $productName button while on the DMs page to expand or collapse the folder.';
   }
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel =>
+      'Open communities to your last channel';
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription =>
+      'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.';
 
   @override
   String get lookAndFeelChannelListSectionTitle => 'Channel list';
@@ -10261,18 +10269,16 @@ class FluxerLocalizationsEn extends FluxerLocalizations {
   String get advancedPerformanceReportingTitle => 'Performance reporting';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'Help improve $productName by sharing anonymous crash and performance data.';
-  }
+  String get advancedCrashReportingSectionDescription =>
+      'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.';
 
   @override
   String get advancedPerformanceReportingLabel =>
       'Send crash and performance reports';
 
   @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'All reported data is anonymous and is sent only to $productName\'s own monitoring service — no third-party providers are used.';
-  }
+  String get advancedCrashReportingDescription =>
+      'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.';
 
   @override
   String get advancedSettingsConfigure => 'Configure';
@@ -20632,7 +20638,7 @@ class FluxerLocalizationsEnGb extends FluxerLocalizationsEn {
 
   @override
   String get lookAndFeelGuildSidebarDescription =>
-      'Configure how the guild sidebar displays direct messages.';
+      'Configure how direct messages and communities behave in the sidebar.';
 
   @override
   String guildUnavailableOutageTooltip(int count) {
@@ -25837,18 +25843,8 @@ class FluxerLocalizationsEnGb extends FluxerLocalizationsEn {
   String get advancedPerformanceReportingTitle => 'Performance reporting';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'Help improve $productName by sharing anonymous crash and performance data.';
-  }
-
-  @override
   String get advancedPerformanceReportingLabel =>
       'Send crash and performance reports';
-
-  @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'All reported data is anonymous and is sent only to $productName\'s own monitoring service — no third-party providers are used.';
-  }
 
   @override
   String get advancedSettingsConfigure => 'Configure';
@@ -34419,7 +34415,7 @@ class FluxerLocalizationsEnUs extends FluxerLocalizationsEn {
 
   @override
   String get lookAndFeelGuildSidebarDescription =>
-      'Configure how the guild sidebar displays direct messages.';
+      'Configure how direct messages and communities behave in the sidebar.';
 
   @override
   String guildUnavailableOutageTooltip(int count) {
@@ -34468,6 +34464,14 @@ class FluxerLocalizationsEnUs extends FluxerLocalizationsEn {
   String lookAndFeelCollapseDMsDescription(String productName) {
     return 'When enabled, unread DMs in the guild sidebar are collapsed into a folder on the $productName button. Click the $productName button while on the DMs page to expand or collapse the folder.';
   }
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel =>
+      'Open communities to your last channel';
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription =>
+      'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.';
 
   @override
   String get lookAndFeelChannelListSectionTitle => 'Channel list';
@@ -39500,18 +39504,16 @@ class FluxerLocalizationsEnUs extends FluxerLocalizationsEn {
   String get advancedPerformanceReportingTitle => 'Performance reporting';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'Help improve $productName by sharing anonymous crash and performance data.';
-  }
+  String get advancedCrashReportingSectionDescription =>
+      'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.';
 
   @override
   String get advancedPerformanceReportingLabel =>
       'Send crash and performance reports';
 
   @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'All reported data is anonymous and is sent only to $productName\'s own monitoring service — no third-party providers are used.';
-  }
+  String get advancedCrashReportingDescription =>
+      'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.';
 
   @override
   String get advancedSettingsConfigure => 'Configure';

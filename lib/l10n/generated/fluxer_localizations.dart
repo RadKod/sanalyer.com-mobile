@@ -7841,7 +7841,7 @@ abstract class FluxerLocalizations {
   /// Subsection description for guild sidebar config.
   ///
   /// In en, this message translates to:
-  /// **'Configure how the guild sidebar displays direct messages.'**
+  /// **'Configure how direct messages and communities behave in the sidebar.'**
   String get lookAndFeelGuildSidebarDescription;
 
   /// Tooltip on the aggregate outage badge in the guild sidebar when one or more communities are unavailable.
@@ -7900,6 +7900,18 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'When enabled, unread DMs in the guild sidebar are collapsed into a folder on the {productName} button. Click the {productName} button while on the DMs page to expand or collapse the folder.'**
   String lookAndFeelCollapseDMsDescription(String productName);
+
+  /// Toggle label. When on, tapping a community in the community list opens the last channel the user viewed there instead of its channel list.
+  ///
+  /// In en, this message translates to:
+  /// **'Open communities to your last channel'**
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel;
+
+  /// Toggle description for opening communities to the last viewed channel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.'**
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription;
 
   /// Section title for channel list options.
   ///
@@ -17013,11 +17025,11 @@ abstract class FluxerLocalizations {
   /// **'Performance reporting'**
   String get advancedPerformanceReportingTitle;
 
-  /// Advanced settings section description for crash and performance reporting.
+  /// Advanced settings section description for opt-in crash and performance reporting, which is off until the user turns it on. Keep the name Fluxer as is. Fluxer is the company that runs the error tracker.
   ///
   /// In en, this message translates to:
-  /// **'Help improve {productName} by sharing anonymous crash and performance data.'**
-  String advancedPerformanceReportingSectionDescription(String productName);
+  /// **'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.'**
+  String get advancedCrashReportingSectionDescription;
 
   /// Toggle label for opting into crash and performance reporting.
   ///
@@ -17025,11 +17037,11 @@ abstract class FluxerLocalizations {
   /// **'Send crash and performance reports'**
   String get advancedPerformanceReportingLabel;
 
-  /// Toggle description explaining anonymous self-hosted performance reporting.
+  /// Toggle description for crash and performance reporting. Reports always go to the error tracker run by Fluxer, the company, never to the instance the user is signed in to, and leave out instance names, IDs and message content. Keep the name Fluxer as is.
   ///
   /// In en, this message translates to:
-  /// **'All reported data is anonymous and is sent only to {productName}\'s own monitoring service — no third-party providers are used.'**
-  String advancedPerformanceReportingDescription(String productName);
+  /// **'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.'**
+  String get advancedCrashReportingDescription;
 
   /// Button label that opens a dedicated advanced settings modal.
   ///

@@ -20,6 +20,7 @@ import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart'
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/utils/channel_e2ee_status.dart';
 import 'package:fluxer_app/features/voice/utils/voice_p2p_mode.dart';
+import 'package:fluxer_app/features/voice/utils/voice_session_navigation.dart';
 import 'package:fluxer_app/features/voice/voice_session_errors.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -455,6 +456,11 @@ Future<VoiceJoinResult> _connectAndResolveJoinResult({
         p2p: p2p,
       );
   if (joined) {
+    openHandheldImmersiveVoiceCallAfterJoin(
+      container,
+      guildId: guildId,
+      channelId: channelId,
+    );
     return VoiceJoinResult.succeeded;
   }
   if (await isChannelGateBlocking(

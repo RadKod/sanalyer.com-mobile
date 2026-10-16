@@ -4914,6 +4914,14 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
   }
 
   @override
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel =>
+      'Open communities to your last channel';
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription =>
+      'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.';
+
+  @override
   String get lookAndFeelChannelListSectionTitle => 'Lista de canales';
 
   @override
@@ -10420,18 +10428,16 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
   String get advancedPerformanceReportingTitle => 'Informes de rendimiento';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'Ayuda a mejorar $productName compartiendo datos anónimos de rendimiento y fallos.';
-  }
+  String get advancedCrashReportingSectionDescription =>
+      'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.';
 
   @override
   String get advancedPerformanceReportingLabel =>
       'Enviar informes de fallos y rendimiento';
 
   @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'Todos los datos notificados son anónimos y solo se envían al propio servicio de monitorización de $productName; no se utilizan proveedores de terceros.';
-  }
+  String get advancedCrashReportingDescription =>
+      'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.';
 
   @override
   String get advancedSettingsConfigure => 'Configurar';
@@ -26244,18 +26250,8 @@ class FluxerLocalizationsEs419 extends FluxerLocalizationsEs {
   String get advancedPerformanceReportingTitle => 'Informes de rendimiento';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'Ayuda a mejorar $productName compartiendo datos anónimos sobre errores y rendimiento.';
-  }
-
-  @override
   String get advancedPerformanceReportingLabel =>
       'Enviar informes de errores y rendimiento';
-
-  @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'Todos los datos reportados son anónimos y se envían únicamente al servicio de monitoreo de $productName; no se utilizan proveedores externos.';
-  }
 
   @override
   String get advancedSettingsConfigure => 'Configurar';

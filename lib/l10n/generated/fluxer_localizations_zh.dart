@@ -4608,6 +4608,14 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   }
 
   @override
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel =>
+      'Open communities to your last channel';
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription =>
+      'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.';
+
+  @override
   String get lookAndFeelChannelListSectionTitle => '频道列表';
 
   @override
@@ -9690,17 +9698,15 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get advancedPerformanceReportingTitle => '性能报告';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return '通过分享匿名的崩溃和性能数据来帮助改进 $productName。';
-  }
+  String get advancedCrashReportingSectionDescription =>
+      'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.';
 
   @override
   String get advancedPerformanceReportingLabel => '发送崩溃和性能报告';
 
   @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return '所有报告的数据都是匿名的，并且仅发送到 $productName 自有的监控服务——不使用任何第三方提供商。';
-  }
+  String get advancedCrashReportingDescription =>
+      'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.';
 
   @override
   String get advancedSettingsConfigure => '配置';
@@ -24467,17 +24473,7 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
   String get advancedPerformanceReportingTitle => '效能報告';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return '透過分享匿名的當機和效能資料，協助改進 $productName。';
-  }
-
-  @override
   String get advancedPerformanceReportingLabel => '傳送當機和效能報告';
-
-  @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return '所有回報的資料均為匿名，且僅傳送至 $productName 自有的監控服務 — 不會使用任何第三方供應商。';
-  }
 
   @override
   String get advancedSettingsConfigure => '設定';

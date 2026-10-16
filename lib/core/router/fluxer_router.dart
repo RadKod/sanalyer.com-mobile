@@ -191,17 +191,13 @@ GoRouter fluxerRouter(Ref ref) {
   final homeShellPopupRouteObserver = createShellPopupRouteObserver();
   final notificationsShellPopupRouteObserver = createShellPopupRouteObserver();
   final youShellPopupRouteObserver = createShellPopupRouteObserver();
-  final FluxerMeasureNavigatorObserver? measureNavigatorObserver =
-      AppBuildConfig.hasObservabilityConfig
-      ? FluxerMeasureNavigatorObserver()
-      : null;
   List<NavigatorObserver> withMeasureNavigatorObserver(
     List<NavigatorObserver> observers,
   ) {
-    if (measureNavigatorObserver == null) {
+    if (!AppBuildConfig.hasObservabilityConfig) {
       return observers;
     }
-    return <NavigatorObserver>[...observers, measureNavigatorObserver];
+    return <NavigatorObserver>[...observers, FluxerMeasureNavigatorObserver()];
   }
 
   final List<NavigatorObserver> navigationObservers =
@@ -282,6 +278,7 @@ GoRouter fluxerRouter(Ref ref) {
             .read(preReconnectingLocationProvider.notifier)
             .takeOrRestore(
               ref.read(fluxerDatabaseProvider),
+              currentUserId: ref.read(currentUserIdProvider),
               preferredPath: currentAccountPendingNavigationPath(
                 pending: ref.read(pendingPushNotificationPathProvider),
                 currentUserId: ref.read(currentUserIdProvider),
@@ -310,6 +307,7 @@ GoRouter fluxerRouter(Ref ref) {
             .read(preReconnectingLocationProvider.notifier)
             .takeOrRestore(
               ref.read(fluxerDatabaseProvider),
+              currentUserId: ref.read(currentUserIdProvider),
               preferredPath: currentAccountPendingNavigationPath(
                 pending: ref.read(pendingPushNotificationPathProvider),
                 currentUserId: ref.read(currentUserIdProvider),
@@ -810,6 +808,7 @@ GoRouter fluxerRouter(Ref ref) {
                     guildId: state.pathParameters['guildId'],
                     fullPath: state.uri.path,
                     db: ref.read(fluxerDatabaseProvider),
+                    currentUserId: ref.read(currentUserIdProvider),
                     trackedUnavailableGuildIds: ref.read(
                       guildAvailabilityProvider,
                     ),

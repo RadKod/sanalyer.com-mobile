@@ -18,6 +18,7 @@ abstract final class InstanceEndpoints {
   static String webApp = defaultWebApp;
   static String api = '';
   static String gateway = '';
+  static bool selfHosted = false;
 
   static void apply(WellKnownFluxerResponse response) {
     final InstanceEndpointsSchema endpoints = response.endpoints;
@@ -34,6 +35,7 @@ abstract final class InstanceEndpoints {
         : endpoints.api;
     api = resolvedApi.isNotEmpty ? _normalizeBaseUrl(resolvedApi) : api;
     gateway = endpoints.gateway.isNotEmpty ? endpoints.gateway : gateway;
+    selfHosted = response.features.selfHosted;
   }
 
   static String mediaOf(WellKnownFluxerResponse? response) {
@@ -59,5 +61,6 @@ abstract final class InstanceEndpoints {
     webApp = defaultWebApp;
     api = '';
     gateway = '';
+    selfHosted = false;
   }
 }

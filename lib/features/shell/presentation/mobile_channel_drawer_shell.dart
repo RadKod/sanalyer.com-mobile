@@ -8,8 +8,7 @@ import 'package:fluxer_app/features/shell/presentation/mobile_chat_back_scope.da
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/shell/presentation/sidebar_drawer.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/voice_call_phone_surface.dart';
-import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
-import 'package:fluxer_app/features/voice/utils/voice_pip_visibility.dart';
+import 'package:fluxer_app/features/voice/providers/voice_pip_providers.dart';
 import 'package:fluxer_app/material_ui.dart';
 
 class MobileChannelDrawerShell extends ConsumerWidget {
@@ -27,19 +26,10 @@ class MobileChannelDrawerShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isOnChatRoute = _isChatRoute(shellLocation);
-    if (isPhoneVoiceOverlay(context) &&
-        voicePipIsOnSessionCallRoute(
-          voice: ref.watch(voiceSessionProvider),
-          location: shellLocation,
-          routeGuildId: extractGuildId(shellLocation),
-          routeChannelId: extractChannelId(shellLocation),
-        )) {
-      return Scaffold(
-        backgroundColor: context.colors.chatBackground,
-        resizeToAvoidBottomInset: false,
-        body: VoiceCallPhoneSurface(child: navigationShell),
-      );
-    }
+    final bool handheld = isHandheldVoiceOverlay(context);
+    final bool immersiveVoice = ref.watch(handheldVoiceImmersiveProvider);
+    final bool fullScreenVoice = handheld && immersiveVoice;
+
     final bool compactWide = isCompactWideMobileLayout(context);
     final bool drawerLocked = isSidebarDrawerLockedForLocation(shellLocation);
     final double screenWidth = MediaQuery.sizeOf(context).width;
@@ -56,22 +46,30 @@ class MobileChannelDrawerShell extends ConsumerWidget {
       peekContentInset: peekContentInset,
     );
 
+    final Widget drawer = SidebarDrawer(
+      key: const ValueKey<String>('mobile-channel-drawer'),
+      shellLocation: shellLocation,
+      base: Offstage(
+        offstage: fullScreenVoice,
+        child: Column(
+          children: <Widget>[
+            Expanded(child: sidebar),
+            bottomNav,
+          ],
+        ),
+      ),
+      slider: navigationShell,
+    );
+
     return MobileChatBackScope(
       child: Scaffold(
-        backgroundColor: isOnChatRoute
+        backgroundColor: fullScreenVoice
+            ? context.colors.chatBackground
+            : isOnChatRoute
             ? context.colors.chatInputBackground
             : context.colors.backgroundPrimary,
         resizeToAvoidBottomInset: false,
-        body: SidebarDrawer(
-          shellLocation: shellLocation,
-          base: Column(
-            children: <Widget>[
-              Expanded(child: sidebar),
-              bottomNav,
-            ],
-          ),
-          slider: navigationShell,
-        ),
+        body: VoiceCallPhoneSurface(active: fullScreenVoice, child: drawer),
       ),
     );
   }

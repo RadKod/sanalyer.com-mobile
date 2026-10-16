@@ -64,6 +64,10 @@ bool isPhoneVoiceOverlay(BuildContext context) {
       Breakpoints.mobile;
 }
 
+bool isHandheldVoiceOverlay(BuildContext context) {
+  return !isDesktopLayout(context);
+}
+
 bool isCompactWideMobileLayout(BuildContext context) {
   final Size size = MediaQuery.sizeOf(context);
   if (size.width < Breakpoints.compactWide || !isMobileLayout(context)) {

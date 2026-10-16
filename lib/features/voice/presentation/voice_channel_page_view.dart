@@ -158,7 +158,7 @@ class _VoiceChannelPageViewState extends ConsumerState<VoiceChannelPageView> {
         (VoiceSessionState s) => s.isInVoice && s.channelId == widget.channelId,
       ),
     );
-    final bool usePhoneVoiceOverlay = isPhoneVoiceOverlay(context);
+    final bool usePhoneVoiceOverlay = isHandheldVoiceOverlay(context);
     final bool useDesktopChat = isDesktopLayout(context);
     final bool textChatSupported =
         ref

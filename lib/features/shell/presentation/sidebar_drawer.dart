@@ -11,6 +11,7 @@ import 'package:fluxer_app/features/shell/providers/drawer_past_half_screen_prov
 import 'package:fluxer_app/features/shell/providers/drawer_reveal_sync_trigger_provider.dart';
 import 'package:fluxer_app/features/shell/providers/reveal_side_provider.dart';
 import 'package:fluxer_app/features/shell/providers/shell_blocks_horizontal_gestures_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_pip_providers.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/gestures/horizontal_reveal_physics.dart';
 import 'package:fluxer_app/shared/gestures/nested_horizontal_scrollable.dart';
@@ -168,7 +169,15 @@ class _SidebarDrawerState extends ConsumerState<SidebarDrawer>
     return isSidebarDrawerLockedForLocation(ref.read(shellLocationProvider));
   }
 
+  bool _handheldVoiceImmersive() {
+    return isHandheldVoiceOverlay(context) &&
+        ref.read(handheldVoiceImmersiveProvider);
+  }
+
   bool _usesPeekReveal() {
+    if (_handheldVoiceImmersive()) {
+      return false;
+    }
     return isCompactWideMobileLayout(context) && !_isSidebarDrawerLocked();
   }
 
@@ -358,6 +367,11 @@ class _SidebarDrawerState extends ConsumerState<SidebarDrawer>
           return;
         }
         _scheduleSyncTranslateToRevealSide(writeBack: false);
+      })
+      ..listen<bool>(handheldVoiceImmersiveProvider, (bool? prev, bool next) {
+        if (next && _handheldVoiceImmersive()) {
+          _scheduleMoveToState(RevealSide.main, writeBack: true);
+        }
       });
     final Map<Type, GestureRecognizerFactory> drawerGestures =
         blocksHorizontalGestures

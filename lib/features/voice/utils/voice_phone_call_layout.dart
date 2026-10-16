@@ -11,7 +11,7 @@ const Curve kVoiceCallPhoneTransitionCurve = Curves.easeOutCubic;
 const Offset kVoiceCallPhoneSlideBegin = Offset(0, 0.12);
 
 bool shouldMinimizePhoneVoiceCall(BuildContext context, WidgetRef ref) {
-  if (!isPhoneVoiceOverlay(context)) {
+  if (!isHandheldVoiceOverlay(context)) {
     return false;
   }
   final String location = ref.read(shellLocationProvider);

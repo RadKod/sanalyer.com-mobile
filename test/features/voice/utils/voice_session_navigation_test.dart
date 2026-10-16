@@ -1,10 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
+import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
+import 'package:fluxer_app/features/guilds/domain/guild.dart';
+import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/utils/voice_session_navigation.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod/src/framework.dart' show Override;
 
 void main() {
   const VoiceSessionState guildVoice = VoiceSessionState(
@@ -24,7 +28,10 @@ void main() {
       final GoRouter router = _buildRouter();
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [fluxerRouterProvider.overrideWithValue(router)],
+          overrides: <Override>[
+            fluxerRouterProvider.overrideWithValue(router),
+            ..._voiceNavigationOverrides(),
+          ],
           child: MaterialApp.router(routerConfig: router),
         ),
       );
@@ -46,7 +53,10 @@ void main() {
       final GoRouter router = _buildRouter();
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [fluxerRouterProvider.overrideWithValue(router)],
+          overrides: <Override>[
+            fluxerRouterProvider.overrideWithValue(router),
+            ..._voiceNavigationOverrides(),
+          ],
           child: MaterialApp.router(routerConfig: router),
         ),
       );
@@ -87,6 +97,32 @@ GoRouter _buildRouter() {
             const Text('call'),
       ),
     ],
+  );
+}
+
+List<Override> _voiceNavigationOverrides() {
+  return <Override>[
+    channelListViewModelProvider.overrideWith(_NoOpChannelList.new),
+    guildListViewModelProvider.overrideWith(_FakeGuildList.new),
+  ];
+}
+
+class _NoOpChannelList extends ChannelListViewModel {
+  @override
+  ChannelListState build() => const ChannelListState(
+    guild: null,
+    categories: [],
+    selectedChannelId: null,
+  );
+
+  @override
+  bool loadActiveGuild(String guildId) => true;
+}
+
+class _FakeGuildList extends GuildListViewModel {
+  @override
+  GuildListViewState build() => const GuildListViewState(
+    guilds: <Guild>[Guild(id: 'g1', name: 'g1')],
   );
 }
 

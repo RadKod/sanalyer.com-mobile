@@ -9,6 +9,7 @@ import 'package:fluxer_app/features/ui/voice/voice_participant_media_tile.dart';
 import 'package:fluxer_app/features/voice/domain/voice_media_participant.dart';
 import 'package:fluxer_app/features/voice/providers/voice_active_speakers_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_call_layout_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_call_overlay_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_channel_participants_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_screen_share_watch_tile_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
@@ -226,6 +227,15 @@ final voicePipOnSessionCallRouteProvider = Provider<bool>((Ref ref) {
     routeChannelId: route.channelId,
     callViewObscured: ref.watch(voicePipCallViewObscuredProvider),
   );
+});
+
+final handheldVoiceImmersiveProvider = Provider<bool>((Ref ref) {
+  return ref.watch(voicePipOnSessionCallRouteProvider) ||
+      ref.watch(
+        voiceCallOverlayProvider.select(
+          (VoiceCallOverlayState s) => s.isExiting,
+        ),
+      );
 });
 
 class VoicePipOverlayPhaseController extends Notifier<VoicePipOverlayPhase> {

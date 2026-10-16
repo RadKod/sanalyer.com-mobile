@@ -255,6 +255,16 @@ final List<_UserSettingsSearchOption> _userSettingsSearchOptions = [
     keywords: [_l((l10n) => l10n.lookAndFeelGuildSidebarTitle)],
   ),
   _UserSettingsSearchOption(
+    id: 'look-and-feel:open-communities-to-last-channel',
+    section: UserSettingsSection.lookAndFeel,
+    fieldId: 'interface',
+    label: _l((l10n) => l10n.lookAndFeelOpenCommunitiesToLastChannelLabel),
+    description: _l(
+      (l10n) => l10n.lookAndFeelOpenCommunitiesToLastChannelDescription,
+    ),
+    keywords: [_l((l10n) => l10n.lookAndFeelGuildSidebarTitle)],
+  ),
+  _UserSettingsSearchOption(
     id: 'look-and-feel:muted-unread',
     section: UserSettingsSection.lookAndFeel,
     fieldId: 'channel-list',
@@ -871,10 +881,7 @@ final List<_UserSettingsSearchOption> _userSettingsSearchOptions = [
     section: UserSettingsSection.advanced,
     fieldId: 'advanced-performance',
     label: _l((l10n) => l10n.advancedPerformanceReportingLabel),
-    description: _lp(
-      (l10n, productName) =>
-          l10n.advancedPerformanceReportingSectionDescription(productName),
-    ),
+    description: _l((l10n) => l10n.advancedCrashReportingSectionDescription),
   ),
   _UserSettingsSearchOption(
     id: 'applications-dev',

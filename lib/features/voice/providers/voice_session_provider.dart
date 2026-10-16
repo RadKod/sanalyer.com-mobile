@@ -2911,10 +2911,12 @@ class VoiceSession extends _$VoiceSession {
     }
 
     participant.addListener(onChanged);
+    onChanged();
     try {
-      await published.future.timeout(_kScreenSharePublicationTimeout);
-    } on TimeoutException {
-      return;
+      await published.future.timeout(
+        _kScreenSharePublicationTimeout,
+        onTimeout: () {},
+      );
     } finally {
       participant.removeListener(onChanged);
     }

@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluxer_app/core/router/navigate_to_content.dart';
-import 'package:fluxer_app/core/router/route_names.dart';
+import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/features/favorites/utils/favorites_shell_navigation.dart';
 import 'package:fluxer_app/features/shell/navigation/drawer_navigation_coordinator.dart';
@@ -14,6 +13,18 @@ import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart'
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:go_router/go_router.dart';
 
+bool isHandheldVoiceOverlayForContainer(ProviderContainer container) {
+  final BuildContext? context = container
+      .read(fluxerRouterProvider)
+      .routerDelegate
+      .navigatorKey
+      .currentContext;
+  if (context == null) {
+    return false;
+  }
+  return isHandheldVoiceOverlay(context);
+}
+
 void navigateToActiveVoiceSession(
   BuildContext context, {
   required VoiceSessionState voice,
@@ -22,65 +33,92 @@ void navigateToActiveVoiceSession(
   if (channelId == null || channelId.isEmpty) {
     return;
   }
-  final String? guildId = voice.guildId;
   popShellCoveringPages();
-  final String path = guildId != null && guildId.isNotEmpty
-      ? RoutePaths.guildChannel(guildId, channelId)
-      : RoutePaths.dmChannelCall(channelId);
-  navigateToContent(context, path);
+  final ProviderContainer container = ProviderScope.containerOf(context);
+  final String? guildId = voice.guildId;
+  if (guildId != null && guildId.isNotEmpty) {
+    DrawerNavigationCoordinator.openImmersiveGuildVoiceCall(
+      container,
+      guildId: guildId,
+      channelId: channelId,
+    );
+    return;
+  }
+  DrawerNavigationCoordinator.openImmersiveDmVoiceCall(
+    container,
+    channelId: channelId,
+  );
 }
 
-void goToPhoneVoiceChannelList({
-  required BuildContext context,
-  required ProviderContainer container,
-  required VoiceSessionState voice,
+void openHandheldImmersiveVoiceCallAfterJoin(
+  ProviderContainer container, {
+  required String? guildId,
+  required String channelId,
 }) {
-  final String? guildId = voice.guildId;
-  final bool isGuild = guildId != null && guildId.isNotEmpty;
-  if (!isGuild && context.canPop()) {
-    context.pop();
-    DrawerNavigationCoordinator.closeDrawer(container);
+  if (!isHandheldVoiceOverlayForContainer(container)) {
     return;
   }
-  if (isGuild) {
-    DrawerNavigationCoordinator.openGuildChannelList(container, guildId);
+  if (guildId != null && guildId.isNotEmpty) {
+    DrawerNavigationCoordinator.openImmersiveGuildVoiceCall(
+      container,
+      guildId: guildId,
+      channelId: channelId,
+    );
     return;
   }
-  DrawerNavigationCoordinator.navigateToContent(container, RoutePaths.me);
+  DrawerNavigationCoordinator.openImmersiveDmVoiceCall(
+    container,
+    channelId: channelId,
+  );
 }
 
 void minimizePhoneVoiceCall({
   required BuildContext context,
   required ProviderContainer container,
 }) {
-  goToPhoneVoiceChannelList(
-    context: context,
-    container: container,
-    voice: container.read(voiceSessionProvider),
-  );
+  final VoiceSessionState voice = container.read(voiceSessionProvider);
+  final String? guildId = voice.guildId;
+  if (guildId == null || guildId.isEmpty) {
+    final GoRouter router = container.read(fluxerRouterProvider);
+    if (router.canPop()) {
+      router.pop();
+    }
+    DrawerNavigationCoordinator.closeDrawer(container);
+    return;
+  }
+  DrawerNavigationCoordinator.openGuildChannelList(container, guildId);
 }
 
 Future<void> endPhoneVoiceCall({
   required BuildContext context,
   required WidgetRef ref,
 }) async {
-  if (isPhoneVoiceOverlay(context)) {
+  final ProviderContainer container = ref.container;
+  final VoiceSessionState voiceBeforeLeave = ref.read(voiceSessionProvider);
+  final String location = ref.read(currentLocationProvider);
+  final bool favoritesChannel = isFavoritesChannelRoute(location);
+  final bool handheld = isHandheldVoiceOverlay(context);
+
+  if (handheld) {
     await ref.read(voiceCallOverlayProvider.notifier).playPhoneExit();
   }
   if (!context.mounted) {
     return;
   }
-  if (isMobileLayout(context)) {
-    final String location = ref.read(currentLocationProvider);
-    if (isFavoritesChannelRoute(location)) {
-      returnToFavoritesList(ref);
-    } else {
-      goToPhoneVoiceChannelList(
-        context: context,
-        container: ref.container,
-        voice: ref.read(voiceSessionProvider),
-      );
+  await ref.read(voiceSessionProvider.notifier).leaveVoice();
+  if (!context.mounted || !handheld) {
+    return;
+  }
+  if (favoritesChannel) {
+    returnToFavoritesList(ref);
+    return;
+  }
+  final String? guildId = voiceBeforeLeave.guildId;
+  if (guildId == null || guildId.isEmpty) {
+    final GoRouter router = container.read(fluxerRouterProvider);
+    if (router.canPop()) {
+      router.pop();
     }
   }
-  await ref.read(voiceSessionProvider.notifier).leaveVoice();
+  DrawerNavigationCoordinator.closeDrawer(container);
 }

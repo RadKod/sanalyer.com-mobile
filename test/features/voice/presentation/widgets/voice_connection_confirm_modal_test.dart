@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
@@ -16,16 +17,18 @@ Widget buildTestApp({
   required Widget child,
 }) {
   final colorTheme = buildDarkColorTheme();
-  return MaterialApp(
-    navigatorKey: rootNavigatorKey,
-    localizationsDelegates: fluxerLocalizationsDelegates,
-    supportedLocales: FluxerLocalizations.supportedLocales,
-    theme: buildFluxerTheme(
-      colorTheme: colorTheme,
-      textTheme: FluxerTextTheme.fromColors(colorTheme),
-      layoutTheme: FluxerLayoutTheme.scaled(),
+  return ProviderScope(
+    child: MaterialApp(
+      navigatorKey: rootNavigatorKey,
+      localizationsDelegates: fluxerLocalizationsDelegates,
+      supportedLocales: FluxerLocalizations.supportedLocales,
+      theme: buildFluxerTheme(
+        colorTheme: colorTheme,
+        textTheme: FluxerTextTheme.fromColors(colorTheme),
+        layoutTheme: FluxerLayoutTheme.scaled(),
+      ),
+      home: child,
     ),
-    home: child,
   );
 }
 

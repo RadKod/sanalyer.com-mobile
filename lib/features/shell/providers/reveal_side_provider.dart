@@ -3,6 +3,7 @@ import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_kind.dart';
 import 'package:fluxer_app/core/router/shell_location_resolver.dart';
 import 'package:fluxer_app/features/shell/providers/drawer_reveal_sync_trigger_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_pip_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'reveal_side_provider.g.dart';
@@ -58,7 +59,7 @@ class CurrentRevealSide extends _$CurrentRevealSide {
     if (location == _lastAppliedFor) {
       return;
     }
-    final desired = syncedRevealSideFor(location);
+    final desired = _resolvedRevealSideFor(location);
     if (desired == null) {
       _rememberChatLocation(location);
       return;
@@ -68,7 +69,7 @@ class CurrentRevealSide extends _$CurrentRevealSide {
   }
 
   void forceSyncForRoute(String location) {
-    final RevealSide? desired = syncedRevealSideFor(location);
+    final RevealSide? desired = _resolvedRevealSideFor(location);
     if (desired == null) {
       _rememberChatLocation(location);
       return;
@@ -78,6 +79,15 @@ class CurrentRevealSide extends _$CurrentRevealSide {
     ref.read(drawerRevealSyncTriggerProvider.notifier).nudge();
   }
 
+  RevealSide? _resolvedRevealSideFor(String location) {
+    final RevealSide? desired = syncedRevealSideFor(location);
+    if (desired == RevealSide.left &&
+        ref.read(handheldVoiceImmersiveProvider)) {
+      return RevealSide.main;
+    }
+    return desired;
+  }
+
   void _rememberChatLocation(String location) {
     if (classifyRoute(location) == RouteKind.chat) {
       _lastAppliedFor = location;
@@ -85,10 +95,14 @@ class CurrentRevealSide extends _$CurrentRevealSide {
   }
 
   void set(RevealSide side) {
-    if (state == side) {
+    final RevealSide resolved =
+        side == RevealSide.left && ref.read(handheldVoiceImmersiveProvider)
+        ? RevealSide.main
+        : side;
+    if (state == resolved) {
       return;
     }
-    state = side;
+    state = resolved;
   }
 }
 

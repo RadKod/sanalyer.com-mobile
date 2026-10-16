@@ -4808,6 +4808,14 @@ class FluxerLocalizationsHe extends FluxerLocalizations {
   }
 
   @override
+  String get lookAndFeelOpenCommunitiesToLastChannelLabel =>
+      'Open communities to your last channel';
+
+  @override
+  String get lookAndFeelOpenCommunitiesToLastChannelDescription =>
+      'Tapping a community takes you straight to the last channel you viewed there. Swipe right to see its channel list.';
+
+  @override
   String get lookAndFeelChannelListSectionTitle => 'רשימת ערוצים';
 
   @override
@@ -10165,17 +10173,15 @@ class FluxerLocalizationsHe extends FluxerLocalizations {
   String get advancedPerformanceReportingTitle => 'דיווח ביצועים';
 
   @override
-  String advancedPerformanceReportingSectionDescription(String productName) {
-    return 'עזרו לשפר את $productName על ידי שיתוף נתוני קריסות וביצועים אנונימיים.';
-  }
+  String get advancedCrashReportingSectionDescription =>
+      'Help Fluxer fix bugs in this app by sharing crash and performance data. This is off by default.';
 
   @override
   String get advancedPerformanceReportingLabel => 'שלח דוחות קריסה וביצועים';
 
   @override
-  String advancedPerformanceReportingDescription(String productName) {
-    return 'כל הנתונים המדווחים אנונימיים ונשלחים רק לשירות הניטור של $productName — לא נעשה שימוש בספקי צד שלישי.';
-  }
+  String get advancedCrashReportingDescription =>
+      'Reports go to Fluxer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.';
 
   @override
   String get advancedSettingsConfigure => 'הגדרות מתקדמות';

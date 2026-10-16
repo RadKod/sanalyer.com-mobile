@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
-import 'package:fluxer_app/core/router/navigate_to_content.dart';
-import 'package:fluxer_app/core/router/route_names.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
@@ -28,11 +26,11 @@ import 'package:fluxer_app/features/voice/providers/voice_noise_filter_provider.
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/utils/voice_processing_profile.dart';
+import 'package:fluxer_app/features/voice/utils/voice_session_navigation.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:fluxer_dart/gateway.dart';
-import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class VoiceConnectionStatus extends ConsumerWidget {
@@ -131,19 +129,7 @@ class _ResolvedVoiceConnectionStatus extends ConsumerWidget {
   }
 
   void _navigateToChannel(BuildContext context) {
-    final String? channelId = voice.channelId;
-    if (channelId == null || channelId.isEmpty) {
-      return;
-    }
-    if (_isGuildVoice) {
-      final String? guildId = voice.guildId;
-      if (guildId == null || guildId.isEmpty) {
-        return;
-      }
-      navigateToContent(context, RoutePaths.guildChannel(guildId, channelId));
-      return;
-    }
-    unawaited(context.push(RoutePaths.dmChannelCall(channelId)));
+    navigateToActiveVoiceSession(context, voice: voice);
   }
 
   @override

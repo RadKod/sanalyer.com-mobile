@@ -8,9 +8,14 @@ import 'package:fluxer_app/features/voice/utils/voice_pip_morph.dart';
 import 'package:fluxer_app/material_ui.dart';
 
 class VoiceCallJoinOverlay extends ConsumerStatefulWidget {
-  const VoiceCallJoinOverlay({required this.child, super.key});
+  const VoiceCallJoinOverlay({
+    required this.child,
+    this.active = true,
+    super.key,
+  });
 
   final Widget child;
+  final bool active;
 
   @override
   ConsumerState<VoiceCallJoinOverlay> createState() =>
@@ -21,8 +26,23 @@ class _VoiceCallJoinOverlayState extends ConsumerState<VoiceCallJoinOverlay> {
   @override
   void initState() {
     super.initState();
+    _armJoinOverlayIfNeeded();
+  }
+
+  @override
+  void didUpdateWidget(VoiceCallJoinOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.active && widget.active) {
+      _armJoinOverlayIfNeeded();
+    }
+  }
+
+  void _armJoinOverlayIfNeeded() {
+    if (!widget.active) {
+      return;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
+      if (!mounted || !widget.active) {
         return;
       }
       if (peekVoicePipSkipPhoneEnter()) {
@@ -31,7 +51,7 @@ class _VoiceCallJoinOverlayState extends ConsumerState<VoiceCallJoinOverlay> {
       }
       ref.read(voiceCallOverlayProvider.notifier).armJoinOverlay();
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) {
+        if (!mounted || !widget.active) {
           return;
         }
         ref.read(voiceCallOverlayProvider.notifier).reveal();
@@ -44,20 +64,29 @@ class _VoiceCallJoinOverlayState extends ConsumerState<VoiceCallJoinOverlay> {
 }
 
 class VoiceCallPhoneSurface extends StatelessWidget {
-  const VoiceCallPhoneSurface({required this.child, super.key});
+  const VoiceCallPhoneSurface({
+    required this.child,
+    this.active = true,
+    super.key,
+  });
 
   final Widget child;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
-    return VoiceCallJoinOverlay(child: _VoiceCallPhoneEnter(child: child));
+    return VoiceCallJoinOverlay(
+      active: active,
+      child: _VoiceCallPhoneEnter(active: active, child: child),
+    );
   }
 }
 
 class _VoiceCallPhoneEnter extends ConsumerStatefulWidget {
-  const _VoiceCallPhoneEnter({required this.child});
+  const _VoiceCallPhoneEnter({required this.child, this.active = true});
 
   final Widget child;
+  final bool active;
 
   @override
   ConsumerState<_VoiceCallPhoneEnter> createState() =>
@@ -71,12 +100,13 @@ class _VoiceCallPhoneEnterState extends ConsumerState<_VoiceCallPhoneEnter>
   late final Animation<Offset> _slide;
   late final VoiceCallOverlay _overlay;
   ProviderSubscription<bool>? _exitSub;
+  bool _exitHostRegistered = false;
+  int _enterGeneration = 0;
 
   @override
   void initState() {
     super.initState();
     _overlay = ref.read(voiceCallOverlayProvider.notifier);
-    _overlay.registerPhoneExitHost();
     _enter = AnimationController(
       vsync: this,
       duration: kVoiceCallPhoneTransitionDuration,
@@ -93,37 +123,80 @@ class _VoiceCallPhoneEnterState extends ConsumerState<_VoiceCallPhoneEnter>
     _exitSub = ref.listenManual<bool>(
       voiceCallOverlayProvider.select((VoiceCallOverlayState s) => s.isExiting),
       (bool? previous, bool next) {
-        if (next) {
+        if (next && _exitHostRegistered) {
           _playExit();
         }
       },
     );
+    _syncActiveState();
+  }
+
+  @override
+  void didUpdateWidget(_VoiceCallPhoneEnter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.active != widget.active) {
+      _syncActiveState();
+    }
+  }
+
+  void _syncActiveState() {
+    if (!widget.active) {
+      if (ref.read(voiceCallOverlayProvider).isExiting) {
+        return;
+      }
+      _unregisterExitHost();
+      _enter.value = 1;
+      return;
+    }
+    _registerExitHost();
     if (peekVoicePipSkipPhoneEnter()) {
       _enter.value = 1;
     }
+    final int generation = ++_enterGeneration;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || ref.read(voiceCallOverlayProvider).isExiting) {
+      if (!mounted || !widget.active || generation != _enterGeneration) {
+        return;
+      }
+      if (ref.read(voiceCallOverlayProvider).isExiting) {
         return;
       }
       if (takeVoicePipSkipPhoneEnter() || _enter.value == 1) {
         _enter.value = 1;
         return;
       }
-      _enter.forward();
+      _enter
+        ..value = 0
+        ..forward();
     });
+  }
+
+  void _registerExitHost() {
+    if (_exitHostRegistered) {
+      return;
+    }
+    _overlay.registerPhoneExitHost();
+    _exitHostRegistered = true;
+  }
+
+  void _unregisterExitHost() {
+    if (!_exitHostRegistered) {
+      return;
+    }
+    _overlay.unregisterPhoneExitHost();
+    _exitHostRegistered = false;
   }
 
   @override
   void dispose() {
     _exitSub?.close();
-    _overlay.unregisterPhoneExitHost();
+    _unregisterExitHost();
     _enter.dispose();
     super.dispose();
   }
 
   void _playExit() {
     if (_enter.status == AnimationStatus.dismissed) {
-      _overlay.completePhoneExit();
+      _finishPhoneExit();
       return;
     }
     unawaited(
@@ -131,15 +204,26 @@ class _VoiceCallPhoneEnterState extends ConsumerState<_VoiceCallPhoneEnter>
         if (!mounted) {
           return;
         }
-        _overlay.completePhoneExit();
+        _finishPhoneExit();
       }),
     );
   }
 
+  void _finishPhoneExit() {
+    _overlay.completePhoneExit();
+    if (!widget.active) {
+      _unregisterExitHost();
+    }
+    _enter.value = 1;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Color background = widget.active
+        ? context.colors.chatBackground
+        : Colors.transparent;
     return ColoredBox(
-      color: context.colors.chatBackground,
+      color: background,
       child: FadeTransition(
         opacity: _fade,
         child: SlideTransition(position: _slide, child: widget.child),
