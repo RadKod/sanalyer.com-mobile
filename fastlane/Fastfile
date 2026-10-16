@@ -663,9 +663,9 @@ platform :ios do
 
   # sanalyer: local TestFlight lane. Reads the App Store Connect API key from ~/.config/sanalyer
   # (asc.env + asc_key.p8, never in the repo), creates or reuses the Apple Distribution certificate
-  # and the four App Store profiles with that key, and builds the stable flavor. Push stays off
-  # until push.sanalyer.com exists, so aps-environment is dropped from Runner.entitlements for the
-  # duration of the build only.
+  # and the four App Store profiles with that key, and builds the stable flavor. Runner.entitlements
+  # gets aps-environment=production for the duration of the build only. After an App ID capability
+  # change run once with SANALYER_REFRESH_PROFILES=1 so the profiles are regenerated.
   desc "Build stable for com.sanalyer.mobile and upload to TestFlight (local, API key)"
   lane :sanalyer_testflight do
     config_dir = File.expand_path("~/.config/sanalyer")
@@ -703,7 +703,8 @@ platform :ios do
         app_identifier: bundle_id,
         platform: "ios",
         filename: "sanalyer_#{target}.mobileprovision",
-        output_path: signing_dir
+        output_path: signing_dir,
+        force: ENV["SANALYER_REFRESH_PROFILES"] == "1"
       )
       profiles[target] = {
         bundle_id: bundle_id,
@@ -717,7 +718,8 @@ platform :ios do
     original_project = File.read(project_file)
     original_entitlements = File.read(entitlements_file)
     begin
-      sh("/usr/libexec/PlistBuddy", "-c", "Delete :aps-environment", entitlements_file)
+      # Store builds talk to production APNs through push.sanalyer.com; the repo keeps development for debug.
+      sh("/usr/libexec/PlistBuddy", "-c", "Set :aps-environment production", entitlements_file)
       profiles.each do |target, profile|
         update_project_provisioning(
           xcodeproj: "ios/Runner.xcodeproj",

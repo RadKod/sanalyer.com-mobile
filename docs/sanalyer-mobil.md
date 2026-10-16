@@ -131,7 +131,7 @@ Apple tarafında kayıtlı olanlar (takım 9XYJ4H8U3Y):
 - App Group `group.com.sanalyer.mobile`.
 - App ID'ler: `com.sanalyer.mobile` (App Groups, Associated Domains, Communication Notifications),
   `.ShareExtension` ve `.BroadcastExtension` (App Groups), `.NotificationService` (App Groups,
-  Communication Notifications). Push Notifications hiçbirinde açık değil; relay kurulunca açılacak.
+  Communication Notifications, Push Notifications), eklentilerde Push yok.
 - Apple Distribution sertifikası `JRVM9YYNHH` ve dört App Store profili (fastlane üretti).
 - App Store Connect API anahtarı `sanalyer-mobile` (Admin).
 
@@ -155,8 +155,9 @@ APPLE_TEAM_ID=9XYJ4H8U3Y fastlane ios sanalyer_testflight
 ```
 
 Lane (`fastlane/Fastfile`, `sanalyer_testflight`) API anahtarını `~/.config/sanalyer`'den okur,
-sertifika ve profilleri gerekirse üretir, `aps-environment`'ı yalnız derleme süresince
-`Runner.entitlements`'tan çıkarır ve bitince proje ile entitlements dosyasını eski hâline döndürür.
+sertifika ve profilleri gerekirse üretir, `aps-environment`'ı yalnız derleme süresince `production`
+yapar ve bitince proje ile entitlements dosyasını eski hâline döndürür. App ID yeteneği değişirse
+bir kez `SANALYER_REFRESH_PROFILES=1` ile çalıştırılır.
 Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_NUMBER` (varsayılan
 `YYYYMMDD.HHMM`). CocoaPods 1.17 ve fastlane, Homebrew Ruby 3.4 ile `gem install --user-install` kuruldu.
 
@@ -166,6 +167,16 @@ Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_
   clang'ıyla başlıyor, macOS SDK'sını bulamadığı için Rust build script'leri (serde, proc-macro2...)
   link edilemiyordu. Mac hedefinin linker'ı `/usr/bin/cc` yapıldı.
 - `Podfile.lock`: yalnız Podfile checksum'ı güncellendi.
+
+### Push
+
+Relay `https://push.sanalyer.com` (sunucuda `push-relay` container'ı, RadKod/sanalyer.com
+`deploy/fluxer/push-relay.compose.yml`). Uygulama APNs token'ını `/relay/v1/apns/stable/production/<token>`
+adresiyle kaydeder; sunucunun push servisi oraya Web Push gönderir, relay APNs'e iletir, içeriği
+NotificationService eklentisi çözer. APNs anahtarı `K88329YUQ7`: yalnız production ve yalnız
+`com.sanalyer.mobile` konusu (takımda team-scoped anahtar sınırı dolu). Debug build'ler development APNs
+kullandığı için bildirim almaz; VoIP (`.voip` konusu) bu anahtarla çalışmayabilir, doğrulanmadı.
+İlk push'lu build 20261016.1752.
 
 ## Bilerek bırakılanlar
 

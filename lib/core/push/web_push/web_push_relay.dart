@@ -1,6 +1,6 @@
-// sanalyer: our own relay (APNs/FCM keys for com.sanalyer.mobile) is not
-// deployed yet. Pointing at Fluxer's relay would ship device tokens to a third
-// party and could not deliver to our bundle id anyway.
+// sanalyer: our own relay (fluxer-push --mode relay) with the APNs key for
+// com.sanalyer.mobile. Fluxer's relay could not deliver to our bundle id and
+// would ship device tokens to a third party. FCM is not configured there yet.
 const String kPushRelayOrigin = 'https://push.sanalyer.com';
 
 String fcmRelayUrl({required String appId, required String deviceToken}) {
