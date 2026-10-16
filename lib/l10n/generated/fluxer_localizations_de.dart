@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3839,8 +3838,10 @@ class FluxerLocalizationsDe extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Dadurch werden die ausgewählten Geräte von deinem Account abgemeldet. Du musst dich auf diesen Geräten erneut anmelden.',
-      one: 'Dadurch wird das ausgewählte Gerät von deinem Account abgemeldet. Du musst dich auf diesem Gerät erneut anmelden.',
+      other:
+          'Dadurch werden die ausgewählten Geräte von deinem Account abgemeldet. Du musst dich auf diesen Geräten erneut anmelden.',
+      one:
+          'Dadurch wird das ausgewählte Gerät von deinem Account abgemeldet. Du musst dich auf diesem Gerät erneut anmelden.',
     );
     return '$_temp0';
   }
@@ -4864,7 +4865,8 @@ class FluxerLocalizationsDe extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count Communitys sind aufgrund einer Störung des Fluxkondensators vorübergehend nicht verfügbar.',
-      one: '1 Community ist aufgrund einer Störung des Fluxkondensators vorübergehend nicht verfügbar.',
+      one:
+          '1 Community ist aufgrund einer Störung des Fluxkondensators vorübergehend nicht verfügbar.',
     );
     return '$_temp0';
   }
@@ -5757,7 +5759,8 @@ class FluxerLocalizationsDe extends FluxerLocalizations {
       locale: localeName,
       other:
           'Du bist bereits von $count anderen Geräten mit diesem Sprachkanal verbunden. Was möchtest du tun?',
-      one: 'Du bist bereits von 1 anderen Gerät mit diesem Sprachkanal verbunden. Was möchtest du tun?',
+      one:
+          'Du bist bereits von 1 anderen Gerät mit diesem Sprachkanal verbunden. Was möchtest du tun?',
     );
     return '$_temp0';
   }
@@ -14900,7 +14903,8 @@ class FluxerLocalizationsDe extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count Kanäle folgen diesem Kanal. Wenn du ihn in einen Textkanal umwandelst, werden diese Verknüpfungen entfernt.',
-      one: '1 Kanal folgt diesem Kanal. Wenn du ihn in einen Textkanal umwandelst, wird diese Verknüpfung entfernt.',
+      one:
+          '1 Kanal folgt diesem Kanal. Wenn du ihn in einen Textkanal umwandelst, wird diese Verknüpfung entfernt.',
     );
     return '$_temp0';
   }

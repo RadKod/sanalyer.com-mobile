@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3819,8 +3818,10 @@ class FluxerLocalizationsNl extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Dit logt de geselecteerde apparaten uit je account. Je moet op die apparaten opnieuw inloggen.',
-      one: 'Dit logt het geselecteerde apparaat uit je account. Je moet op dat apparaat opnieuw inloggen.',
+      other:
+          'Dit logt de geselecteerde apparaten uit je account. Je moet op die apparaten opnieuw inloggen.',
+      one:
+          'Dit logt het geselecteerde apparaat uit je account. Je moet op dat apparaat opnieuw inloggen.',
     );
     return '$_temp0';
   }
@@ -4835,7 +4836,8 @@ class FluxerLocalizationsNl extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count communities zijn tijdelijk niet beschikbaar vanwege een flux-condensatorstoring.',
-      one: '1 community is tijdelijk niet beschikbaar vanwege een flux-condensatorstoring.',
+      one:
+          '1 community is tijdelijk niet beschikbaar vanwege een flux-condensatorstoring.',
     );
     return '$_temp0';
   }
@@ -5723,7 +5725,8 @@ class FluxerLocalizationsNl extends FluxerLocalizations {
       locale: localeName,
       other:
           'Je bent al verbonden met dit spraakkanaal vanaf $count andere apparaten. Wat wil je doen?',
-      one: 'Je bent al verbonden met dit spraakkanaal vanaf 1 ander apparaat. Wat wil je doen?',
+      one:
+          'Je bent al verbonden met dit spraakkanaal vanaf 1 ander apparaat. Wat wil je doen?',
     );
     return '$_temp0';
   }
@@ -14831,7 +14834,8 @@ class FluxerLocalizationsNl extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count kanalen volgen dit kanaal. Als je het omzet naar een tekstkanaal, volgen die kanalen het niet meer.',
-      one: '1 kanaal volgt dit kanaal. Als je het omzet naar een tekstkanaal, volgt dat kanaal het niet meer.',
+      one:
+          '1 kanaal volgt dit kanaal. Als je het omzet naar een tekstkanaal, volgt dat kanaal het niet meer.',
     );
     return '$_temp0';
   }

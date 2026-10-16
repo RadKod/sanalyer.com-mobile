@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3766,8 +3765,10 @@ class FluxerLocalizationsHe extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'פעולה זו תנתק את המכשירים הנבחרים מהחשבון שלך. תצטרך להתחבר שוב במכשירים אלו.',
-      one: 'פעולה זו תנתק את המכשיר הנבחר מהחשבון שלך. תצטרך להתחבר שוב במכשיר זה.',
+      other:
+          'פעולה זו תנתק את המכשירים הנבחרים מהחשבון שלך. תצטרך להתחבר שוב במכשירים אלו.',
+      one:
+          'פעולה זו תנתק את המכשיר הנבחר מהחשבון שלך. תצטרך להתחבר שוב במכשיר זה.',
     );
     return '$_temp0';
   }
@@ -14546,7 +14547,8 @@ class FluxerLocalizationsHe extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count ערוצים עוקבים אחר ערוץ זה. המרתו לערוץ טקסט תסיר את המעקבים האלה.',
-      two: 'שני ערוצים עוקבים אחר ערוץ זה. המרתו לערוץ טקסט תסיר את המעקבים האלה.',
+      two:
+          'שני ערוצים עוקבים אחר ערוץ זה. המרתו לערוץ טקסט תסיר את המעקבים האלה.',
       one: 'ערוץ אחד עוקב אחר ערוץ זה. המרתו לערוץ טקסט תסיר את המעקב הזה.',
     );
     return '$_temp0';

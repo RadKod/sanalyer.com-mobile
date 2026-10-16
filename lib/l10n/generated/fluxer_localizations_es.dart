@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3851,8 +3850,10 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Esto cerrará la sesión de los dispositivos seleccionados en tu cuenta. Deberás iniciar sesión de nuevo en esos dispositivos.',
-      one: 'Esto cerrará la sesión del dispositivo seleccionado en tu cuenta. Deberás iniciar sesión de nuevo en ese dispositivo.',
+      other:
+          'Esto cerrará la sesión de los dispositivos seleccionados en tu cuenta. Deberás iniciar sesión de nuevo en esos dispositivos.',
+      one:
+          'Esto cerrará la sesión del dispositivo seleccionado en tu cuenta. Deberás iniciar sesión de nuevo en ese dispositivo.',
     );
     return '$_temp0';
   }
@@ -4872,7 +4873,8 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count comunidades no están disponibles temporalmente debido a un mal funcionamiento del condensador de flujo.',
-      one: '1 comunidad no está disponible temporalmente debido a un mal funcionamiento del condensador de flujo.',
+      one:
+          '1 comunidad no está disponible temporalmente debido a un mal funcionamiento del condensador de flujo.',
     );
     return '$_temp0';
   }
@@ -5764,7 +5766,8 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
       locale: localeName,
       other:
           'Ya estás conectado a este canal de voz desde $count dispositivos más. ¿Qué quieres hacer?',
-      one: 'Ya estás conectado a este canal de voz desde 1 dispositivo más. ¿Qué quieres hacer?',
+      one:
+          'Ya estás conectado a este canal de voz desde 1 dispositivo más. ¿Qué quieres hacer?',
     );
     return '$_temp0';
   }
@@ -14926,7 +14929,8 @@ class FluxerLocalizationsEs extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count canales siguen a este canal. Al convertirlo en un canal de texto, se eliminan esos seguimientos.',
-      one: '1 canal sigue a este canal. Al convertirlo en un canal de texto, se elimina ese seguimiento.',
+      one:
+          '1 canal sigue a este canal. Al convertirlo en un canal de texto, se elimina ese seguimiento.',
     );
     return '$_temp0';
   }
@@ -20017,8 +20021,10 @@ class FluxerLocalizationsEs419 extends FluxerLocalizationsEs {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Esto cerrará la sesión de los dispositivos seleccionados en tu cuenta. Deberás iniciar sesión de nuevo en esos dispositivos.',
-      one: 'Esto cerrará la sesión del dispositivo seleccionado en tu cuenta. Deberás iniciar sesión de nuevo en ese dispositivo.',
+      other:
+          'Esto cerrará la sesión de los dispositivos seleccionados en tu cuenta. Deberás iniciar sesión de nuevo en esos dispositivos.',
+      one:
+          'Esto cerrará la sesión del dispositivo seleccionado en tu cuenta. Deberás iniciar sesión de nuevo en ese dispositivo.',
     );
     return '$_temp0';
   }
@@ -20950,7 +20956,8 @@ class FluxerLocalizationsEs419 extends FluxerLocalizationsEs {
       locale: localeName,
       other:
           '$count comunidades no están disponibles temporalmente debido a un mal funcionamiento del condensador de flujo.',
-      one: '1 comunidad no está disponible temporalmente debido a un mal funcionamiento del condensador de flujo.',
+      one:
+          '1 comunidad no está disponible temporalmente debido a un mal funcionamiento del condensador de flujo.',
     );
     return '$_temp0';
   }
@@ -21842,7 +21849,8 @@ class FluxerLocalizationsEs419 extends FluxerLocalizationsEs {
       locale: localeName,
       other:
           'Ya estás conectado a este canal de voz desde $count dispositivos más. ¿Qué quieres hacer?',
-      one: 'Ya estás conectado a este canal de voz desde 1 dispositivo más. ¿Qué quieres hacer?',
+      one:
+          'Ya estás conectado a este canal de voz desde 1 dispositivo más. ¿Qué quieres hacer?',
     );
     return '$_temp0';
   }
@@ -30270,7 +30278,8 @@ class FluxerLocalizationsEs419 extends FluxerLocalizationsEs {
       locale: localeName,
       other:
           '$count canales siguen a este canal. Al convertirlo en un canal de texto, se eliminan esos seguimientos.',
-      one: '1 canal sigue a este canal. Al convertirlo en un canal de texto, se elimina ese seguimiento.',
+      one:
+          '1 canal sigue a este canal. Al convertirlo en un canal de texto, se elimina ese seguimiento.',
     );
     return '$_temp0';
   }

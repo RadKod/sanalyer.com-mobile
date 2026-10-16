@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3806,8 +3805,10 @@ class FluxerLocalizationsId extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ini akan mengeluarkan perangkat yang dipilih dari akun Anda. Anda perlu masuk lagi di perangkat tersebut.',
-      one: 'Ini akan mengeluarkan perangkat yang dipilih dari akun Anda. Anda perlu masuk lagi di perangkat tersebut.',
+      other:
+          'Ini akan mengeluarkan perangkat yang dipilih dari akun Anda. Anda perlu masuk lagi di perangkat tersebut.',
+      one:
+          'Ini akan mengeluarkan perangkat yang dipilih dari akun Anda. Anda perlu masuk lagi di perangkat tersebut.',
     );
     return '$_temp0';
   }
@@ -4816,7 +4817,8 @@ class FluxerLocalizationsId extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count komunitas tidak tersedia sementara karena malfungsi kapasitor fluks.',
-      one: '1 komunitas tidak tersedia sementara karena malfungsi kapasitor fluks.',
+      one:
+          '1 komunitas tidak tersedia sementara karena malfungsi kapasitor fluks.',
     );
     return '$_temp0';
   }
@@ -5699,7 +5701,8 @@ class FluxerLocalizationsId extends FluxerLocalizations {
       locale: localeName,
       other:
           'Anda sudah terhubung ke saluran suara ini dari $count perangkat lain. Apa yang ingin Anda lakukan?',
-      one: 'Anda sudah terhubung ke saluran suara ini dari 1 perangkat lain. Apa yang ingin Anda lakukan?',
+      one:
+          'Anda sudah terhubung ke saluran suara ini dari 1 perangkat lain. Apa yang ingin Anda lakukan?',
     );
     return '$_temp0';
   }
@@ -14757,7 +14760,8 @@ class FluxerLocalizationsId extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count saluran mengikuti saluran ini. Mengubahnya menjadi saluran teks akan menghapus pengikut tersebut.',
-      one: '1 saluran mengikuti saluran ini. Mengubahnya menjadi saluran teks akan menghapus pengikut tersebut.',
+      one:
+          '1 saluran mengikuti saluran ini. Mengubahnya menjadi saluran teks akan menghapus pengikut tersebut.',
     );
     return '$_temp0';
   }

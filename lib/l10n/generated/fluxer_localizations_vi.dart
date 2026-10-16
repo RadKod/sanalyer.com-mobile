@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'fluxer_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3801,8 +3800,10 @@ class FluxerLocalizationsVi extends FluxerLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Thao tác này sẽ đăng xuất các thiết bị đã chọn khỏi tài khoản của bạn. Bạn sẽ cần đăng nhập lại trên các thiết bị đó.',
-      one: 'Thao tác này sẽ đăng xuất thiết bị đã chọn khỏi tài khoản của bạn. Bạn sẽ cần đăng nhập lại trên thiết bị đó.',
+      other:
+          'Thao tác này sẽ đăng xuất các thiết bị đã chọn khỏi tài khoản của bạn. Bạn sẽ cần đăng nhập lại trên các thiết bị đó.',
+      one:
+          'Thao tác này sẽ đăng xuất thiết bị đã chọn khỏi tài khoản của bạn. Bạn sẽ cần đăng nhập lại trên thiết bị đó.',
     );
     return '$_temp0';
   }
@@ -5698,7 +5699,8 @@ class FluxerLocalizationsVi extends FluxerLocalizations {
       locale: localeName,
       other:
           'Bạn đã kết nối với kênh thoại này từ $count thiết bị khác. Bạn muốn làm gì?',
-      one: 'Bạn đã kết nối với kênh thoại này từ 1 thiết bị khác. Bạn muốn làm gì?',
+      one:
+          'Bạn đã kết nối với kênh thoại này từ 1 thiết bị khác. Bạn muốn làm gì?',
     );
     return '$_temp0';
   }
@@ -14766,7 +14768,8 @@ class FluxerLocalizationsVi extends FluxerLocalizations {
       locale: localeName,
       other:
           '$count kênh đang theo dõi kênh này. Việc chuyển đổi kênh này thành kênh văn bản sẽ xóa các lượt theo dõi đó.',
-      one: '1 kênh đang theo dõi kênh này. Việc chuyển đổi kênh này thành kênh văn bản sẽ xóa lượt theo dõi đó.',
+      one:
+          '1 kênh đang theo dõi kênh này. Việc chuyển đổi kênh này thành kênh văn bản sẽ xóa lượt theo dõi đó.',
     );
     return '$_temp0';
   }
