@@ -384,7 +384,7 @@ class _PurchaseTerms extends StatelessWidget {
             child: MediaQuery.withNoTextScaling(
               child: FluxerTextLink(
                 text: l10n.premiumTermsOfService,
-                url: 'https://fluxer.app/terms',
+                url: 'https://sanalyer.com/kullanim-kosullari',
                 style: muted.copyWith(color: style.accent),
               ),
             ),
@@ -396,7 +396,7 @@ class _PurchaseTerms extends StatelessWidget {
             child: MediaQuery.withNoTextScaling(
               child: FluxerTextLink(
                 text: l10n.premiumPrivacyPolicy,
-                url: 'https://fluxer.app/privacy',
+                url: 'https://sanalyer.com/gizlilik',
                 style: muted.copyWith(color: style.accent),
               ),
             ),

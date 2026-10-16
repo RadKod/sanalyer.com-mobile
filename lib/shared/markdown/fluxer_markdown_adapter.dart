@@ -30,13 +30,13 @@ import 'package:go_router/go_router.dart';
 String _fluxerAppLinkToHttps(String href) {
   if (href.startsWith('fluxer://')) {
     final Uri uri = Uri.parse(href);
-    return 'https://fluxer.app${uri.path}';
+    return 'https://sanalyer.com${uri.path}';
   }
   if (href.startsWith('fluxer:/')) {
-    return 'https://fluxer.app/${href.substring('fluxer:/'.length)}';
+    return 'https://sanalyer.com/${href.substring('fluxer:/'.length)}';
   }
   if (href.startsWith('fluxer:')) {
-    return 'https://fluxer.app/${href.substring('fluxer:'.length)}';
+    return 'https://sanalyer.com/${href.substring('fluxer:'.length)}';
   }
   return href;
 }

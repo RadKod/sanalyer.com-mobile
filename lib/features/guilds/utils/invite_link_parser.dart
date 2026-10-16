@@ -1,10 +1,6 @@
+// sanalyer: only sanalyer.com invite links open in the app.
 const List<String> kOfficialInviteUrlBases = <String>[
-  'https://fluxer.app/invite',
-  'https://canary.fluxer.app/invite',
-  'https://web.fluxer.app/invite',
-  'https://web.canary.fluxer.app/invite',
-  'https://fluxer.gg/invite',
-  'https://fluxer.gg',
+  'https://sanalyer.com/invite',
 ];
 
 final RegExp _bareInviteCodePattern = RegExp(r'^[a-zA-Z0-9\-]{2,32}$');

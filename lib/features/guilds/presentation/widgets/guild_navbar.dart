@@ -693,7 +693,7 @@ class _GuildNavbarState extends ConsumerState<GuildNavbar> {
           label: l10n.guildNavbarHelp,
           icon: PhosphorIconsBold.questionMark,
           onTap: () =>
-              handleExternalLinkTap(context, 'https://help.fluxer.app'),
+              handleExternalLinkTap(context, 'https://sanalyer.com'),
         );
     }
   }

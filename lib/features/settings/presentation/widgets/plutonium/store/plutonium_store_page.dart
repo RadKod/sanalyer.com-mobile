@@ -25,8 +25,8 @@ import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_dart/export.dart';
 
-const String _kDonateUrl = 'https://fluxer.app/donate';
-const String _kVisionaryUrl = 'https://fluxer.app/help/visionary';
+const String _kDonateUrl = 'https://sanalyer.com';
+const String _kVisionaryUrl = 'https://sanalyer.com';
 
 class PremiumStorePage extends ConsumerStatefulWidget {
   const PremiumStorePage({this.scrollController, super.key});

@@ -19,15 +19,7 @@ class MessageJumpLink extends ChannelJumpLink {
   final String messageId;
 }
 
-const Set<String> kOfficialChannelJumpHosts = <String>{
-  'fluxer.com',
-  'fluxer.app',
-  'canary.fluxer.app',
-  'web.fluxer.app',
-  'web.canary.fluxer.app',
-  'web.fluxer.com',
-  'web.canary.fluxer.com',
-};
+const Set<String> kOfficialChannelJumpHosts = <String>{'sanalyer.com'};
 
 String? channelJumpHostFromBaseUrl(String baseUrl) {
   final String trimmed = baseUrl.trim().replaceAll(RegExp(r'/+$'), '');

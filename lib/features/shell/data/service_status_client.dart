@@ -187,6 +187,9 @@ class ServiceStatusClient {
   final Dio _dio;
 
   Future<ServiceStatusIncident?> fetchActiveIncident() async {
+    if (!ExternalUrls.serviceStatusEnabled) {
+      return null;
+    }
     try {
       final Response<dynamic> response = await _dio.get<dynamic>(
         '${ExternalUrls.serviceStatus}/summary.json',
@@ -242,6 +245,9 @@ class ServiceStatusClient {
   }
 
   Future<ServiceStatusMaintenance?> fetchScheduledMaintenance() async {
+    if (!ExternalUrls.serviceStatusEnabled) {
+      return null;
+    }
     try {
       final Response<dynamic> response = await _dio.get<dynamic>(
         '${ExternalUrls.serviceStatus}/summary.json',

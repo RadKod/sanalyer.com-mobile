@@ -1,16 +1,6 @@
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 
-const implicitlyTrustedDomains = <String>[
-  'fluxer.com',
-  '*.fluxer.com',
-  'fluxer.app',
-  '*.fluxer.app',
-  'fluxer.gg',
-  'fluxer.gift',
-  'fluxerusercontent.com',
-  'fluxerstatic.com',
-  'fluxerstatus.com',
-];
+const implicitlyTrustedDomains = <String>['sanalyer.com', '*.sanalyer.com'];
 
 bool trustAllDomains(List<String> trustedDomains) {
   return trustedDomains.contains('*');

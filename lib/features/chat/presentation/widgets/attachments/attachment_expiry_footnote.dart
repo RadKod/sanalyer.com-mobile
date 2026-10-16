@@ -3,7 +3,7 @@ import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/material_ui.dart';
 
 const String attachmentExpiryHelpUrl =
-    'https://fluxer.app/help/attachment-expiry';
+    'https://sanalyer.com';
 
 class AttachmentExpiryFootnote extends StatelessWidget {
   const AttachmentExpiryFootnote({required this.text, super.key});

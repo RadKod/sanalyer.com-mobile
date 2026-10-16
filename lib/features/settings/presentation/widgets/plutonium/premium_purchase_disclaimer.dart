@@ -4,8 +4,8 @@ import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 
-const String _kTermsUrl = 'https://fluxer.app/terms';
-const String _kPrivacyUrl = 'https://fluxer.app/privacy';
+const String _kTermsUrl = 'https://sanalyer.com/kullanim-kosullari';
+const String _kPrivacyUrl = 'https://sanalyer.com/gizlilik';
 
 class PremiumPurchaseDisclaimer extends StatelessWidget {
   const PremiumPurchaseDisclaimer({

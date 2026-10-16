@@ -13,7 +13,7 @@ import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/external_links/external_link_handler.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-const String _kPlutoniumUrl = 'https://fluxer.app/plutonium';
+const String _kPlutoniumUrl = 'https://sanalyer.com';
 
 class FluxerPlutoniumUpsell extends ConsumerWidget {
   const FluxerPlutoniumUpsell({

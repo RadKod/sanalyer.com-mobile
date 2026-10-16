@@ -5,12 +5,7 @@ import 'package:fluxer_app/features/gifts/utils/gift_code_utils.dart';
 const int kMaxSharedThemesPerMessage = 10;
 
 const List<String> kOfficialThemeUrlBases = <String>[
-  'https://fluxer.app/theme',
-  'https://canary.fluxer.app/theme',
-  'https://web.fluxer.app/theme',
-  'https://web.canary.fluxer.app/theme',
-  'https://fluxer.com/theme',
-  'https://canary.fluxer.com/theme',
+  'https://sanalyer.com/theme',
 ];
 
 String? _cachedThemePatternKey;

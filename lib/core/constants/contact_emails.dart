@@ -1,3 +1,3 @@
 abstract final class ContactEmails {
-  static const String support = 'support@fluxer.com';
+  static const String support = 'info@sanalyer.com';
 }

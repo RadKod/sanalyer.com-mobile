@@ -21,7 +21,8 @@ class ServiceStatusConnectionFooter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.watch(isActiveInstanceOfficialProvider)) {
+    if (!ExternalUrls.serviceStatusEnabled ||
+        !ref.watch(isActiveInstanceOfficialProvider)) {
       return const SizedBox.shrink();
     }
     final FluxerLocalizations strings = FluxerLocalizations.of(context);
@@ -74,7 +75,8 @@ class OfficialInstanceStatusPageLink extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.watch(isActiveInstanceOfficialProvider)) {
+    if (!ExternalUrls.serviceStatusEnabled ||
+        !ref.watch(isActiveInstanceOfficialProvider)) {
       return const SizedBox.shrink();
     }
     final FluxerLocalizations strings = FluxerLocalizations.of(context);

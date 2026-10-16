@@ -8,8 +8,8 @@ const List<String> kOAuth2Scopes = <String>[
 
 const int kMaxApplicationRedirectUris = 10;
 
-const String kApplicationDocsUrl = 'https://fluxer.dev';
-const String kApplicationDocsDomain = 'fluxer.dev';
+const String kApplicationDocsUrl = 'https://sanalyer.com/docs';
+const String kApplicationDocsDomain = 'sanalyer.com/docs';
 const String kExampleCallbackUrl = 'https://example.com/callback';
 
 String resolveOAuthAuthorizeOrigin({

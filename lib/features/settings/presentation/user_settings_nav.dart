@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/build/app_build_config.dart';
-import 'package:fluxer_app/core/instance/instance_constants.dart';
 import 'package:fluxer_app/core/platform/alternate_app_icon_settings.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
-import 'package:fluxer_app/core/providers/active_instance_provider.dart';
 import 'package:fluxer_app/features/settings/domain/user_settings_nav_group.dart';
 import 'package:fluxer_app/features/settings/domain/user_settings_section.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/settings_fluxer_logo_icon.dart';
@@ -20,9 +18,10 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 const String kFluxerLabsInviteUrl = 'https://fluxer.gg/fluxer-labs';
 const String kFluxerFeedbackUrl = 'https://feedback.fluxer.com';
 
+// sanalyer: the Fluxer Labs and feedback links point at Fluxer's own
+// community, so they stay hidden on every instance.
 bool userSettingsIsMainFluxerInstance(WidgetRef ref) {
-  return ref.watch(fluxerBaseUrlProvider) ==
-      InstanceConstants.defaultApiBaseUrl;
+  return false;
 }
 
 bool userSettingsShowGiveFeedbackNav(WidgetRef ref) {

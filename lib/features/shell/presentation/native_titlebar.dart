@@ -69,7 +69,7 @@ class NativeTitlebar extends ConsumerWidget {
                       onPressed: () => unawaited(
                         handleExternalLinkTap(
                           context,
-                          'https://help.fluxer.app',
+                          'https://sanalyer.com',
                         ),
                       ),
                     ),
