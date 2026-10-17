@@ -9055,10 +9055,10 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get chatAttachmentLibraryLimitedBody =>
-      'Only photos and videos you chose to share are shown here.';
+      'Burada yalnız paylaşmayı seçtiğin fotoğraf ve videolar görünüyor.';
 
   @override
-  String get chatAttachmentLibraryLimitedManage => 'Manage';
+  String get chatAttachmentLibraryLimitedManage => 'Yönet';
 
   @override
   String messageAccessibilityLabel(String author, String summary) {

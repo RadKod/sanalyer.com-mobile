@@ -3875,6 +3875,8 @@
             }
         }
     },
+    "chatAttachmentLibraryLimitedBody": "Burada yalnız paylaşmayı seçtiğin fotoğraf ve videolar görünüyor.",
+    "chatAttachmentLibraryLimitedManage": "Yönet",
     "chatAttachmentTooMany": "Çok fazla dosya (en fazla {max})",
     "@chatAttachmentTooMany": {
         "description": "Shown when adding files would exceed the per-message attachment limit.",
