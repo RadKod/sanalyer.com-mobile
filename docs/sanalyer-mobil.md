@@ -158,6 +158,11 @@ Lane (`fastlane/Fastfile`, `sanalyer_testflight`) API anahtarını `~/.config/sa
 sertifika ve profilleri gerekirse üretir, `aps-environment`'ı yalnız derleme süresince `production`
 yapar ve bitince proje ile entitlements dosyasını eski hâline döndürür. App ID yeteneği değişirse
 bir kez `SANALYER_REFRESH_PROFILES=1` ile çalıştırılır.
+
+PATH'te Anaconda varsa önce çıkarılır (`export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v anaconda | paste -sd: -)`).
+Anaconda'nın eski `ld`'si native asset hook'larının derlediği kütüphaneleri (webcrypto gibi) link'lerse
+Apple yüklemeyi 90125 hatasıyla reddeder ("not built with Apple's linker"). Hook cache'i
+`.dart_tool/hooks_runner/` altındadır; bozuk bir derleme olduysa ilgili klasör silinir.
 Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_NUMBER` (varsayılan
 `YYYYMMDD.HHMM`). CocoaPods 1.17 ve fastlane, Homebrew Ruby 3.4 ile `gem install --user-install` kuruldu.
 
