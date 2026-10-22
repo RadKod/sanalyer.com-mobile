@@ -9,12 +9,36 @@ import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart'
     show isThreadChannelType;
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
+import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/members/domain/member.dart';
 import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
 import 'package:riverpod/misc.dart' show FutureProviderFamily;
 import 'package:riverpod/riverpod.dart';
 
 typedef ChannelPermissionBitsOutcome = ({int value, bool shouldCache});
+
+bool _guildIsListed(Ref ref, String guildId) {
+  return ref
+      .read(guildListViewModelProvider)
+      .guilds
+      .any((Guild guild) => guild.id == guildId);
+}
+
+List<MemberRole> _memberRolesFromRow({
+  required List<Role> allRoles,
+  required String? roleIdsJson,
+}) {
+  if (roleIdsJson == null || roleIdsJson.isEmpty) {
+    return const <MemberRole>[];
+  }
+  final List<String> memberRoleIds = List<String>.from(
+    jsonDecode(roleIdsJson) as List<dynamic>,
+  );
+  return allRoles
+      .where((Role role) => memberRoleIds.contains(role.id))
+      .map(MemberRole.fromRow)
+      .toList();
+}
 
 bool bypassesChannelSlowmode(ChannelPermissionBitsOutcome? outcome) {
   if (outcome == null || !outcome.shouldCache) {
@@ -76,9 +100,6 @@ computeEffectiveGuildChannelPermissionBitsOutcome({
   if (!ref.mounted) {
     return (value: 0, shouldCache: false);
   }
-  if (memberRow == null) {
-    return (value: 0, shouldCache: false);
-  }
   Role? everyoneRole;
   for (final Role r in allRoles) {
     if (r.id == guildId) {
@@ -89,13 +110,10 @@ computeEffectiveGuildChannelPermissionBitsOutcome({
   final int everyonePermissions = everyoneRolePermissionsFromString(
     everyoneRole?.permissions,
   );
-  final List<String> memberRoleIds = memberRow.roleIdsJson.isNotEmpty
-      ? List<String>.from(jsonDecode(memberRow.roleIdsJson) as List<dynamic>)
-      : <String>[];
-  final List<MemberRole> memberRoles = allRoles
-      .where((r) => memberRoleIds.contains(r.id))
-      .map(MemberRole.fromRow)
-      .toList();
+  final List<MemberRole> memberRoles = _memberRolesFromRow(
+    allRoles: allRoles,
+    roleIdsJson: memberRow?.roleIdsJson,
+  );
   final List<String?> layers = await db.channelDao.getPermissionOverwriteLayers(
     channelId,
   );
@@ -108,14 +126,14 @@ computeEffectiveGuildChannelPermissionBitsOutcome({
     currentUserId: currentUserId,
     everyonePermissions: everyonePermissions,
     memberRoles: memberRoles,
-    memberRecordPresent: true,
+    memberRecordPresent: memberRow != null,
     overwriteJsonLayersRootToLeaf: layers,
   );
   return (
     value: isThreadChannelType(channelRow.type)
         ? threadViewPermissions(value)
         : value,
-    shouldCache: true,
+    shouldCache: memberRow != null || _guildIsListed(ref, guildId),
   );
 }
 
@@ -179,9 +197,6 @@ computeEffectiveGuildChannelPermissionBitsOutcomesForGuild({
   if (!ref.mounted) {
     return const <String, ChannelPermissionBitsOutcome>{};
   }
-  if (memberRow == null) {
-    return all(notResolved);
-  }
   Role? everyoneRole;
   for (final Role r in allRoles) {
     if (r.id == guildId) {
@@ -192,40 +207,64 @@ computeEffectiveGuildChannelPermissionBitsOutcomesForGuild({
   final int everyonePermissions = everyoneRolePermissionsFromString(
     everyoneRole?.permissions,
   );
-  final List<String> memberRoleIds = memberRow.roleIdsJson.isNotEmpty
-      ? List<String>.from(jsonDecode(memberRow.roleIdsJson) as List<dynamic>)
-      : <String>[];
-  final List<MemberRole> memberRoles = allRoles
-      .where((r) => memberRoleIds.contains(r.id))
-      .map(MemberRole.fromRow)
-      .toList();
+  final List<MemberRole> memberRoles = _memberRolesFromRow(
+    allRoles: allRoles,
+    roleIdsJson: memberRow?.roleIdsJson,
+  );
+  final String guildOwnerId = guild.ownerId ?? '';
+  int evaluateWithOverwrites(List<String?> overwriteLayers) =>
+      evaluateChannelEffectivePermissionBits(
+        guildOwnerId: guildOwnerId,
+        guildId: guildId,
+        currentUserId: currentUserId,
+        everyonePermissions: everyonePermissions,
+        memberRoles: memberRoles,
+        memberRecordPresent: memberRow != null,
+        overwriteJsonLayersRootToLeaf: overwriteLayers,
+      );
+  final int guildPermissionBits = evaluateWithOverwrites(const <String?>[]);
   return <String, ChannelPermissionBitsOutcome>{
     for (final Channel channel in targets)
       channel.id: () {
-        final int value = evaluateChannelEffectivePermissionBits(
-          guildOwnerId: guild.ownerId ?? '',
-          guildId: guildId,
-          currentUserId: currentUserId,
-          everyonePermissions: everyonePermissions,
-          memberRoles: memberRoles,
-          memberRecordPresent: true,
-          overwriteJsonLayersRootToLeaf: _overwriteLayers(channel, byId),
-        );
+        final int value;
+        if (isThreadChannelType(channel.type)) {
+          final String? parentOverwrites =
+              byId[channel.parentId]?.permissionOverwritesJson;
+          final int parentBits =
+              parentOverwrites == null ||
+                  !_hasPermissionOverwritesJson(parentOverwrites)
+              ? guildPermissionBits
+              : evaluateWithOverwrites(<String?>[parentOverwrites]);
+          value = threadViewPermissions(parentBits);
+        } else if (!_hasPermissionOverwritesJson(
+          channel.permissionOverwritesJson,
+        )) {
+          value = guildPermissionBits;
+        } else {
+          value = evaluateWithOverwrites(<String?>[
+            channel.permissionOverwritesJson,
+          ]);
+        }
         return (
-          value: isThreadChannelType(channel.type)
-              ? threadViewPermissions(value)
-              : value,
-          shouldCache: true,
+          value: value,
+          shouldCache: memberRow != null || _guildIsListed(ref, guildId),
         );
       }(),
   };
 }
 
-List<String?> _overwriteLayers(Channel channel, Map<String, Channel> byId) {
-  if (!isThreadChannelType(channel.type)) {
-    return <String?>[channel.permissionOverwritesJson];
+bool _hasPermissionOverwritesJson(String? json) {
+  if (json == null || json.isEmpty) {
+    return false;
   }
-  return <String?>[byId[channel.parentId]?.permissionOverwritesJson];
+  final Object? decoded = jsonDecode(json);
+  if (decoded is List) {
+    return decoded.isNotEmpty;
+  }
+  if (decoded is Map) {
+    return decoded.isNotEmpty;
+  }
+  return true;
 }
 
 Future<int> computeEffectiveGuildChannelPermissionBits({
@@ -291,9 +330,6 @@ computeChannelLocalGuildChannelPermissionBitsOutcome({
   if (!ref.mounted) {
     return (value: 0, shouldCache: false);
   }
-  if (memberRow == null) {
-    return (value: 0, shouldCache: false);
-  }
   Role? everyoneRole;
   for (final Role r in allRoles) {
     if (r.id == guildId) {
@@ -304,13 +340,10 @@ computeChannelLocalGuildChannelPermissionBitsOutcome({
   final int everyonePermissions = everyoneRolePermissionsFromString(
     everyoneRole?.permissions,
   );
-  final List<String> memberRoleIds = memberRow.roleIdsJson.isNotEmpty
-      ? List<String>.from(jsonDecode(memberRow.roleIdsJson) as List<dynamic>)
-      : <String>[];
-  final List<MemberRole> memberRoles = allRoles
-      .where((r) => memberRoleIds.contains(r.id))
-      .map(MemberRole.fromRow)
-      .toList();
+  final List<MemberRole> memberRoles = _memberRolesFromRow(
+    allRoles: allRoles,
+    roleIdsJson: memberRow?.roleIdsJson,
+  );
   final bool isThread = isThreadChannelType(channelRow.type);
   final String? threadParentId = isThread ? channelRow.parentId : null;
   final String? leafOverwritesJson = threadParentId == null
@@ -327,12 +360,12 @@ computeChannelLocalGuildChannelPermissionBitsOutcome({
     currentUserId: currentUserId,
     everyonePermissions: everyonePermissions,
     memberRoles: memberRoles,
-    memberRecordPresent: true,
+    memberRecordPresent: memberRow != null,
     overwriteJsonLayersRootToLeaf: [leafOverwritesJson],
   );
   return (
     value: isThread ? threadViewPermissions(value) : value,
-    shouldCache: true,
+    shouldCache: memberRow != null || _guildIsListed(ref, guildId),
   );
 }
 

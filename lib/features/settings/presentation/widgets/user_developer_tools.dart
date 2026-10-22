@@ -4,13 +4,20 @@ import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/observability/observability_reporting_provider.dart';
+import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_consent_sheet.dart';
+import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_prompt_coordinator.dart';
+import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_prompt_provider.dart';
 import 'package:fluxer_app/core/premium/app_store_distribution.dart';
 import 'package:fluxer_app/core/providers/gateway_reconnect_provider.dart';
+import 'package:fluxer_app/core/push/services/apple_push_service.dart';
+import 'package:fluxer_app/core/theme/fluxer_fonts.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/native_markdown_tester.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_content_layout.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/utils/clipboard_utils.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
 
 class UserDeveloperTools extends ConsumerStatefulWidget {
@@ -35,6 +42,9 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
   late final TextEditingController _ahapController;
   String? _inputError;
   Timer? _bannerPreviewTimer;
+  String? _apnsToken;
+  String? _voipApnsToken;
+  bool _apnsTokensLoading = false;
 
   @override
   void initState() {
@@ -45,6 +55,9 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
         return;
       }
       unawaited(_loadSendSample(showToast: false));
+      if (Platform.isIOS) {
+        unawaited(_refreshApnsTokens());
+      }
     });
   }
 
@@ -176,6 +189,81 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
     });
   }
 
+  Future<void> _refreshApnsTokens() async {
+    if (!Platform.isIOS || _apnsTokensLoading) {
+      return;
+    }
+    setState(() => _apnsTokensLoading = true);
+    const ApplePushService push = ApplePushService();
+    await push.initialize();
+    final String? apns = await push.getToken();
+    final String? voip = await ApplePushService.getVoipToken();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _apnsToken = apns;
+      _voipApnsToken = voip;
+      _apnsTokensLoading = false;
+    });
+  }
+
+  void _copyApnsToken(String? token) {
+    if (token == null || token.isEmpty) {
+      _showToast('No token available yet.', variant: FluxerToastVariant.info);
+      return;
+    }
+    unawaited(copyToClipboard(context: context, value: token));
+  }
+
+  Widget _apnsTokenBlock({required String label, required String? token}) {
+    final layout = context.layout;
+    final TextStyle mono = context.textStyles.codeText.copyWith(
+      fontSize: 12,
+      height: 1.4,
+      fontFamily: FluxerFonts.mono,
+      color: context.colors.textPrimary,
+    );
+    final String display = token == null || token.isEmpty
+        ? 'Not available yet'
+        : token;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: context.textStyles.bodySmall.copyWith(
+            color: context.colors.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: layout.s1),
+        SelectableText(display, style: mono),
+        SizedBox(height: layout.s2),
+        FluxerButton.secondary(
+          onPressed: () => _copyApnsToken(token),
+          label: 'Copy',
+          fitContent: true,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showObservabilityReportingConsentSheet() async {
+    final bool? optedIn = await showObservabilityReportingConsentSheet(context);
+    if (!mounted) {
+      return;
+    }
+    await recordObservabilityReportingConsentSheetResult(
+      reporting: ref.read(observabilityReportingProvider.notifier),
+      dismissed: ref.read(
+        observabilityReportingPromptDismissedProvider.notifier,
+      ),
+      optedIn: optedIn,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final layout = context.layout;
@@ -239,12 +327,25 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
             description:
                 'Throws an uncaught exception after 2 seconds. Talker always '
                 "logs it. sanalyer's error tracker gets it only when crash and "
-                'performance reports are on.',
+                'performance reports are on. Show consent sheet opens the '
+                'post-crash opt-in UI with the same side effects as production.',
             children: [
-              FluxerButton.primary(
-                onPressed: _sendTestCrashToMeasure,
-                label: 'Send test error',
-                fitContent: true,
+              Wrap(
+                spacing: layout.s2,
+                runSpacing: layout.s2,
+                children: [
+                  FluxerButton.primary(
+                    onPressed: _sendTestCrashToMeasure,
+                    label: 'Send test error',
+                    fitContent: true,
+                  ),
+                  FluxerButton.secondary(
+                    onPressed: () =>
+                        unawaited(_showObservabilityReportingConsentSheet()),
+                    label: 'Show consent sheet',
+                    fitContent: true,
+                  ),
+                ],
               ),
             ],
           ),
@@ -289,6 +390,29 @@ class _UserDeveloperToolsState extends ConsumerState<UserDeveloperTools> {
               ),
             ],
           ),
+          if (Platform.isIOS)
+            FluxerSettingsSection(
+              sectionId: 'developer-tools-apns-tokens',
+              title: 'APNs tokens',
+              description:
+                  'Remote notification and VoIP push tokens for this device. '
+                  'Refresh after granting notification permission if a token is missing.',
+              children: [
+                _apnsTokenBlock(label: 'APNs device token', token: _apnsToken),
+                SizedBox(height: context.layout.s4),
+                _apnsTokenBlock(
+                  label: 'VoIP APNs token',
+                  token: _voipApnsToken,
+                ),
+                FluxerButton.secondary(
+                  onPressed: _apnsTokensLoading
+                      ? null
+                      : () => unawaited(_refreshApnsTokens()),
+                  label: _apnsTokensLoading ? 'Refreshing...' : 'Refresh',
+                  fitContent: true,
+                ),
+              ],
+            ),
           if (Platform.isIOS)
             FluxerSettingsSection(
               sectionId: 'developer-tools-sandbox-purchases',

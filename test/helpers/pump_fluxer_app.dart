@@ -15,6 +15,7 @@ Widget pumpFluxerApp({
   List<Override> overrides = const [],
   Locale locale = kTestLocale,
   ThemeData? theme,
+  bool disableAnimations = true,
   Duration? Function(int retryCount, Object error)? retry,
 }) {
   final colorTheme = buildDarkColorTheme();
@@ -32,7 +33,10 @@ Widget pumpFluxerApp({
             textTheme: FluxerTextTheme.fromColors(colorTheme),
             layoutTheme: FluxerLayoutTheme.scaled(),
           ),
-      home: child,
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: disableAnimations),
+        child: child,
+      ),
     ),
   );
 }

@@ -99,7 +99,16 @@ class ChannelPermissionCache extends _$ChannelPermissionCache {
     }
   }
 
-  Future<void> rebuildAfterReady({String? priorityGuildId}) async {
+  Future<void> rebuildAfterReady({
+    String? priorityGuildId,
+    String? priorityChannelId,
+  }) async {
+    if (priorityChannelId != null && priorityChannelId.isNotEmpty) {
+      await rebuildChannel(priorityChannelId);
+      if (!ref.mounted) {
+        return;
+      }
+    }
     final db = ref.read(fluxerDatabaseProvider);
     final List<String> guildIds = <String>[
       for (final Server guild in await db.guildDao.getServers()) guild.id,
@@ -110,13 +119,31 @@ class ChannelPermissionCache extends _$ChannelPermissionCache {
     if (priorityGuildId != null && guildIds.remove(priorityGuildId)) {
       guildIds.insert(0, priorityGuildId);
     }
-    for (final String guildId in guildIds) {
+    for (var index = 0; index < guildIds.length; index++) {
       if (!ref.mounted) {
         return;
       }
-      await rebuildGuild(guildId);
-      await Future<void>.delayed(const Duration(milliseconds: 15));
+      if (index > 0) {
+        await Future<void>.delayed(const Duration(milliseconds: 15));
+      }
+      await rebuildGuild(guildIds[index]);
     }
+  }
+
+  void evictChannel(String channelId) {
+    if (channelId.isEmpty) {
+      return;
+    }
+    if (!state.effective.containsKey(channelId) &&
+        !state.local.containsKey(channelId)) {
+      return;
+    }
+    final Map<String, int> nextEffective = Map<String, int>.from(
+      state.effective,
+    )..remove(channelId);
+    final Map<String, int> nextLocal = Map<String, int>.from(state.local)
+      ..remove(channelId);
+    state = ChannelPermissionCaches(effective: nextEffective, local: nextLocal);
   }
 
   Future<void> evictGuild(String guildId) async {

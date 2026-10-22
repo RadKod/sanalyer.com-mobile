@@ -3,6 +3,9 @@
 // would ship device tokens to a third party. FCM is not configured there yet.
 const String kPushRelayOrigin = 'https://push.sanalyer.com';
 
+// sanalyer: no push-relay notice page of our own; the privacy page covers it.
+const String kPushRelayNoticeUrl = 'https://sanalyer.com/gizlilik';
+
 String fcmRelayUrl({required String appId, required String deviceToken}) {
   return '$kPushRelayOrigin/relay/v1/fcm/${_segment(appId)}/${_segment(deviceToken)}';
 }

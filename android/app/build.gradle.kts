@@ -104,6 +104,12 @@ val measureApiUrl = readMeasureApiUrl(
     localProperties = localProperties,
 )
 
+val bundledRootCertificatesRes = layout.buildDirectory.dir("generated/bundledRootCertificates/res")
+val copyBundledRootCertificates = tasks.register<Copy>("copyBundledRootCertificates") {
+    from(file("../../assets/certificates/root_certificates.pem"))
+    into(bundledRootCertificatesRes.map { it.dir("raw") })
+}
+
 android {
     // Kotlin package stays com.fluxer (upstream code); the store id is applicationId.
     namespace = "com.fluxer"
@@ -213,9 +219,19 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("main") {
+            res.srcDir(bundledRootCertificatesRes)
+        }
+    }
+
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+}
+
+tasks.named("preBuild") {
+    dependsOn(copyBundledRootCertificates)
 }
 
 flutter {

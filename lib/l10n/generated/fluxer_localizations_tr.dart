@@ -295,7 +295,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get register => 'Kaydol';
 
   @override
-  String get orDivider => 'OR';
+  String get orDivider => 'VEYA';
 
   @override
   String get cancel => 'İptal';
@@ -973,7 +973,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get inviteAcceptSomeone => 'biri';
 
   @override
-  String get mentionUnknownChannel => 'unknown-channel';
+  String get mentionUnknownChannel => 'bilinmeyen-kanal';
 
   @override
   String get channelAccessDeniedTitle => 'Kanala erişim reddedildi';
@@ -1611,7 +1611,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get emojiInfoFromHeader => 'Bu emoji şuradan';
 
   @override
-  String get emojiInfoDiscoverableCommunity => 'Keşfedilebilir topluluk';
+  String get emojiInfoDiscoverableCommunity => 'Keşfet\'te listeleniyor';
 
   @override
   String get emojiInfoPrivateCommunity => 'Özel topluluk';
@@ -1846,10 +1846,12 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get crop => 'Kırp';
 
   @override
-  String get cropTouchHint => 'Pinch to zoom, drag to reposition';
+  String get cropTouchHint =>
+      'Yakınlaştırmak için iki parmakla sıkıştırın, konumlandırmak için sürükleyin';
 
   @override
-  String get cropMouseHint => 'Drag corners to resize, drag inside to move';
+  String get cropMouseHint =>
+      'Boyutlandırmak için köşeleri, taşımak için içini sürükleyin';
 
   @override
   String get changeYourFluxerTag => 'Kullanıcı adınızı değiştirin';
@@ -3128,7 +3130,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String userProfileVisionaryBadgeTooltip(String productName) {
-    return '$productName Visionary';
+    return '$productName Vizyoner';
   }
 
   @override
@@ -4368,10 +4370,10 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get connectionDomainLabel => 'Alan adı';
 
   @override
-  String get connectionHandlePlaceholder => 'username.bsky.social';
+  String get connectionHandlePlaceholder => 'kullaniciadi.bsky.social';
 
   @override
-  String get connectionDomainPlaceholder => 'example.com';
+  String get connectionDomainPlaceholder => 'ornek.com';
 
   @override
   String get connectionAlreadyExists => 'Bu bağlantı zaten mevcut.';
@@ -5879,6 +5881,9 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   }
 
   @override
+  String get shellResizeSidebar => 'Kenar çubuğunu yeniden boyutlandır';
+
+  @override
   String get voiceConnectionTitle => 'Ses bağlantısı';
 
   @override
@@ -7286,10 +7291,10 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get chatReplyMentionAccessibilityLabel => 'Yanıtlanan kişiyi etiketle';
 
   @override
-  String get chatReplyMentionOn => 'ON';
+  String get chatReplyMentionOn => 'AÇIK';
 
   @override
-  String get chatReplyMentionOff => 'OFF';
+  String get chatReplyMentionOff => 'KAPALI';
 
   @override
   String get chatReplyCancel => 'Yanıtlamayı iptal et';
@@ -7529,7 +7534,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String composerCommandOptionalMore(int count) {
-    return '+$count more';
+    return '+$count tane daha';
   }
 
   @override
@@ -7830,7 +7835,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get channelSettingsUrl => 'URL';
 
   @override
-  String get channelSettingsUrlPlaceholder => 'https://example.com';
+  String get channelSettingsUrlPlaceholder => 'https://ornek.com';
 
   @override
   String get channelSettingsTopic => 'Konu';
@@ -9019,7 +9024,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String channelWelcomeDescription(String channelName) {
-    return 'Başlangıçta hiçbir şey yoktu. Sonra $channelName oldu. Ve iyiydi.';
+    return 'Bu, $channelName sohbetinin başlangıcı.';
   }
 
   @override
@@ -9044,7 +9049,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get groupDmComposerHint => 'Mesaj grubu';
 
   @override
-  String get composerHint => 'Message';
+  String get composerHint => 'Mesaj';
 
   @override
   String get composerOpenExpressionPicker => 'İfade seçiciyi aç';
@@ -9154,16 +9159,16 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get userSettingsGroupYourAccount => 'Hesabınız';
 
   @override
-  String get userSettingsGroupBilling => 'Billing';
+  String get userSettingsGroupBilling => 'Faturalandırma';
 
   @override
-  String get userSettingsGroupApplication => 'Application';
+  String get userSettingsGroupApplication => 'Uygulama';
 
   @override
-  String get userSettingsGroupDeveloper => 'Developer';
+  String get userSettingsGroupDeveloper => 'Geliştirici';
 
   @override
-  String get userSettingsGroupStaffOnly => 'Staff-only';
+  String get userSettingsGroupStaffOnly => 'Yalnızca personel';
 
   @override
   String get userSettingsSearchPlaceholder => 'Ayarlar arasında ara...';
@@ -10178,6 +10183,38 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
       'Bildirimler etkinleştirilemedi. Devam etmek için bildirim iznine izin verin.';
 
   @override
+  String get notificationsPushDeliveryProviderLabel =>
+      'Anlık bildirim sağlayıcısı';
+
+  @override
+  String get notificationsPushDeliveryDistributorLabel => 'Dağıtıcı';
+
+  @override
+  String get notificationsPushDeliveryDistributorNone => 'Seçilmedi';
+
+  @override
+  String get notificationsPushDeliveryDistributorSheetTitle => 'Dağıtıcı seçin';
+
+  @override
+  String get notificationsPushDeliveryDistributorPickAccessibility =>
+      'Anlık bildirim dağıtıcısını değiştir';
+
+  @override
+  String get notificationsPushDeliveryGatewayLabel => 'Ağ geçidi';
+
+  @override
+  String get notificationsPushDeliveryRelayLabel => 'sanalyer Push aktarıcısı';
+
+  @override
+  String get notificationsPushDeliveryRelayInUse => 'Kullanımda';
+
+  @override
+  String get notificationsPushDeliveryRelayOff => 'Kapalı';
+
+  @override
+  String get notificationsPushDeliveryRelayNotUsed => 'Kullanılmıyor';
+
+  @override
   String get notificationsPushRelaySectionTitle => 'Anlık bildirim aktarıcısı';
 
   @override
@@ -10358,6 +10395,30 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   @override
   String get advancedCrashReportingDescription =>
       'Raporlar, hangi kuruluma giriş yaptıysanız onun sanalyer hata izleyicisine gider. Kurulum adı, kimlik ya da mesaj içeriği içermez.';
+
+  @override
+  String get observabilityReportingConsentTitle =>
+      'Çökmeleri düzeltmeye yardım edin';
+
+  @override
+  String get observabilityReportingConsentSubtitle =>
+      'sanalyer beklenmedik şekilde kapandı. Anonim çökme ve hata verilerini paylaşmak, sorunları daha hızlı düzeltmemize yardımcı olur.';
+
+  @override
+  String get observabilityReportingConsentBody =>
+      'Raporlar çökme günlüklerini, hataları ve temel performans verilerini içerir. Üçüncü taraflarla paylaşılmaz ve bu ayarı istediğiniz zaman kapatabilirsiniz.';
+
+  @override
+  String observabilityReportingConsentEnableLater(String reportingToggle) {
+    return 'Daha sonra etkinleştirmek için Ayarlar → Gelişmiş → $reportingToggle yolunu izleyin.';
+  }
+
+  @override
+  String get observabilityReportingConsentAgree => 'Çökme raporları gönder';
+
+  @override
+  String get observabilityReportingConsentDecline =>
+      'Etkinleştirmek istemiyorum';
 
   @override
   String get advancedSettingsConfigure => 'Yapılandır';
@@ -11239,8 +11300,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get guildNavbarDirectMessages => 'Doğrudan mesajlar';
 
   @override
-  String get guildNavbarExploreDiscoverableCommunities =>
-      'Keşfedilebilir Toplulukları Keşfet';
+  String get guildNavbarExploreDiscoverableCommunities => 'Toplulukları keşfet';
 
   @override
   String get discoveryExplore => 'Keşfet';
@@ -11587,13 +11647,13 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get guildNavbarNameLabel => 'Ad';
 
   @override
-  String get guildNavbarNewChannelHint => 'new-channel';
+  String get guildNavbarNewChannelHint => 'yeni-kanal';
 
   @override
   String get guildNavbarUrlLabel => 'URL';
 
   @override
-  String get guildNavbarUrlHint => 'https://example.com';
+  String get guildNavbarUrlHint => 'https://ornek.com';
 
   @override
   String get guildNavbarChannelTypeSelection => 'Kanal türü seçimi';
@@ -12633,7 +12693,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get guildSettingsModerationVerificationDiscoveryNote =>
-      'Keşfet\'te listelenen toplulukların en azından doğrulanmış bir e-postaya sahip olması gerekir. Keşfet etkinleştirildiğinde Hiçbiri seçilemez.';
+      'Keşfet\'te listelenen topluluklarda en az e-posta doğrulaması gerekir. Topluluğunuz Keşfet\'te listelendiği sürece \"Yok\" seçeneğini seçemezsiniz.';
 
   @override
   String get guildSettingsModerationMatureTitle =>
@@ -13359,7 +13419,13 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String guildSettingsDiscoveryNotEligible(int count) {
-    return 'Topluluğunuzun Keşfet\'te listelenebilmesi için en az $count üyeye sahip olması gerekir.';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count üyesi',
+      one: '$count üyesi',
+    );
+    return 'Topluluğunuzun Keşfet\'te listelenebilmesi için en az $_temp0 olmalı.';
   }
 
   @override
@@ -13402,7 +13468,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get guildSettingsDiscoveryPrimaryLanguageHelp =>
-      'Topluluğunuzdaki çoğu kişinin konuştuğu dil. Keşfet sonuçlarını filtrelemek için kullanılır.';
+      'Topluluğunuzdaki çoğu kişinin konuştuğu dil. Keşfet\'teki sonuçları filtrelemek için kullanılır.';
 
   @override
   String get guildSettingsDiscoveryDescriptionField => 'Açıklama';
@@ -13429,7 +13495,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String guildSettingsDiscoveryTagsHelp(int maxTags) {
-    return 'En fazla $maxTags etiket, topluluğunuzun bulunmasına yardımcı olur. Keşfet aramalarında görünürler.';
+    return 'En fazla $maxTags etiket, insanların topluluğunuzu bulmasına yardımcı olur. İnsanlar Keşfet\'te arama yaptığında görünürler.';
   }
 
   @override
@@ -13822,16 +13888,16 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get guildSettingsDeleteCommunityFailed => 'Bu topluluk silinemedi';
 
   @override
-  String get guildSettingsCategoryExpressions => 'Expressions';
+  String get guildSettingsCategoryExpressions => 'İfadeler';
 
   @override
-  String get guildSettingsCategoryCommunity => 'Community';
+  String get guildSettingsCategoryCommunity => 'Topluluk';
 
   @override
-  String get guildSettingsCategoryIntegrations => 'Integrations';
+  String get guildSettingsCategoryIntegrations => 'Entegrasyonlar';
 
   @override
-  String get guildSettingsCategoryPeople => 'People';
+  String get guildSettingsCategoryPeople => 'Kişiler';
 
   @override
   String get guildSettingsOverviewBrandingTitle => 'Marka';
@@ -14072,7 +14138,7 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get guildSettingsModerationContentFilterDiscoveryNote =>
-      'Keşfedilen toplulukların tüm üyeleri taraması zorunludur. Keşif etkinleştirildiğinde bu ayar değiştirilemez.';
+      'Keşfet\'te listelenen toplulukların tüm üyelerden gelen mesajları taraması gerekir. Topluluğunuz Keşfet\'te listelendiği sürece bu ayarı değiştiremezsiniz.';
 
   @override
   String get guildSettingsContentFilterOff => 'Kapalı';

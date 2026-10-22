@@ -2846,13 +2846,13 @@ abstract class FluxerLocalizations {
   /// **'This emoji is from'**
   String get emojiInfoFromHeader;
 
-  /// Subtitle for a discoverable source community in the emoji info sheet.
+  /// Subtitle for a source community listed in Explore in the emoji info sheet.
   ///
   /// In en, this message translates to:
-  /// **'Discoverable community'**
+  /// **'Listed in Explore'**
   String get emojiInfoDiscoverableCommunity;
 
-  /// Subtitle for a non-discoverable source community in the emoji info sheet.
+  /// Subtitle for a source community not listed in Explore in the emoji info sheet.
   ///
   /// In en, this message translates to:
   /// **'Private community'**
@@ -9531,6 +9531,12 @@ abstract class FluxerLocalizations {
   /// **'Jump to {channelSourceLabel}'**
   String voiceJumpToChannel(String channelSourceLabel);
 
+  /// Accessible label for the draggable handle that resizes the channel or direct message sidebar.
+  ///
+  /// In en, this message translates to:
+  /// **'Resize sidebar'**
+  String get shellResizeSidebar;
+
   /// Voice status popout title.
   ///
   /// In en, this message translates to:
@@ -14769,10 +14775,10 @@ abstract class FluxerLocalizations {
   /// **'Welcome to {channelName}'**
   String channelWelcomeHeading(String channelName);
 
-  /// Whimsical body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).
+  /// Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).
   ///
   /// In en, this message translates to:
-  /// **'In the beginning, there was nothing. Then, there was {channelName}. And it was good.'**
+  /// **'This is the start of {channelName}.'**
   String channelWelcomeDescription(String channelName);
 
   /// Placeholder in the message composer when viewing personal notes.
@@ -16767,6 +16773,66 @@ abstract class FluxerLocalizations {
   /// **'Couldn\'t enable notifications. Allow notification permission to continue.'**
   String get notificationsEnableNotificationsPermissionDenied;
 
+  /// Label for the compile-time mobile push provider on notification settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Push provider'**
+  String get notificationsPushDeliveryProviderLabel;
+
+  /// Label for the UnifiedPush distributor on notification settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Distributor'**
+  String get notificationsPushDeliveryDistributorLabel;
+
+  /// Shown when no UnifiedPush distributor is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not selected'**
+  String get notificationsPushDeliveryDistributorNone;
+
+  /// Title of the UnifiedPush distributor picker sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose distributor'**
+  String get notificationsPushDeliveryDistributorSheetTitle;
+
+  /// Accessibility label when the distributor row opens a picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Change push distributor'**
+  String get notificationsPushDeliveryDistributorPickAccessibility;
+
+  /// Label for the UnifiedPush gateway host on notification settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Gateway'**
+  String get notificationsPushDeliveryGatewayLabel;
+
+  /// Label for Fluxer Push relay status on notification settings.
+  ///
+  /// In en, this message translates to:
+  /// **'sanalyer Push relay'**
+  String get notificationsPushDeliveryRelayLabel;
+
+  /// Fluxer relay is active for this device.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get notificationsPushDeliveryRelayInUse;
+
+  /// Fluxer relay is required but not enabled for this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get notificationsPushDeliveryRelayOff;
+
+  /// This push provider does not use the Fluxer relay.
+  ///
+  /// In en, this message translates to:
+  /// **'Not used'**
+  String get notificationsPushDeliveryRelayNotUsed;
+
   /// Notification settings section title for the Fluxer push relay.
   ///
   /// In en, this message translates to:
@@ -17078,6 +17144,42 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'Reports go to sanalyer\'s error tracker, whichever instance you\'re signed in to. They don\'t include instance names, IDs or message content.'**
   String get advancedCrashReportingDescription;
+
+  /// Title of the post-crash opt-in sheet for crash and error reporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Help fix crashes'**
+  String get observabilityReportingConsentTitle;
+
+  /// Subtitle on the post-crash crash reporting opt-in sheet. Keep the name Fluxer as is.
+  ///
+  /// In en, this message translates to:
+  /// **'sanalyer closed unexpectedly. Sharing anonymous crash and error data helps us fix issues faster.'**
+  String get observabilityReportingConsentSubtitle;
+
+  /// Body copy on the post-crash crash reporting opt-in sheet explaining what is collected.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports include crash logs, errors and basic performance data. They are not shared with third parties and you can turn this off at any time.'**
+  String get observabilityReportingConsentBody;
+
+  /// Hint on the post-crash crash reporting opt-in sheet for finding the setting later.
+  ///
+  /// In en, this message translates to:
+  /// **'To enable later, open Settings → Advanced → {reportingToggle}.'**
+  String observabilityReportingConsentEnableLater(String reportingToggle);
+
+  /// Primary button on the post-crash crash reporting opt-in sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Send crash reports'**
+  String get observabilityReportingConsentAgree;
+
+  /// Secondary button that permanently dismisses the post-crash crash reporting opt-in sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t want to enable'**
+  String get observabilityReportingConsentDecline;
 
   /// Button label that opens a dedicated advanced settings modal.
   ///
@@ -18566,25 +18668,25 @@ abstract class FluxerLocalizations {
   /// Label for the explore communities button in the guild navbar.
   ///
   /// In en, this message translates to:
-  /// **'Explore discoverable communities'**
+  /// **'Explore communities'**
   String get guildNavbarExploreDiscoverableCommunities;
 
-  /// Short label in the discovery page header.
+  /// Short label in the Explore page header.
   ///
   /// In en, this message translates to:
   /// **'Explore'**
   String get discoveryExplore;
 
-  /// Main heading on the Discovery page.
+  /// Main heading on the Explore page.
   ///
   /// In en, this message translates to:
   /// **'Explore public communities'**
   String get discoveryExplorePublicCommunities;
 
-  /// Subheading on the Discovery page explaining how to apply for listing.
+  /// Subheading on the Explore page explaining how to apply for listing.
   ///
   /// In en, this message translates to:
-  /// **'Want to list your community on here? Apply if you meet the requirements in your community\'s settings > Discovery.'**
+  /// **'Want to list your community on here? Apply if you meet the requirements in your community\'s settings > Explore.'**
   String get discoveryListingSubheading;
 
   /// Accessible label and placeholder for the community search field.
@@ -18593,7 +18695,7 @@ abstract class FluxerLocalizations {
   /// **'Search communities'**
   String get discoverySearchCommunities;
 
-  /// Label for the language filter on the discovery page.
+  /// Label for the language filter on the Explore page.
   ///
   /// In en, this message translates to:
   /// **'Filter by language'**
@@ -18605,133 +18707,133 @@ abstract class FluxerLocalizations {
   /// **'All languages'**
   String get discoveryAllLanguages;
 
-  /// Label for the all-categories tab on the discovery page.
+  /// Label for the all-categories tab on the Explore page.
   ///
   /// In en, this message translates to:
   /// **'All'**
   String get discoveryAllCategories;
 
-  /// Discovery category label for gaming communities.
+  /// Explore category label for gaming communities.
   ///
   /// In en, this message translates to:
   /// **'Gaming'**
   String get discoveryCategoryGaming;
 
-  /// Discovery category label for music communities.
+  /// Explore category label for music communities.
   ///
   /// In en, this message translates to:
   /// **'Music'**
   String get discoveryCategoryMusic;
 
-  /// Discovery category label for entertainment communities.
+  /// Explore category label for entertainment communities.
   ///
   /// In en, this message translates to:
   /// **'Entertainment'**
   String get discoveryCategoryEntertainment;
 
-  /// Discovery category label for education communities.
+  /// Explore category label for education communities.
   ///
   /// In en, this message translates to:
   /// **'Education'**
   String get discoveryCategoryEducation;
 
-  /// Discovery category label for science and technology communities.
+  /// Explore category label for science and technology communities.
   ///
   /// In en, this message translates to:
   /// **'Science & technology'**
   String get discoveryCategoryScienceAndTechnology;
 
-  /// Discovery category label for content creator communities.
+  /// Explore category label for content creator communities.
   ///
   /// In en, this message translates to:
   /// **'Content creator'**
   String get discoveryCategoryContentCreator;
 
-  /// Discovery category label for anime and manga communities.
+  /// Explore category label for anime and manga communities.
   ///
   /// In en, this message translates to:
   /// **'Anime & manga'**
   String get discoveryCategoryAnimeAndManga;
 
-  /// Discovery category label for movies and TV communities.
+  /// Explore category label for movies and TV communities.
   ///
   /// In en, this message translates to:
   /// **'Movies & TV'**
   String get discoveryCategoryMoviesAndTv;
 
-  /// Discovery category label for communities that do not fit other categories.
+  /// Explore category label for communities that do not fit other categories.
   ///
   /// In en, this message translates to:
   /// **'Other'**
   String get discoveryCategoryOther;
 
-  /// Empty-state text when no discovery communities match the filters.
+  /// Empty-state text when no communities in Explore match the filters.
   ///
   /// In en, this message translates to:
   /// **'No communities match.'**
   String get discoveryNoCommunitiesMatch;
 
-  /// Button label to join a discovery community.
+  /// Button label to join a community listed in Explore.
   ///
   /// In en, this message translates to:
   /// **'Join community'**
   String get discoveryJoinCommunity;
 
-  /// Button label when the user is already in a discovery community.
+  /// Button label when the user is already in a community listed in Explore.
   ///
   /// In en, this message translates to:
   /// **'Joined'**
   String get discoveryJoined;
 
-  /// Online member count on a discovery guild card.
+  /// Online member count on a community card in Explore.
   ///
   /// In en, this message translates to:
   /// **'{count} online'**
   String discoveryOnlineCount(String count);
 
-  /// Member count on a discovery guild card.
+  /// Member count on a community card in Explore.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, one{1 member} other{{count} members}}'**
   String discoveryMemberCount(num count);
 
-  /// Fallback text when a discovery guild has no description.
+  /// Fallback text when a community in Explore has no description.
   ///
   /// In en, this message translates to:
   /// **'No description.'**
   String get discoveryNoDescription;
 
-  /// Discovery sidebar section label for communities.
+  /// Explore sidebar section label for communities.
   ///
   /// In en, this message translates to:
   /// **'Communities'**
   String get discoveryCommunities;
 
-  /// Discovery sidebar section label for apps.
+  /// Explore sidebar section label for apps.
   ///
   /// In en, this message translates to:
   /// **'Apps'**
   String get discoveryApps;
 
-  /// Title of the generic join error dialog on the discovery page.
+  /// Title of the generic join error dialog on the Explore page.
   ///
   /// In en, this message translates to:
   /// **'Couldn\'t join this community'**
   String get discoveryJoinErrorGenericTitle;
 
-  /// Body of the generic join error dialog on the discovery page.
+  /// Body of the generic join error dialog on the Explore page.
   ///
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again in a moment.'**
   String get discoveryJoinErrorGenericMessage;
 
-  /// Title when a discovery community has reached its member limit.
+  /// Title when a community listed in Explore has reached its member limit.
   ///
   /// In en, this message translates to:
   /// **'This community is full'**
   String get discoveryJoinErrorFullTitle;
 
-  /// Body when a discovery community has reached its member limit.
+  /// Body when a community listed in Explore has reached its member limit.
   ///
   /// In en, this message translates to:
   /// **'This community has reached its member limit, so you can\'t join right now.'**
@@ -18749,37 +18851,37 @@ abstract class FluxerLocalizations {
   /// **'You\'re in the maximum number of communities. Leave one and try again.'**
   String get discoveryJoinErrorMaxGuildsMessage;
 
-  /// Title when the user is banned from a discovery community.
+  /// Title when the user is banned from a community listed in Explore.
   ///
   /// In en, this message translates to:
   /// **'You can\'t join this community'**
   String get discoveryJoinErrorBannedTitle;
 
-  /// Body when the user is banned from a discovery community.
+  /// Body when the user is banned from a community listed in Explore.
   ///
   /// In en, this message translates to:
   /// **'You have been banned from this community.'**
   String get discoveryJoinErrorBannedMessage;
 
-  /// Title when a discovery community is no longer joinable.
+  /// Title when a community listed in Explore is no longer joinable.
   ///
   /// In en, this message translates to:
   /// **'This community is no longer available'**
   String get discoveryJoinErrorNotAvailableTitle;
 
-  /// Body when a discovery community is no longer joinable.
+  /// Body when a community listed in Explore is no longer joinable.
   ///
   /// In en, this message translates to:
-  /// **'It may have left discovery or turned off new joins. Refresh the page and you won\'t see it again.'**
+  /// **'It may have left Explore or turned off new joins. Refresh the page and you won\'t see it again.'**
   String get discoveryJoinErrorNotAvailableMessage;
 
-  /// Title when joining a discovery community is rate limited.
+  /// Title when joining a community listed in Explore is rate limited.
   ///
   /// In en, this message translates to:
   /// **'You\'re going too fast'**
   String get discoveryJoinErrorRateLimitTitle;
 
-  /// Body when joining a discovery community is rate limited.
+  /// Body when joining a community listed in Explore is rate limited.
   ///
   /// In en, this message translates to:
   /// **'Please wait a moment and try again.'**
@@ -19607,10 +19709,10 @@ abstract class FluxerLocalizations {
   /// **'Webhooks'**
   String get guildMenuSettingsWebhooks;
 
-  /// Community settings tab for discovery settings.
+  /// Community settings tab for Explore.
   ///
   /// In en, this message translates to:
-  /// **'Discovery'**
+  /// **'Explore'**
   String get guildMenuSettingsDiscovery;
 
   /// Community settings tab for member management.
@@ -20979,10 +21081,10 @@ abstract class FluxerLocalizations {
   /// **'Members with roles can bypass these checks. For public spaces, we recommend enabling verification.'**
   String get guildSettingsModerationVerificationRolesBypass;
 
-  /// Discovery restriction note for verification level.
+  /// Note on the verification level restriction while the community is listed in Explore.
   ///
   /// In en, this message translates to:
-  /// **'Communities listed in Discovery require at least verified email. None cannot be selected while Discovery is enabled.'**
+  /// **'Communities listed in Explore need at least email verification. You can\'t pick \"None\" while your community is listed in Explore.'**
   String get guildSettingsModerationVerificationDiscoveryNote;
 
   /// Title for mature content settings.
@@ -22014,85 +22116,85 @@ abstract class FluxerLocalizations {
   /// **'URL copied to clipboard'**
   String get guildSettingsCopiedUrl;
 
-  /// Subtitle for the community Discovery settings tab.
+  /// Subtitle for the "Explore" community settings tab.
   ///
   /// In en, this message translates to:
-  /// **'List your community in Discovery so others can find and join it.'**
+  /// **'List your community in Explore so others can find and join it.'**
   String get guildSettingsDiscoveryDescription;
 
-  /// Title for the eligibility warning when a community cannot apply for Discovery yet.
+  /// Title for the eligibility warning when a community cannot apply to be listed in Explore yet.
   ///
   /// In en, this message translates to:
   /// **'Not enough members'**
   String get guildSettingsDiscoveryNotEnoughMembersTitle;
 
-  /// Discovery eligibility message.
+  /// Message when the community does not have enough members to be listed in Explore.
   ///
   /// In en, this message translates to:
-  /// **'Your community needs at least {count} members before it can be listed in Discovery.'**
+  /// **'Your community needs at least {count, plural, one{{count} member} other{{count} members}} before it can be listed in Explore.'**
   String guildSettingsDiscoveryNotEligible(int count);
 
-  /// Label before the discovery application status badge.
+  /// Label before the status badge of the application to Explore.
   ///
   /// In en, this message translates to:
   /// **'Status:'**
   String get guildSettingsDiscoveryStatusLabel;
 
-  /// Discovery application status badge when awaiting staff review.
+  /// Status badge of the application to Explore when awaiting staff review.
   ///
   /// In en, this message translates to:
   /// **'Pending'**
   String get guildSettingsDiscoveryStatusPending;
 
-  /// Discovery application status badge when approved and listed.
+  /// Status badge of the application to Explore when approved and listed.
   ///
   /// In en, this message translates to:
   /// **'Approved'**
   String get guildSettingsDiscoveryStatusApproved;
 
-  /// Discovery application status badge when declined by staff.
+  /// Status badge of the application to Explore when declined by staff.
   ///
   /// In en, this message translates to:
   /// **'Rejected'**
   String get guildSettingsDiscoveryStatusRejected;
 
-  /// Discovery application status badge when delisted from Discovery.
+  /// Status badge of the application to Explore when removed from Explore.
   ///
   /// In en, this message translates to:
   /// **'Removed'**
   String get guildSettingsDiscoveryStatusRemoved;
 
-  /// Review or removal reason shown on the discovery application status card.
+  /// Review or removal reason shown on the status card of the application to Explore.
   ///
   /// In en, this message translates to:
   /// **'Reason: {reason}'**
   String guildSettingsDiscoveryReason(String reason);
 
-  /// Info banner when the community is approved and listed in Discovery.
+  /// Info banner when the community is approved and listed in Explore.
   ///
   /// In en, this message translates to:
-  /// **'Your community is listed in Discovery. You can update your listing details below or withdraw to remove it.'**
+  /// **'Your community is listed in Explore. You can update your listing details below or withdraw to remove it.'**
   String get guildSettingsDiscoveryApprovedInfo;
 
-  /// Info banner when the discovery application is pending review.
+  /// Info banner when the application to Explore is pending review.
   ///
   /// In en, this message translates to:
   /// **'Your application is pending review. You can still update your listing details or withdraw the application.'**
   String get guildSettingsDiscoveryPendingInfo;
 
-  /// Label for discovery category dropdown.
+  /// Label for the category dropdown in the "Explore" tab.
   ///
   /// In en, this message translates to:
   /// **'Category'**
   String get guildSettingsDiscoveryCategory;
 
-  /// Help text below the discovery category field.
+  /// Help text below the category field in the "Explore" tab.
   ///
   /// In en, this message translates to:
   /// **'Choose the category that best describes your community. You can change this any time.'**
   String get guildSettingsDiscoveryCategoryHelp;
 
-  /// Label for the primary language field on the discovery application form.
+  /// Label for the primary language field on the application form for Explore.
   ///
   /// In en, this message translates to:
   /// **'Primary language'**
@@ -22101,40 +22203,40 @@ abstract class FluxerLocalizations {
   /// Help text below the primary language field.
   ///
   /// In en, this message translates to:
-  /// **'The language most of your community speaks. Used to filter Discovery results.'**
+  /// **'The language most of your community speaks. It\'s used to filter results in Explore.'**
   String get guildSettingsDiscoveryPrimaryLanguageHelp;
 
-  /// Label for discovery description field.
+  /// Label for the listing description field in the "Explore" tab.
   ///
   /// In en, this message translates to:
   /// **'Description'**
   String get guildSettingsDiscoveryDescriptionField;
 
-  /// Placeholder in the discovery description field.
+  /// Placeholder in the listing description field in the "Explore" tab.
   ///
   /// In en, this message translates to:
   /// **'Describe what your community is about'**
   String get guildSettingsDiscoveryDescriptionPlaceholder;
 
-  /// Validation error when the discovery description is empty.
+  /// Validation error when the listing description for Explore is empty.
   ///
   /// In en, this message translates to:
   /// **'A description is required.'**
   String get guildSettingsDiscoveryDescriptionRequired;
 
-  /// Validation error when the discovery description is too short.
+  /// Validation error when the listing description for Explore is too short.
   ///
   /// In en, this message translates to:
   /// **'Description must be at least {minLength} characters.'**
   String guildSettingsDiscoveryDescriptionMinLength(int minLength);
 
-  /// Validation error when the discovery description is too long.
+  /// Validation error when the listing description for Explore is too long.
   ///
   /// In en, this message translates to:
   /// **'Description must be no more than {maxLength} characters.'**
   String guildSettingsDiscoveryDescriptionMaxLength(int maxLength);
 
-  /// Label for discovery custom tags field.
+  /// Label for the custom tags field in the "Explore" tab.
   ///
   /// In en, this message translates to:
   /// **'Custom tags'**
@@ -22143,7 +22245,7 @@ abstract class FluxerLocalizations {
   /// Help text below the custom tags field.
   ///
   /// In en, this message translates to:
-  /// **'Up to {maxTags} tags help people find your community. They show up in Discovery search.'**
+  /// **'Up to {maxTags} tags help people find your community. They show up when people search in Explore.'**
   String guildSettingsDiscoveryTagsHelp(int maxTags);
 
   /// Placeholder in the custom tags input field.
@@ -22152,25 +22254,25 @@ abstract class FluxerLocalizations {
   /// **'Add a tag and press Enter'**
   String get guildSettingsDiscoveryTagsHint;
 
-  /// Button to add a custom discovery tag.
+  /// Button to add a custom tag for Explore.
   ///
   /// In en, this message translates to:
   /// **'Add'**
   String get guildSettingsDiscoveryAddTag;
 
-  /// Accessibility label for removing a custom discovery tag.
+  /// Accessibility label for removing a custom tag for Explore.
   ///
   /// In en, this message translates to:
   /// **'Remove tag {tag}'**
   String guildSettingsDiscoveryRemoveTag(String tag);
 
-  /// Error modal title when a custom discovery tag cannot be added.
+  /// Error modal title when a custom tag for Explore cannot be added.
   ///
   /// In en, this message translates to:
   /// **'Couldn\'t add tag'**
   String get guildSettingsDiscoveryTagErrorTitle;
 
-  /// Validation error for invalid custom discovery tags.
+  /// Validation error for invalid custom tags for Explore.
   ///
   /// In en, this message translates to:
   /// **'Tags must be 2 to {maxLength} characters and alphanumeric.'**
@@ -22182,49 +22284,49 @@ abstract class FluxerLocalizations {
   /// **'You can only add up to {maxTags} tags.'**
   String guildSettingsDiscoveryTagLimit(int maxTags);
 
-  /// Button to submit a new discovery application.
+  /// Button to submit a new application to Explore.
   ///
   /// In en, this message translates to:
   /// **'Apply'**
   String get guildSettingsDiscoveryApply;
 
-  /// Button to save changes to an existing discovery listing.
+  /// Button to save changes to an existing listing in Explore.
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get guildSettingsDiscoverySave;
 
-  /// Button to withdraw discovery application.
+  /// Button to withdraw the application to Explore.
   ///
   /// In en, this message translates to:
   /// **'Withdraw'**
   String get guildSettingsDiscoveryWithdraw;
 
-  /// Success toast after submitting a discovery application.
+  /// Success toast after submitting an application to Explore.
   ///
   /// In en, this message translates to:
-  /// **'Discovery application sent'**
+  /// **'Application to Explore sent'**
   String get guildSettingsDiscoveryApplicationSent;
 
-  /// Success toast after updating a discovery listing.
+  /// Success toast after updating a listing in Explore.
   ///
   /// In en, this message translates to:
-  /// **'Discovery listing updated'**
+  /// **'Explore listing updated'**
   String get guildSettingsDiscoveryListingUpdated;
 
-  /// Success toast after withdrawing a discovery application.
+  /// Success toast after withdrawing an application to Explore.
   ///
   /// In en, this message translates to:
-  /// **'Discovery application withdrawn'**
+  /// **'Application to Explore withdrawn'**
   String get guildSettingsDiscoveryApplicationWithdrawn;
 
-  /// Error modal title when withdrawing a discovery application fails.
+  /// Error modal title when withdrawing an application to Explore fails.
   ///
   /// In en, this message translates to:
   /// **'Couldn\'t withdraw application'**
   String get guildSettingsDiscoveryWithdrawErrorTitle;
 
-  /// Error modal body when withdrawing a discovery application fails.
+  /// Error modal body when withdrawing an application to Explore fails.
   ///
   /// In en, this message translates to:
   /// **'Try again in a moment.'**
@@ -22473,7 +22575,7 @@ abstract class FluxerLocalizations {
   /// Join method label on the community members page.
   ///
   /// In en, this message translates to:
-  /// **'Discovery'**
+  /// **'Explore'**
   String get guildMembersJoinSourceDiscovery;
 
   /// Fallback join method label on the community members page.
@@ -22812,7 +22914,7 @@ abstract class FluxerLocalizations {
   /// **'Expressions'**
   String get guildSettingsCategoryExpressions;
 
-  /// Sidebar category for discovery and vanity URL.
+  /// Sidebar category for Explore and vanity URL.
   ///
   /// In en, this message translates to:
   /// **'Community'**
@@ -23235,7 +23337,7 @@ abstract class FluxerLocalizations {
   /// No description provided for @guildSettingsModerationContentFilterDiscoveryNote.
   ///
   /// In en, this message translates to:
-  /// **'Communities listed in Discovery are required to scan all members. This setting cannot be changed while Discovery is enabled.'**
+  /// **'Communities listed in Explore must scan messages from all members. You can\'t change this setting while your community is listed in Explore.'**
   String get guildSettingsModerationContentFilterDiscoveryNote;
 
   /// No description provided for @guildSettingsContentFilterOff.

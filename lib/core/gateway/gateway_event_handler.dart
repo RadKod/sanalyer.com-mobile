@@ -845,7 +845,10 @@ class GatewayEventHandler {
       processedGuilds = await parseReadyGuilds(
         rawGuilds: event.rawGuilds,
         guildPositions: guildPositions,
-        users: <Map<String, dynamic>>[...?event.users, event.user.toJson()],
+        users: <Map<String, dynamic>>[
+          ...?event.users,
+          jsonDecode(jsonEncode(event.user)) as Map<String, dynamic>,
+        ],
       );
       guildsMs = parsePhase.elapsedMilliseconds;
     }
@@ -956,8 +959,7 @@ class GatewayEventHandler {
           final GuildCreateData guildData = parsed.guildData;
           final String guildId = guildData.guild.id;
           final Set<String> snapshotChannelIds = <String>{};
-          snapshotChannelIdsByGuildId[guildId] = snapshotChannelIds;
-          snapshotRoleIdsByGuildId[guildId] = <String>{
+          final Set<String> snapshotRoleIds = <String>{
             for (final GuildRoleResponse role in guildData.roles) role.id,
           };
           guildCompanions.add(
@@ -1040,6 +1042,12 @@ class GatewayEventHandler {
                   )
                   .toList(),
             ));
+          }
+          if (snapshotChannelIds.isNotEmpty) {
+            snapshotChannelIdsByGuildId[guildId] = snapshotChannelIds;
+          }
+          if (snapshotRoleIds.isNotEmpty) {
+            snapshotRoleIdsByGuildId[guildId] = snapshotRoleIds;
           }
         }
 

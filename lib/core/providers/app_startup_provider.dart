@@ -12,6 +12,7 @@ import 'package:fluxer_app/core/experiments/experiments_provider.dart';
 import 'package:fluxer_app/core/gateway/gateway_presence_coordinator.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/observability/fluxer_observability.dart';
+import 'package:fluxer_app/core/permissions/route_warmup_listener_provider.dart';
 import 'package:fluxer_app/core/premium/current_user_entitlements_provider.dart';
 import 'package:fluxer_app/core/premium/premium_state_sync_provider.dart';
 import 'package:fluxer_app/core/providers/app_runtime_info_provider.dart';
@@ -21,7 +22,6 @@ import 'package:fluxer_app/core/providers/gateway_provider.dart';
 import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/providers/startup_session_expiry.dart';
 import 'package:fluxer_app/core/providers/well_known_provider.dart';
-import 'package:fluxer_app/core/push/fcm/fcm_entrypoint.dart';
 import 'package:fluxer_app/core/push/fcm/fcm_mobile_device_registration.dart';
 import 'package:fluxer_app/core/push/fcm/fcm_notification_tap_binding.dart';
 import 'package:fluxer_app/core/push/launch_notification_account.dart';
@@ -39,6 +39,7 @@ import 'package:fluxer_app/core/theme/providers/theme_preference_provider.dart';
 import 'package:fluxer_app/features/auth/providers/account_manager_provider.dart';
 import 'package:fluxer_app/features/auth/providers/auth_providers.dart';
 import 'package:fluxer_app/features/channels/providers/ack_batcher_gateway_listener_provider.dart';
+import 'package:fluxer_app/features/channels/providers/channel_list_gateway_recovery_listener_provider.dart';
 import 'package:fluxer_app/features/chat/providers/chat_wallpaper_provider.dart';
 import 'package:fluxer_app/features/chat/providers/slowmode/slowmode_sync_provider.dart';
 import 'package:fluxer_app/features/chat/providers/slowmode/slowmode_tracker.dart';
@@ -79,6 +80,8 @@ void authenticatedSessionBindings(Ref ref) {
     ..read(experimentsProvider)
     ..read(voiceP2pConsentRetryProvider)
     ..read(ackBatcherGatewayListenerProvider)
+    ..read(channelListGatewayRecoveryListenerProvider)
+    ..read(routeWarmupListenerProvider)
     ..read(pushTrayBackgroundListenerProvider)
     ..read(fluxerSfxIncomingRingBindingProvider)
     ..read(fluxerMessageSfxBindingProvider)
@@ -159,12 +162,13 @@ class AppStartup extends _$AppStartup {
             .read(pushNotificationTapHandlerProvider.notifier)
             .handlePayloadJson,
       );
+      await FirebaseMessagingPushService.bootstrapAfterAuth();
+      await awaitInFlightFcmTapHandlers();
     }
   }
 
   Future<void> _flushLaunchNavigation() async {
     ref.read(deepLinkHandlerProvider.notifier).processPendingDeepLink();
-    ref.read(pendingPushNotificationPathProvider.notifier).flushIfReady();
     ref.read(pendingHomeQuickActionProvider.notifier).flushIfReady();
   }
 
@@ -219,7 +223,6 @@ class AppStartup extends _$AppStartup {
     unawaited(EmojiRegistry.preload());
     unawaited(FluxerHaptics.warmSend());
     unawaited(ref.read(wellKnownProvider.future));
-    unawaited(bootstrapFcmAfterRunApp());
     final Future<void> restoreIdentifyGuildId = restoreIdentifyInitialGuildId(
       ref.read(identifyInitialGuildIdProvider.notifier),
       database,
@@ -408,9 +411,6 @@ class AppStartup extends _$AppStartup {
       '[AppStartup] Completed in ${startupStopwatch.elapsedMilliseconds}ms',
     );
 
-    if (PushProviderGuard.isFirebaseMessaging && Platform.isAndroid) {
-      unawaited(FirebaseMessagingPushService.bootstrapAfterAuth());
-    }
     if (PushProviderGuard.isFirebaseMessaging) {
       ref.read(fcmMobileDeviceRegistrationProvider);
     }

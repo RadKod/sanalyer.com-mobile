@@ -120,16 +120,8 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
     action();
   }
 
-  void runReadyHeavyWork(String? guildId) {
+  void runReadyGuildSync(String? guildId) {
     ifMounted(() {
-      unawaited(
-        ref
-            .read(channelPermissionCacheProvider.notifier)
-            .rebuildAfterReady(priorityGuildId: guildId),
-      );
-      ref
-        ..invalidate(effectiveGuildChannelPermissionBitsProvider)
-        ..invalidate(channelLocalGuildChannelPermissionBitsProvider);
       if (guildId != null) {
         ref.read(guildSyncProvider.notifier).syncIfNeeded(guildId, force: true);
       }
@@ -139,7 +131,7 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
   void scheduleReadyHeavyWork(String? guildId) {
     ifMounted(() {
       if (ref.read(splashRevealCompleteProvider)) {
-        runReadyHeavyWork(guildId);
+        runReadyGuildSync(guildId);
         return;
       }
       pendingReadyHeavyWork = (guildId: guildId);
@@ -153,7 +145,7 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
         return;
       }
       pendingReadyHeavyWork = null;
-      runReadyHeavyWork(pending.guildId);
+      runReadyGuildSync(pending.guildId);
     })
     ..listen<Set<String>>(blockedUserIdsProvider, (_, Set<String> next) {
       mentionCache.blockedUserIds = next;
@@ -219,7 +211,7 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
           '[Gateway] compression: negotiated=${stats.compressionNegotiated} frames=${stats.frames} wire=${stats.wireBytes} decompressed=${stats.decompressedBytes}',
         );
       }
-      final String? activeGuildId = ref.read(activeGuildIdProvider);
+      final String? recoveryGuildId = ref.read(contextualGuildIdProvider);
       ref.read(gatewayReadyProvider.notifier).setReady();
       ref.read(guildSyncProvider.notifier).clearAll();
       clearGuildRolesPrefetchState();
@@ -228,7 +220,7 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
       ref.read(memberListDesiredRangesProvider.notifier).clearAll();
       ref.read(memberListUpdateBatcherProvider).clearAll();
       ref.read(threadMemberListsProvider.notifier).clearAll();
-      scheduleReadyHeavyWork(activeGuildId);
+      scheduleReadyHeavyWork(recoveryGuildId);
       ref.read(gatewaySessionRecoveryProvider.notifier).bump();
       ref.read(gatewayFullRecoveryProvider.notifier).bump();
       ref.read(pendingPushNotificationPathProvider.notifier).flushIfReady();
@@ -387,6 +379,10 @@ Raw<StreamSubscription<GatewayEvent>?> gatewayEventListener(Ref ref) {
         ..invalidate(channelLocalGuildChannelPermissionBitsProvider(channelId));
     }),
     onChannelDelete: (channelId) => ifMounted(() {
+      ref.read(channelPermissionCacheProvider.notifier).evictChannel(channelId);
+      ref
+        ..invalidate(effectiveGuildChannelPermissionBitsProvider(channelId))
+        ..invalidate(channelLocalGuildChannelPermissionBitsProvider(channelId));
       ref.read(chatViewModelProvider.notifier).forgetChannel(channelId);
       ref.read(slowmodeTrackerProvider.notifier).clearChannel(channelId);
       ref.read(savedMessagesProvider.notifier).handleChannelDelete(channelId);

@@ -462,6 +462,12 @@ final class ApplePushBridge: NSObject, FlutterStreamHandler {
         }
         result(self.deviceTokenHex)
       }
+    case "getApnsEnvironment":
+      result(Self.apnsEnvironment())
+    case "getVoipDeviceToken":
+      DispatchQueue.main.async {
+        result(VoipRegistry.shared.currentTokenHex())
+      }
     case "removeDeliveredNotificationsForChannel":
       guard let args = call.arguments as? [String: Any],
         let channelId = args["channelId"] as? String,
@@ -525,6 +531,24 @@ final class ApplePushBridge: NSObject, FlutterStreamHandler {
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+
+  private static func apnsEnvironment() -> String {
+    guard
+      let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+      let data = try? Data(contentsOf: url),
+      let start = data.range(of: Data("<?xml".utf8)),
+      let end = data.range(of: Data("</plist>".utf8), in: start.lowerBound..<data.endIndex),
+      let plist = try? PropertyListSerialization.propertyList(
+        from: data.subdata(in: start.lowerBound..<end.upperBound),
+        format: nil
+      ) as? [String: Any],
+      let entitlements = plist["Entitlements"] as? [String: Any],
+      let environment = entitlements["aps-environment"] as? String
+    else {
+      return "production"
+    }
+    return environment
   }
 
   private static func flattenUserInfo(_ userInfo: [AnyHashable: Any]) -> [String: String] {

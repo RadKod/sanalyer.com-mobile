@@ -14,6 +14,7 @@ import 'package:fluxer_app/core/providers/gateway_performance_providers.dart';
 import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/channels/data/read_state_utils.dart';
+import 'package:fluxer_app/features/channels/providers/guild_channel_unread_snapshot_provider.dart';
 import 'package:fluxer_app/features/channels/providers/read_state_write_batcher_provider.dart';
 import 'package:fluxer_app/features/channels/providers/unread_provider.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
@@ -62,6 +63,11 @@ class _FixedGuildListViewModel extends GuildListViewModel {
 
   @override
   GuildListViewState build() => GuildListViewState(guilds: _guilds);
+}
+
+class _EmptyGuildListViewModel extends GuildListViewModel {
+  @override
+  GuildListViewState build() => const GuildListViewState(guilds: <Guild>[]);
 }
 
 Future<void> _waitFor(bool Function() condition) async {
@@ -408,7 +414,16 @@ void main() {
         includeMember: false,
       );
 
-      final container = _container(db: db, userId: userId, guildId: guildId);
+      final container = ProviderContainer(
+        overrides: [
+          fluxerDatabaseProvider.overrideWithValue(db),
+          currentUserIdProvider.overrideWithValue(userId),
+          userSettingsViewModelProvider.overrideWith(
+            () => _FixedUserSettingsViewModel(userId),
+          ),
+          guildListViewModelProvider.overrideWith(_EmptyGuildListViewModel.new),
+        ],
+      );
       addTearDown(container.dispose);
       container.read(gatewayReadyProvider.notifier).setReady();
 
@@ -452,7 +467,16 @@ void main() {
         includeMember: false,
       );
 
-      final container = _container(db: db, userId: userId, guildId: guildId);
+      final container = ProviderContainer(
+        overrides: [
+          fluxerDatabaseProvider.overrideWithValue(db),
+          currentUserIdProvider.overrideWithValue(userId),
+          userSettingsViewModelProvider.overrideWith(
+            () => _FixedUserSettingsViewModel(userId),
+          ),
+          guildListViewModelProvider.overrideWith(_EmptyGuildListViewModel.new),
+        ],
+      );
       addTearDown(container.dispose);
       container.read(gatewayReadyProvider.notifier).setReady();
 
@@ -946,6 +970,46 @@ void main() {
                     ?.mentionCount ??
                 0) >
             0,
+      );
+    },
+  );
+
+  test(
+    'channelUnreadOrLastKnown prefers live stream over stale snapshot',
+    () async {
+      const String channelId = 'channel-1';
+      final db = openTestDatabase();
+      final container = _container(db: db, userId: 'me', guildId: 'guild-1');
+      addTearDown(container.dispose);
+      container.read(guildChannelUnreadSnapshotProvider.notifier).apply(
+        <String, UnreadState>{channelId: const UnreadState()},
+      );
+      final ProviderSubscription<AsyncValue<UnreadState>> sub = container
+          .listen(
+            channelUnreadProvider(channelId),
+            (_, _) {},
+            fireImmediately: true,
+          );
+      addTearDown(sub.close);
+      await db.readStateDao.upsertReadState(
+        const ReadStatesCompanion(
+          channelId: Value(channelId),
+          mentionCount: Value(4),
+        ),
+      );
+      await _waitFor(
+        () =>
+            container
+                .read(channelUnreadProvider(channelId))
+                .value
+                ?.mentionCount ==
+            4,
+      );
+      expect(
+        container
+            .read(channelUnreadOrLastKnownProvider(channelId))
+            ?.mentionCount,
+        4,
       );
     },
   );

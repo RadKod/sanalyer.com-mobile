@@ -76,8 +76,10 @@ import 'package:fluxer_app/features/settings/providers/advanced_preferences_prov
 import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
+import 'package:fluxer_app/features/shell/providers/shell_sidebar_width_provider.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_sidebar_tile.dart';
 import 'package:fluxer_app/features/ui/action_menu/context_menu_widgets.dart';
+import 'package:fluxer_app/features/ui/scroller/fluxer_smooth_scrollbar.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/features/voice/presentation/sheets/voice_channel_chat_sheet.dart';
 import 'package:fluxer_app/features/voice/presentation/sheets/voice_p2p_sheets.dart';
@@ -102,10 +104,10 @@ import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 part 'guild_sidebar_banner_layout.dart';
-part 'guild_sidebar_header.dart';
+part 'guild_sidebar_category_header.dart';
 part 'guild_sidebar_channel_list.dart';
 part 'guild_sidebar_channel_tile.dart';
-part 'guild_sidebar_category_header.dart';
+part 'guild_sidebar_header.dart';
 part 'guild_sidebar_helpers.dart';
 part 'guild_sidebar_members_tile.dart';
 
@@ -174,10 +176,13 @@ class _GuildSidebarState extends ConsumerState<GuildSidebar> {
     final bool showStaticHeader =
         guildOutageUnavailable || !guildReady || !hasReceivedInitialChannelList;
 
+    final double channelSidebarWidth = watchResolvedShellChannelSidebarWidth(
+      ref,
+      context,
+    );
+
     return Container(
-      width: channelSidebarHasFixedWidth(context)
-          ? context.layout.sidebarWidth
-          : null,
+      width: channelSidebarHasFixedWidth(context) ? channelSidebarWidth : null,
       padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
       decoration: BoxDecoration(
         color: context.colors.channelSidebarBackground,
@@ -189,6 +194,7 @@ class _GuildSidebarState extends ConsumerState<GuildSidebar> {
             GuildSidebarHeader(
               guild: guild,
               outageUnavailable: guildOutageUnavailable,
+              channelSidebarWidth: channelSidebarWidth,
               onTap: guildOutageUnavailable || guild == null
                   ? null
                   : () => unawaited(_handleServerHeaderTap(context, guild)),

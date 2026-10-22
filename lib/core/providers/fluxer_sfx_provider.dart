@@ -5,7 +5,6 @@ import 'package:fluxer_app/core/audio/enums/fluxer_sfx_clip.dart';
 import 'package:fluxer_app/core/audio/fluxer_sfx.dart';
 import 'package:fluxer_app/core/audio/message_notification_sfx_scheduler.dart';
 import 'package:fluxer_app/core/audio/sound_effect_policy.dart';
-import 'package:fluxer_app/core/notifications/system_notification_sound_policy.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/providers/app_ui_lifecycle_provider.dart';
 import 'package:fluxer_app/core/providers/obscuring_overlay_tracker_provider.dart';
@@ -72,6 +71,62 @@ FluxerSfxClip _clipForKind(MessageNotificationSfxClipKind kind) {
     MessageNotificationSfxClipKind.sameChannelMessage =>
       FluxerSfxClip.sameChannelMessage,
   };
+}
+
+void _scheduleMessageNotificationSfx({
+  required Ref ref,
+  required MessageNotificationSfxScheduler scheduler,
+  required MessageNotificationSfxPlayRequest request,
+}) {
+  if (!_soundEffectAllowed(ref, request.clipKind.soundSettingsKey)) {
+    return;
+  }
+  final FluxerSfxClip clip = _clipForKind(request.clipKind);
+  scheduler.schedule(
+    clip: clip,
+    play: (FluxerSfxClip scheduledClip) {
+      if (!ref.read(appUiForegroundProvider)) {
+        return;
+      }
+      _playConfiguredSfx(ref, scheduledClip);
+    },
+  );
+}
+
+Future<void> _playBestEffortMessageSfxAfterCancellation({
+  required Ref ref,
+  required MessageCreated evt,
+  required MessageNotificationSfxDeduper deduper,
+  required MessageNotificationSfxScheduler scheduler,
+}) async {
+  final String? uid = ref.read(currentUserIdProvider);
+  if (uid == null || !ref.read(appUiForegroundProvider)) {
+    return;
+  }
+  try {
+    final MessageNotificationSfxPlayRequest? request =
+        await FluxerMessageNotificationSfxEvaluator.evaluateFromSnapshot(
+          message: evt.event.message,
+          snapshot: evt.snapshot,
+          currentUserId: uid,
+          blockedUserIds: const <String>{},
+          selfIsDnd: false,
+          deduper: deduper,
+          foreground: true,
+          viewingChannel: false,
+          hasObscuringOverlay: false,
+        );
+    if (request == null) {
+      return;
+    }
+    _scheduleMessageNotificationSfx(
+      ref: ref,
+      scheduler: scheduler,
+      request: request,
+    );
+  } on CancellationException {
+    // Ignore any errors
+  }
 }
 
 @Riverpod(keepAlive: true)
@@ -143,25 +198,18 @@ void fluxerMessageSfxBinding(Ref ref) {
           if (request == null) {
             return;
           }
-          if (await isSystemNotificationSoundSuppressed()) {
-            return;
-          }
-          if (!_soundEffectAllowed(ref, request.clipKind.soundSettingsKey)) {
-            return;
-          }
-          final FluxerSfxClip clip = _clipForKind(request.clipKind);
-          scheduler.schedule(
-            clip: clip,
-            play: (FluxerSfxClip scheduledClip) {
-              if (!ref.read(appUiForegroundProvider)) {
-                return;
-              }
-              _playConfiguredSfx(ref, scheduledClip);
-            },
+          _scheduleMessageNotificationSfx(
+            ref: ref,
+            scheduler: scheduler,
+            request: request,
           );
         } on CancellationException {
-          // Best-effort sound: the database connection closed while this
-          // event was in flight (app teardown or hot restart).
+          await _playBestEffortMessageSfxAfterCancellation(
+            ref: ref,
+            evt: evt,
+            deduper: deduper,
+            scheduler: scheduler,
+          );
         }
       });
   ref.onDispose(sub.cancel);
@@ -188,12 +236,19 @@ void fluxerSfxIncomingRingBinding(Ref ref) {
       soundType: kSoundTypeIncomingRing,
     );
     if (shouldPlay && soundEnabled) {
-      isIncomingRingPlaying = true;
       final double volume = computeEffectiveSfxVolume(
         prefs: soundPrefs,
         soundType: kSoundTypeIncomingRing,
       );
-      unawaited(sfx.startLoop(FluxerSfxClip.incomingRing, volume: volume));
+      unawaited(() async {
+        final bool started = await sfx.startLoop(
+          FluxerSfxClip.incomingRing,
+          volume: volume,
+        );
+        if (started) {
+          isIncomingRingPlaying = true;
+        }
+      }());
       return;
     }
     if (!isIncomingRingPlaying) {
