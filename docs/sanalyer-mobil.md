@@ -5,7 +5,7 @@ Uygulama açılışta doğrudan https://sanalyer.com'a bağlanır, adı, ikonu v
 
 Repo: https://github.com/RadKod/sanalyer.com-mobile (eski adı RadKod/flutter_client, GitHub
 eski adresi yönlendiriyor). Upstream: https://github.com/fluxerapp/flutter_client, branch
-`canary`. Son senkron: upstream `b06250ca8` (2026-10-16); fork'un `canary` branch'i bu commit'te,
+`canary`. Son senkron: upstream `e881d2808` (2026-10-22); fork'un `canary` branch'i bu commit'te,
 `sanalyer` branch'ine merge edildi.
 
 ## Ne değişti
@@ -40,10 +40,10 @@ eski adresi yönlendiriyor). Upstream: https://github.com/fluxerapp/flutter_clie
 
 Flutter'ın güncel stable sürümü gerekiyor (pubspec `sdk: ^3.12.0` istiyor). Homebrew'daki
 Flutter 3.35.7 (Dart 3.9.2) yetmiyor. Bu Mac'te ayrı bir kopya var:
-`~/.cache/flutter-stable-sanalyer` (Flutter 3.47.7, Dart 3.13.5).
+`~/.local/share/flutter-stable-sanalyer` (Flutter 3.47.7, Dart 3.13.5; `git clone --depth 1 --branch 3.47.7 https://github.com/flutter/flutter.git`). Eski yeri `~/.cache` temizlikte silindi.
 
 ```sh
-export PATH=~/.cache/flutter-stable-sanalyer/bin:$PATH
+export PATH=~/.local/share/flutter-stable-sanalyer/bin:$PATH
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs   # *.g.dart repoda yok
 flutter analyze
@@ -147,7 +147,7 @@ Eklentiler kapatılmadı: Share, Broadcast ve NotificationService ilk sürümde 
 
 ```sh
 export LANG=en_US.UTF-8
-export PATH=~/.cache/flutter-stable-sanalyer/bin:~/.local/share/gem/ruby/3.4.0/bin:/opt/homebrew/opt/ruby/bin:~/.cargo/bin:$PATH
+export PATH=~/.local/share/flutter-stable-sanalyer/bin:~/.local/share/gem/ruby/3.4.0/bin:/opt/homebrew/opt/ruby/bin:~/.cargo/bin:$PATH
 dart tool/configure_build.dart --profile=ios-store && flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 (cd ios && pod install)
