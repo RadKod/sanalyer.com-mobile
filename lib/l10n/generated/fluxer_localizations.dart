@@ -3743,7 +3743,7 @@ abstract class FluxerLocalizations {
   /// Hint for yearly Operators list opt-in.
   ///
   /// In en, this message translates to:
-  /// **'Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.'**
+  /// **'Once a year, we publish a list of Operators in the notes of a sanalyer release and in its source code. Your wall name is only on it if you turn this on.'**
   String get operatorPassWallReleaseListHint;
 
   /// Save Operators' wall settings.
@@ -7133,7 +7133,7 @@ abstract class FluxerLocalizations {
   /// Body when mature access must be enabled on web or desktop instead of in the iOS app.
   ///
   /// In en, this message translates to:
-  /// **'Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.'**
+  /// **'Turn on age-restricted communities and channels at sanalyer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.'**
   String get matureContentIosWebOptInBody;
 
   /// Body when a minor cannot access a mature category.

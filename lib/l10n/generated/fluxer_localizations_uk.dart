@@ -2178,7 +2178,7 @@ class FluxerLocalizationsUk extends FluxerLocalizations {
 
   @override
   String get operatorPassWallReleaseListHint =>
-      'Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.';
+      'Once a year, we publish a list of Operators in the notes of a sanalyer release and in its source code. Your wall name is only on it if you turn this on.';
 
   @override
   String get operatorPassWallSave => 'Save';
@@ -4437,7 +4437,7 @@ class FluxerLocalizationsUk extends FluxerLocalizations {
 
   @override
   String get matureContentIosWebOptInBody =>
-      'Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.';
+      'Turn on age-restricted communities and channels at sanalyer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.';
 
   @override
   String get matureCategoryUnavailableBody =>

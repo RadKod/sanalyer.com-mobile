@@ -2814,7 +2814,7 @@
     "@operatorPassWallReleaseList": {
         "description": "Switch for yearly Operators list opt-in."
     },
-    "operatorPassWallReleaseListHint": "Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.",
+    "operatorPassWallReleaseListHint": "Once a year, we publish a list of Operators in the notes of a sanalyer release and in its source code. Your wall name is only on it if you turn this on.",
     "@operatorPassWallReleaseListHint": {
         "description": "Hint for yearly Operators list opt-in."
     },
@@ -5669,7 +5669,7 @@
     "@matureCommunityUnavailableBody": {
         "description": "Body when a minor cannot access a mature community."
     },
-    "matureContentIosWebOptInBody": "Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.",
+    "matureContentIosWebOptInBody": "Turn on age-restricted communities and channels at sanalyer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.",
     "@matureContentIosWebOptInBody": {
         "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },

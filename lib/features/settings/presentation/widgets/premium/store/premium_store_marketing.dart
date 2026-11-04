@@ -7,7 +7,7 @@ import 'package:fluxer_app/features/ui/text_link/fluxer_text_link.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 
-const String kPremiumVisionaryHelpUrl = 'https://fluxer.app/help/visionary';
+const String kPremiumVisionaryHelpUrl = 'https://sanalyer.com';
 
 class PremiumStoreMarketingSections extends StatelessWidget {
   const PremiumStoreMarketingSections({super.key});
