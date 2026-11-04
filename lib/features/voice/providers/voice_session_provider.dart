@@ -6,15 +6,17 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:fluxer_app/core/api/api_exception.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
+import 'package:fluxer_app/core/api/retry_interceptor.dart';
 import 'package:fluxer_app/core/audio/enums/fluxer_sfx_clip.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
-import 'package:fluxer_app/core/providers/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/app/fluxer_sfx_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/fluxer_sfx_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_connection_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/system_permissions/system_permission_kind.dart';
 import 'package:fluxer_app/core/system_permissions/system_permission_result.dart';
@@ -22,17 +24,17 @@ import 'package:fluxer_app/core/system_permissions/system_permission_service.dar
 import 'package:fluxer_app/core/talker.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/mature_content/utils/channel_gate_navigator.dart';
-import 'package:fluxer_app/features/settings/providers/sound_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/voice_settings_provider.dart';
-import 'package:fluxer_app/features/settings/utils/sound_sfx_playback.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/sound_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/voice_settings_provider.dart';
+import 'package:fluxer_app/features/settings/utils/sound/sound_sfx_playback.dart';
 import 'package:fluxer_app/features/voice/domain/local_voice_state_data.dart';
 import 'package:fluxer_app/features/voice/domain/voice_connect_failed_target.dart';
 import 'package:fluxer_app/features/voice/domain/voice_settings_state.dart';
 import 'package:fluxer_app/features/voice/providers/local_voice_state_provider.dart';
-import 'package:fluxer_app/features/voice/providers/screen_share_capability_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_call_display_preferences_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_call_layout_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_callkit_engine_gate_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_capability_providers.dart';
 import 'package:fluxer_app/features/voice/providers/voice_channel_participants_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_channel_permissions_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_join_eligibility_provider.dart';
@@ -42,25 +44,27 @@ import 'package:fluxer_app/features/voice/providers/voice_screen_share_watch_til
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/services/mesh/voice_mesh_transport.dart';
 import 'package:fluxer_app/features/voice/services/voice_settings_applicator.dart';
-import 'package:fluxer_app/features/voice/utils/android_screen_share_background.dart';
-import 'package:fluxer_app/features/voice/utils/channel_e2ee_status.dart';
-import 'package:fluxer_app/features/voice/utils/entrance_sound_playback.dart';
-import 'package:fluxer_app/features/voice/utils/microphone_permission.dart';
-import 'package:fluxer_app/features/voice/utils/voice_audio_publish_options.dart';
-import 'package:fluxer_app/features/voice/utils/voice_audio_route_recovery.dart';
-import 'package:fluxer_app/features/voice/utils/voice_callkit_policy.dart';
-import 'package:fluxer_app/features/voice/utils/voice_camera_platform.dart';
-import 'package:fluxer_app/features/voice/utils/voice_channel_join_guard.dart';
-import 'package:fluxer_app/features/voice/utils/voice_channel_permissions.dart';
-import 'package:fluxer_app/features/voice/utils/voice_connection_voice_state.dart';
-import 'package:fluxer_app/features/voice/utils/voice_effective_audio_state.dart';
-import 'package:fluxer_app/features/voice/utils/voice_join_timing.dart';
-import 'package:fluxer_app/features/voice/utils/voice_lifecycle_log.dart';
-import 'package:fluxer_app/features/voice/utils/voice_media_teardown.dart';
-import 'package:fluxer_app/features/voice/utils/voice_p2p_mode.dart';
-import 'package:fluxer_app/features/voice/utils/voice_participant_volume_utils.dart';
-import 'package:fluxer_app/features/voice/utils/voice_server_update_decision.dart';
-import 'package:fluxer_app/features/voice/utils/voice_volume_utils.dart';
+import 'package:fluxer_app/features/voice/utils/audio/audio_publish_options.dart';
+import 'package:fluxer_app/features/voice/utils/audio/audio_route_recovery.dart';
+import 'package:fluxer_app/features/voice/utils/audio/effective_audio_state.dart';
+import 'package:fluxer_app/features/voice/utils/audio/entrance_sound_playback.dart';
+import 'package:fluxer_app/features/voice/utils/audio/microphone_permission.dart';
+import 'package:fluxer_app/features/voice/utils/audio/participant_volume_utils.dart';
+import 'package:fluxer_app/features/voice/utils/audio/speaker_route.dart';
+import 'package:fluxer_app/features/voice/utils/audio/voice_join_permissions.dart';
+import 'package:fluxer_app/features/voice/utils/audio/volume_utils.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/callkit_policy.dart';
+import 'package:fluxer_app/features/voice/utils/connection/channel_join_guard.dart';
+import 'package:fluxer_app/features/voice/utils/connection/channel_permissions.dart';
+import 'package:fluxer_app/features/voice/utils/connection/connection_voice_state.dart';
+import 'package:fluxer_app/features/voice/utils/connection/join_timing.dart';
+import 'package:fluxer_app/features/voice/utils/connection/media_teardown.dart';
+import 'package:fluxer_app/features/voice/utils/connection/server_update_decision.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/e2ee_status.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/p2p_mode.dart';
+import 'package:fluxer_app/features/voice/utils/lifecycle/lifecycle_log.dart';
+import 'package:fluxer_app/features/voice/utils/media/camera_platform.dart';
+import 'package:fluxer_app/features/voice/utils/screen_share/android_screen_share_background.dart';
 import 'package:fluxer_app/features/voice/voice_session_errors.dart';
 import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/shared/utils/api_error_presentation.dart';
@@ -150,17 +154,31 @@ class VoiceSession extends _$VoiceSession {
   VoiceChannelPermissions? _channelPermissions;
   VoiceJoinTiming? _joinTiming;
   Future<void>? _liveKitTeardownTail;
+  bool _preJoinPermissionsInFlight = false;
 
   @override
   VoiceSessionState build() {
+    final String? accountUserId = accountUserIdOrNull(ref, watch: true);
+
+    ref.onDispose(_teardownOnDispose);
+
+    if (accountUserId != null) {
+      ref
+        ..listen<ChannelPermissionCaches>(
+          channelPermissionCacheProvider(accountUserId),
+          (ChannelPermissionCaches? _, ChannelPermissionCaches _) {
+            unawaited(_onChannelPermissionsChanged());
+          },
+        )
+        ..listen<Map<String, VoiceState>>(
+          voiceStatesMapProvider(accountUserId),
+          (Map<String, VoiceState>? _, Map<String, VoiceState> next) {
+            _syncMeshRoster(next);
+          },
+        );
+    }
+
     ref
-      ..onDispose(_teardownOnDispose)
-      ..listen<ChannelPermissionCaches>(channelPermissionCacheProvider, (
-        ChannelPermissionCaches? _,
-        ChannelPermissionCaches _,
-      ) {
-        unawaited(_onChannelPermissionsChanged());
-      })
       ..listen<VoiceSettingsState>(voiceSettingsProvider, (
         VoiceSettingsState? previous,
         VoiceSettingsState next,
@@ -169,12 +187,6 @@ class VoiceSession extends _$VoiceSession {
           return;
         }
         unawaited(_onVoiceSettingsChanged(previous, next));
-      })
-      ..listen<Map<String, VoiceState>>(voiceStatesMapProvider, (
-        Map<String, VoiceState>? _,
-        Map<String, VoiceState> next,
-      ) {
-        _syncMeshRoster(next);
       })
       ..listen<bool>(voiceCallKitEngineSuppressedProvider, (
         bool? previous,
@@ -199,6 +211,22 @@ class VoiceSession extends _$VoiceSession {
         );
       });
     return const VoiceSessionState();
+  }
+
+  void _runVoiceAsync(Future<void> Function() body, {String? label}) {
+    unawaited(() async {
+      try {
+        await body();
+      } on Object catch (error, stackTrace) {
+        final String tag = label ?? 'async voice work';
+        final String message = '[Voice] $tag: $error';
+        if (isTransientNetworkError(error)) {
+          talker.debug(message, error, stackTrace);
+        } else {
+          talker.warning(message, error, stackTrace);
+        }
+      }
+    }());
   }
 
   void _cancelConnectWatchdog() {
@@ -331,6 +359,7 @@ class VoiceSession extends _$VoiceSession {
       _sendVoiceDisconnectState(guildId: guildId, connectionId: connectionId);
       await _prepareVoiceMediaTeardownBeforeRoomDisconnect();
       await _disconnectAndDisposeRoom(roomToDisconnect, reason: reason);
+      await _releaseAndroidRouteIfCurrent(generation + 1);
     }
     state = state.copyWith(
       isConnecting: false,
@@ -592,6 +621,25 @@ class VoiceSession extends _$VoiceSession {
       );
       return false;
     }
+    if (_preJoinPermissionsInFlight) {
+      talker.info(
+        '[Voice] Join skipped: pre-join permissions in progress '
+        '(channelId=$channelId).',
+      );
+      return false;
+    }
+    _preJoinPermissionsInFlight = true;
+    bool joinMicrophoneGranted = false;
+    try {
+      joinMicrophoneGranted = await requestVoiceJoinMediaPermissionGranted(
+        SystemPermissionKind.microphone,
+      );
+    } finally {
+      _preJoinPermissionsInFlight = false;
+    }
+    if (!ref.mounted) {
+      return false;
+    }
     _lastConnectRequestAt = now;
     _startWithVideoAfterConnect = initialSelfVideo;
     final local = ref.read(localVoiceStateProvider);
@@ -603,12 +651,15 @@ class VoiceSession extends _$VoiceSession {
     }
     if (guildId != null) {
       final int? permissionBits = ref
-          .read(channelPermissionCacheProvider.notifier)
+          .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
           .getChannelBits(channelId);
       if (permissionBits != null &&
           !hasPermission(permissionBits, Permission.speak)) {
         resolvedSelfMute = true;
       }
+    }
+    if (!joinMicrophoneGranted) {
+      resolvedSelfMute = true;
     }
     _pendingSelfMute = resolvedSelfMute;
     _pendingSelfDeaf = resolvedSelfDeaf;
@@ -639,7 +690,9 @@ class VoiceSession extends _$VoiceSession {
     }
     if (startOutgoingCall) {
       ref
-          .read(outgoingVoiceCallInitiatorProvider.notifier)
+          .read(
+            outgoingVoiceCallInitiatorProvider(readAccountUserId(ref)).notifier,
+          )
           .markInitiated(
             channelId: channelId,
             outboundRingRecipients: outboundRingRecipients ?? const [],
@@ -699,35 +752,12 @@ class VoiceSession extends _$VoiceSession {
       return false;
     }
     _armConnectWatchdog(_connectGeneration);
-    unawaited(_warmupMicrophoneForJoin(channelId: channelId));
-    if (initialSelfVideo) {
-      unawaited(requestSystemPermission(SystemPermissionKind.camera));
-    }
     prefetchVoiceParticipantsForChannel(
       ref,
       guildId: _expectedGuildId,
       channelId: channelId,
     );
     return true;
-  }
-
-  Future<void> _warmupMicrophoneForJoin({required String channelId}) async {
-    final SystemPermissionOutcome outcome = await requestSystemPermission(
-      SystemPermissionKind.microphone,
-    );
-    if (outcome == SystemPermissionOutcome.granted) {
-      return;
-    }
-    talker.info(
-      '[Voice] Microphone warmup denied; joining listen-only '
-      '(channelId=$channelId).',
-    );
-    if (outcome == SystemPermissionOutcome.requiresSettings) {
-      await ensureSystemPermission(
-        resolveSystemPermissionContext(null),
-        SystemPermissionKind.microphone,
-      );
-    }
   }
 
   String? _acceptedVoiceServerChannelId({
@@ -1042,7 +1072,9 @@ class VoiceSession extends _$VoiceSession {
     if (attempt != _connectGeneration || !identical(state.mesh, mesh)) {
       return;
     }
-    mesh.syncRoster(ref.read(voiceStatesMapProvider).values);
+    mesh.syncRoster(
+      ref.read(voiceStatesMapProvider(readAccountUserId(ref))).values,
+    );
     logVoiceLifecycle(
       'mesh_connected',
       connectGeneration: attempt,
@@ -1198,7 +1230,7 @@ class VoiceSession extends _$VoiceSession {
     ChannelE2eeStatus? channelStatus;
     if (resolvedChannelId != null) {
       channelStatus = computeChannelE2eeStatus(
-        voiceStates: ref.read(voiceStatesMapProvider),
+        voiceStates: ref.read(voiceStatesMapProvider(readAccountUserId(ref))),
         guildId: resolvedGuildId,
         channelId: resolvedChannelId,
         guildHasVoiceE2ee: _guildHasVoiceE2ee(resolvedGuildId),
@@ -1225,7 +1257,7 @@ class VoiceSession extends _$VoiceSession {
     final String channelId = state.channelId!;
     final String? guildId = state.guildId;
     final ChannelE2eeStatus status = computeChannelE2eeStatus(
-      voiceStates: ref.read(voiceStatesMapProvider),
+      voiceStates: ref.read(voiceStatesMapProvider(readAccountUserId(ref))),
       guildId: guildId,
       channelId: channelId,
       guildHasVoiceE2ee: _guildHasVoiceE2ee(guildId),
@@ -1495,7 +1527,6 @@ class VoiceSession extends _$VoiceSession {
       }
       return;
     }
-    final VoiceSettingsState voiceSettings = ref.read(voiceSettingsProvider);
     final Room room = Room(roomOptions: roomOptions);
     _managedLiveKitRoom = room;
     if (attempt != _connectGeneration) {
@@ -1534,11 +1565,7 @@ class VoiceSession extends _$VoiceSession {
       timeouts: useE2ee ? _kE2eeConnectTimeouts : Timeouts.defaultTimeouts,
     );
     _armLiveKitConnectWatchdog(attempt);
-    final VoiceSettingsApplicator applicator = _voiceSettingsApplicator(
-      channelId: resolvedChannelId,
-    );
     try {
-      unawaited(applicator.applySpeakerOutput(settings: voiceSettings));
       await restoreAutomaticAudioSessionAfterMesh();
       await room.connect(
         event.endpoint,
@@ -1902,7 +1929,7 @@ class VoiceSession extends _$VoiceSession {
     );
     final VoiceChannelMode mode = voiceChannelMode(
       voiceStatesForChannel(
-        voiceStates: ref.read(voiceStatesMapProvider),
+        voiceStates: ref.read(voiceStatesMapProvider(readAccountUserId(ref))),
         channelId: resolvedChannelId,
         guildId: resolvedGuildId,
       ),
@@ -1987,7 +2014,9 @@ class VoiceSession extends _$VoiceSession {
       return;
     }
     ref
-        .read(outgoingVoiceCallInitiatorProvider.notifier)
+        .read(
+          outgoingVoiceCallInitiatorProvider(readAccountUserId(ref)).notifier,
+        )
         .clearChannel(channelId);
   }
 
@@ -2012,18 +2041,6 @@ class VoiceSession extends _$VoiceSession {
     );
     if (cameraOutcome != SystemPermissionOutcome.granted ||
         attempt != _connectGeneration) {
-      if (attempt == _connectGeneration) {
-        if (cameraOutcome == SystemPermissionOutcome.denied) {
-          state = state.copyWith(
-            errorMessage: kVoiceSessionErrorCameraPermission,
-          );
-        } else if (cameraOutcome == SystemPermissionOutcome.requiresSettings) {
-          await ensureSystemPermission(
-            resolveSystemPermissionContext(null),
-            SystemPermissionKind.camera,
-          );
-        }
-      }
       return;
     }
     _togglingVideo = true;
@@ -2068,6 +2085,12 @@ class VoiceSession extends _$VoiceSession {
     _leaveVoiceInFlight = leaveCompleter.future;
     try {
       await _leaveVoiceImpl();
+    } on Object catch (error, stackTrace) {
+      if (isTransientNetworkError(error)) {
+        talker.debug('[Voice] leaveVoice: $error', error, stackTrace);
+      } else {
+        talker.warning('[Voice] leaveVoice: $error', error, stackTrace);
+      }
     } finally {
       try {
         await _finishRequestedEndCall();
@@ -2078,6 +2101,39 @@ class VoiceSession extends _$VoiceSession {
         _leaveVoiceInFlight = null;
       }
     }
+  }
+
+  Future<bool> leaveInterruptedGatewayVoice(String channelId) async {
+    if (channelId.isEmpty) {
+      return false;
+    }
+    if (state.isInVoice && state.channelId == channelId) {
+      await leaveVoice(endCall: false);
+      return true;
+    }
+    final String? userId = ref.read(currentUserIdProvider);
+    if (userId == null) {
+      return false;
+    }
+    VoiceState? selfOnServer;
+    for (final VoiceState voiceState
+        in ref.read(voiceStatesMapProvider(readAccountUserId(ref))).values) {
+      if (voiceState.userId == userId && voiceState.channelId == channelId) {
+        selfOnServer = voiceState;
+        break;
+      }
+    }
+    if (selfOnServer == null) {
+      return false;
+    }
+    final String? connectionId = selfOnServer.connectionId;
+    final String? guildId = selfOnServer.guildId;
+    if (connectionId != null && guildId != null) {
+      _sendVoiceDisconnectState(guildId: guildId, connectionId: connectionId);
+    } else {
+      _sendVoiceLeaveChannelState(guildId: guildId);
+    }
+    return true;
   }
 
   Future<void> _finishRequestedEndCall() async {
@@ -2197,7 +2253,12 @@ class VoiceSession extends _$VoiceSession {
     if (roomToDisconnect == null) {
       return;
     }
-    unawaited(_disconnectAndDisposeRoom(roomToDisconnect));
+    final int generation = _connectGeneration;
+    unawaited(
+      _disconnectAndDisposeRoom(roomToDisconnect).whenComplete(() {
+        unawaited(_releaseAndroidRouteIfCurrent(generation));
+      }),
+    );
   }
 
   Future<void> _prepareVoiceMediaTeardownBeforeRoomDisconnect() async {
@@ -2284,11 +2345,19 @@ class VoiceSession extends _$VoiceSession {
     }
   }
 
+  Future<void> _releaseAndroidRouteIfCurrent(int generation) async {
+    if (generation != _connectGeneration) {
+      return;
+    }
+    await clearNativeVoiceOutputRouteHold();
+  }
+
   Future<void> _disconnectRoomOnly({
     String? guildId,
     String? connectionId,
     bool skipGatewayDisconnect = false,
   }) async {
+    final int generation = _connectGeneration;
     _detachMediaDeviceChangeListener();
     _detachRoomEventsListener();
     _detachLocalParticipantListener();
@@ -2324,6 +2393,7 @@ class VoiceSession extends _$VoiceSession {
     if (roomToDisconnect != null) {
       await _disconnectAndDisposeRoom(roomToDisconnect);
     }
+    await _releaseAndroidRouteIfCurrent(generation);
   }
 
   void _sendVoiceDisconnectState({
@@ -2408,7 +2478,7 @@ class VoiceSession extends _$VoiceSession {
 
   VoiceState? _selfConnectionVoiceState() {
     return resolveSelfConnectionVoiceState(
-      voiceStates: ref.read(voiceStatesMapProvider),
+      voiceStates: ref.read(voiceStatesMapProvider(readAccountUserId(ref))),
       activeConnectionId: state.activeConnectionId,
       userId: ref.read(currentUserIdProvider),
       channelId: state.channelId,
@@ -2431,6 +2501,14 @@ class VoiceSession extends _$VoiceSession {
     }
     final VoiceState? vs = _selfConnectionVoiceState();
     final bool nextMute = !(vs?.selfMute ?? false);
+    if (!nextMute) {
+      final bool micGranted = await requestVoiceJoinMediaPermissionGranted(
+        SystemPermissionKind.microphone,
+      );
+      if (!ref.mounted || !micGranted) {
+        return;
+      }
+    }
     await setSelfMute(isMuted: nextMute, playSound: true);
     await ref
         .read(localVoiceStateProvider.notifier)
@@ -2514,10 +2592,12 @@ class VoiceSession extends _$VoiceSession {
       return;
     }
     if (nextVideo) {
-      final bool camOk = await _ensureSystemPermissionForVoice(
+      final bool camOk = await requestVoiceJoinMediaPermissionGranted(
         SystemPermissionKind.camera,
-        deniedErrorCode: kVoiceSessionErrorCameraPermission,
       );
+      if (!ref.mounted) {
+        return;
+      }
       if (!camOk) {
         return;
       }
@@ -3105,16 +3185,24 @@ class VoiceSession extends _$VoiceSession {
     }
     _joinTiming?.mark('connected');
     unawaited(_reconcileRemoteAudioForSelfConnection(reason: 'room_connected'));
-    unawaited(_applyVoiceOutputRouting(ref.read(voiceSettingsProvider)));
     _attachMediaDeviceChangeListener();
-    unawaited(
-      _ensureLocalMicrophone(reason: 'room_connected', attempt: attempt),
-    );
+    unawaited(_startCallAudio(attempt));
+  }
+
+  Future<void> _startCallAudio(int attempt) async {
+    await _applyVoiceOutputRouting(ref.read(voiceSettingsProvider));
+    if (!ref.mounted || !_isLatestRoomAttempt(attempt) || !state.isConnected) {
+      return;
+    }
+    await _ensureLocalMicrophone(reason: 'room_connected', attempt: attempt);
   }
 
   void _attachMediaDeviceChangeListener() {
     if (_mediaDeviceChangeSubscription != null) {
       return;
+    }
+    if (Platform.isIOS) {
+      ref.read(voiceIosNativeRouteSyncProvider);
     }
     _mediaDeviceChangeSubscription = Hardware.instance.onDeviceChange.stream
         .listen(_scheduleAudioRouteRecovery);
@@ -3130,6 +3218,7 @@ class VoiceSession extends _$VoiceSession {
     _isRecoveringAudioRoute = false;
     unawaited(_mediaDeviceChangeSubscription?.cancel());
     _mediaDeviceChangeSubscription = null;
+    unawaited(clearNativeVoiceOutputRouteHold());
   }
 
   Set<String> _audioInputDeviceIds(List<MediaDevice> devices) {
@@ -3199,19 +3288,51 @@ class VoiceSession extends _$VoiceSession {
 
     final VoiceSettingsState settings = ref.read(voiceSettingsProvider);
     final VoiceSettingsApplicator applicator = _voiceSettingsApplicator();
+    final bool isAndroid = Platform.isAndroid;
+    final bool isIos = Platform.isIOS;
+    final bool isMobile = isAndroid || isIos;
+    final bool isDesktop = !isMobile;
 
     _isRecoveringAudioRoute = true;
     try {
-      if (outputChanged) {
+      if (shouldReapplyMobileVoiceOutputOnDeviceChange(
+        isIos: isIos,
+        isAndroid: isAndroid,
+        outputChanged: outputChanged,
+      )) {
         await _runAudioRouteRecoveryStep(
           'applySpeakerOutput',
           () => applicator.applySpeakerOutput(settings: settings),
         );
+      } else if (shouldReapplyDesktopAudioOutputOnDeviceChange(
+        isDesktop: isDesktop,
+        outputChanged: outputChanged,
+        configuredOutputDeviceId: settings.outputDeviceId,
+        availableOutputDeviceIds: outputIds,
+      )) {
+        await _runAudioRouteRecoveryStep(
+          'applyDesktopAudioOutput',
+          () => _applyAudioOutputDevice(settings.outputDeviceId),
+        );
+      } else if (shouldClearMissingDesktopOutputDevice(
+        isDesktop: isDesktop,
+        outputChanged: outputChanged,
+        configuredOutputDeviceId: settings.outputDeviceId,
+        availableOutputDeviceIds: outputIds,
+      )) {
+        await _runAudioRouteRecoveryStep('clearDesktopAudioOutput', () async {
+          await ref
+              .read(voiceSettingsProvider.notifier)
+              .setOutputDeviceId(kDefaultVoiceDeviceId);
+        });
       }
       if (inputChanged &&
           shouldRefreshMicrophoneOnAudioRouteChange(
-            isIos: Platform.isIOS,
+            isIos: isIos,
+            isAndroid: isAndroid,
             isForeground: ref.read(appUiForegroundProvider),
+            configuredInputDeviceId: settings.inputDeviceId,
+            availableInputDeviceIds: inputIds,
           ) &&
           _shouldPublishMicrophone()) {
         await _runAudioRouteRecoveryStep('refreshMicrophone', () async {
@@ -3353,6 +3474,7 @@ class VoiceSession extends _$VoiceSession {
         isInVoice: state.isInVoice,
         speakerPreferenceChanged:
             previous != null && previous.outputRoute != next.outputRoute,
+        isAndroid: Platform.isAndroid,
       )) {
         _scheduleSpeakerOutputRetry();
       }
@@ -3696,7 +3818,7 @@ class VoiceSession extends _$VoiceSession {
       return true;
     }
     final int? bits = ref
-        .read(channelPermissionCacheProvider.notifier)
+        .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
         .getChannelBits(channelId);
     if (bits == null) {
       return true;
@@ -3751,14 +3873,15 @@ class VoiceSession extends _$VoiceSession {
         if (!_isLatestRoomAttempt(attempt) || _intentionalLiveKitTeardown) {
           return;
         }
-        unawaited(
-          _onLiveKitRoomConnected(
+        _runVoiceAsync(
+          () => _onLiveKitRoomConnected(
             room: room,
             attempt: attempt,
             resolvedChannelId: resolvedChannelId,
             resolvedGuildId: resolvedGuildId,
             connectionId: connectionId,
           ),
+          label: 'room connected handler',
         );
       })
       ..on<RoomDisconnectedEvent>((RoomDisconnectedEvent evt) {
@@ -3766,7 +3889,10 @@ class VoiceSession extends _$VoiceSession {
           return;
         }
         talker.warning('[Voice] LiveKit room disconnected: ${evt.reason}');
-        unawaited(leaveVoice(endCall: false));
+        _runVoiceAsync(
+          () => leaveVoice(endCall: false),
+          label: 'leave after disconnect',
+        );
       })
       ..on<RoomReconnectingEvent>((RoomReconnectingEvent _) {
         if (!_isLatestRoomAttempt(attempt)) {
@@ -3779,21 +3905,28 @@ class VoiceSession extends _$VoiceSession {
           return;
         }
         state = state.copyWith(isReconnecting: false);
-        unawaited(
-          _reconcileRemoteAudioForSelfConnection(reason: 'room_reconnected'),
+        _runVoiceAsync(
+          () => _reconcileRemoteAudioForSelfConnection(
+            reason: 'room_reconnected',
+          ),
+          label: 'reconcile remote audio after reconnect',
         );
-        unawaited(
-          _reconcileLocalAudioPublish(
+        _runVoiceAsync(
+          () => _reconcileLocalAudioPublish(
             reason: 'room_reconnected',
             attempt: attempt,
           ),
+          label: 'reconcile local publish after reconnect',
         );
       })
       ..on<TrackPublishedEvent>((TrackPublishedEvent evt) {
         if (!_isLatestRoomAttempt(attempt) || _intentionalLiveKitTeardown) {
           return;
         }
-        unawaited(_subscribeRemotePublicationIfNeeded(evt.publication));
+        _runVoiceAsync(
+          () => _subscribeRemotePublicationIfNeeded(evt.publication),
+          label: 'subscribe remote track',
+        );
       })
       ..on<ParticipantConnectedEvent>((ParticipantConnectedEvent evt) {
         if (_intentionalLiveKitTeardown) {
@@ -3805,14 +3938,15 @@ class VoiceSession extends _$VoiceSession {
         final bool isUserParticipant = evt.participant.identity.startsWith(
           'user_',
         );
-        unawaited(
-          playFluxerSoundEffect(
+        _runVoiceAsync(
+          () => playFluxerSoundEffect(
             prefs: ref.read(soundPreferencesProvider),
             sfx: ref.read(fluxerSfxProvider),
             clip: isUserParticipant
                 ? FluxerSfxClip.userJoin
                 : FluxerSfxClip.viewerJoin,
           ),
+          label: 'participant join sound',
         );
       })
       ..on<ParticipantDisconnectedEvent>((ParticipantDisconnectedEvent evt) {
@@ -3825,14 +3959,15 @@ class VoiceSession extends _$VoiceSession {
         final bool isUserParticipant = evt.participant.identity.startsWith(
           'user_',
         );
-        unawaited(
-          playFluxerSoundEffect(
+        _runVoiceAsync(
+          () => playFluxerSoundEffect(
             prefs: ref.read(soundPreferencesProvider),
             sfx: ref.read(fluxerSfxProvider),
             clip: isUserParticipant
                 ? FluxerSfxClip.userLeave
                 : FluxerSfxClip.viewerLeave,
           ),
+          label: 'participant leave sound',
         );
       });
   }

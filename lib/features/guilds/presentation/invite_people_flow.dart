@@ -1,7 +1,7 @@
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/guilds/domain/invite_people_recipient.dart';
 import 'package:fluxer_app/features/guilds/presentation/widgets/invite_people_content.dart';
-import 'package:fluxer_app/features/guilds/utils/invite_people_actions.dart';
+import 'package:fluxer_app/features/guilds/utils/invites/invite_people_actions.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
@@ -25,6 +25,7 @@ class InvitePeopleFlow {
         context,
         title: title,
         useRootNavigator: true,
+        bottomGap: false,
         minChildSize: 0.5,
         builder:
             (
@@ -188,7 +189,7 @@ class InvitePeopleFlow {
         builder: (BuildContext sheetContext, VoidCallback close) {
           final layout = sheetContext.layout;
           return Padding(
-            padding: EdgeInsets.fromLTRB(layout.s4, 0, layout.s4, layout.s4),
+            padding: EdgeInsets.fromLTRB(layout.s4, 0, layout.s4, 0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

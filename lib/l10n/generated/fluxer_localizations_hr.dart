@@ -2013,6 +2013,48 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
   String get emojiPickerTitle => 'Emojii';
 
   @override
+  String get profileBadgesSettingsTitle => 'Badges';
+
+  @override
+  String get profileBadgesSettingsDescription =>
+      'Choose which badges other people see on your profile.';
+
+  @override
+  String get profileBadgesSettingsEmpty => 'You don\'t have any badges yet.';
+
+  @override
+  String get profileBadgesSettingsLoadFailed =>
+      'Your badges couldn\'t be loaded.';
+
+  @override
+  String profileBadgesShowOnProfile(String badgeLabel) {
+    return 'Show $badgeLabel on your profile';
+  }
+
+  @override
+  String profileBadgesOverflowButton(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get profileBadgesShowAllTooltip => 'Show all badges';
+
+  @override
+  String profileBadgesShowAllSemantic(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+$count more badges, show all',
+      one: '+$count more badge, show all',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileBadgesVisionaryNumberNote =>
+      'Shown only when your Visionary badge is visible and not masked.';
+
+  @override
   String get plutoniumBadgePrivacyTitle => 'Privatnost Plutonium značke';
 
   @override
@@ -2055,6 +2097,123 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
 
   @override
   String get hideVisionaryIdDescription => 'Uklonite svoju značku Visionary ID';
+
+  @override
+  String get operatorPassName => 'Operator Pass';
+
+  @override
+  String operatorPassSince(String since) {
+    return 'Operator Pass since $since';
+  }
+
+  @override
+  String get operatorPassShowBadgeOnProfile => 'Show badge on my profile';
+
+  @override
+  String operatorPassHideDate(String operatorPassName) {
+    return 'Hide when you got your $operatorPassName';
+  }
+
+  @override
+  String get operatorPassHideCount => 'Hide how many Operator Passes you have';
+
+  @override
+  String get operatorPassWallTitle => 'Operators\' wall';
+
+  @override
+  String get operatorPassWallHowItWorks => 'How the wall works';
+
+  @override
+  String get operatorPassWallNotListed => 'Not listed.';
+
+  @override
+  String get operatorPassWallOnTheWall => 'On the wall';
+
+  @override
+  String get operatorPassWallInReview => 'In review';
+
+  @override
+  String operatorPassWallReviewBy(String date) {
+    return 'by $date';
+  }
+
+  @override
+  String get operatorPassWallLive => 'Live';
+
+  @override
+  String operatorPassWallDeclined(String name, String reason) {
+    return 'Declined: $name. $reason.';
+  }
+
+  @override
+  String operatorPassWallTeamNote(String note) {
+    return 'Team note: $note';
+  }
+
+  @override
+  String get operatorPassWallHidden => 'Hidden by our team for now.';
+
+  @override
+  String get operatorPassWallHiddenWhy => 'Why?';
+
+  @override
+  String get operatorPassWallRemoved =>
+      'Off the wall while your benefits are removed.';
+
+  @override
+  String get operatorPassTermsLink => 'Operator Pass terms';
+
+  @override
+  String get operatorPassWallSendChanges => 'Send profile changes to the wall';
+
+  @override
+  String get operatorPassWallReleaseList =>
+      'Add my name to the yearly Operators list';
+
+  @override
+  String get operatorPassWallReleaseListHint =>
+      'Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.';
+
+  @override
+  String get operatorPassWallSave => 'Save';
+
+  @override
+  String get operatorPassWallSaved => 'Saved.';
+
+  @override
+  String get operatorPassWallSaveFailed => 'Couldn\'t save. Try again.';
+
+  @override
+  String get operatorPassWallNameSettingsLabel => 'Name on the wall';
+
+  @override
+  String get operatorPassWallNameHint =>
+      'We check new names before they go live.';
+
+  @override
+  String get operatorPassWallDontListMe => 'Don\'t list me';
+
+  @override
+  String get operatorPassWallNameRequired =>
+      'Enter a name, or check Don\'t list me.';
+
+  @override
+  String get operatorPassWallNameTooLong => 'Use 32 characters or fewer.';
+
+  @override
+  String get operatorPassWallDeclineGuidelines =>
+      'Breaks the community guidelines';
+
+  @override
+  String get operatorPassWallDeclineImpersonation =>
+      'Pretends to be someone else';
+
+  @override
+  String get operatorPassWallDeclineRights =>
+      'Uses a name or image without the rights to it';
+
+  @override
+  String get operatorPassWallDeclineAge => 'Not suitable for younger users';
 
   @override
   String get avatarDescriptionNonPremium =>
@@ -4264,6 +4423,10 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
       'Ova zajednica za odrasle nije dostupna vašem računu.';
 
   @override
+  String get matureContentIosWebOptInBody =>
+      'Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.';
+
+  @override
   String get matureCategoryUnavailableBody =>
       'Ova kategorija za odrasle nije dostupna vašem računu.';
 
@@ -6019,6 +6182,9 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
   String get voiceOutputRouteHeadset => 'Slušalice';
 
   @override
+  String get voiceChangeAudioOutputLabel => 'Change audio output';
+
+  @override
   String get voicePanelOnlyShowVideosLabel => 'Prikaži samo videozapise';
 
   @override
@@ -6076,6 +6242,11 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
 
   @override
   String get voiceScreenShareExitFullscreenTooltip => 'Izađi iz punog zaslona';
+
+  @override
+  String voiceVideoZoomLevel(String scale) {
+    return 'Zoom $scale';
+  }
 
   @override
   String get voiceOwnScreenShareTitle => 'Emitirate';
@@ -9624,6 +9795,16 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
       'Dijelite videozapise pune duljine i velike datoteke bez prethodnog smanjivanja. Besplatni računi mogu slati do 25 MB.';
 
   @override
+  String get storePlutoniumStreamTitle => 'Stream in 4K at 60 FPS';
+
+  @override
+  String get storePlutoniumStreamBody =>
+      'Share your screen or camera in up to 4K at 60 frames per second. Free accounts stream in up to 720p at 30.';
+
+  @override
+  String get storePlutoniumManageHeading => 'Your subscription';
+
+  @override
   String get storePlutoniumCompareTitle =>
       'Usporedite besplatni plan i Plutonium';
 
@@ -10516,6 +10697,13 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
   @override
   String get advancedSettingMobileSplashZoomAnimationDescription =>
       'Smanji logotip pri izlasku sa početnog zaslona';
+
+  @override
+  String get advancedSettingSplashQuotesLabel => 'Splash screen quotes';
+
+  @override
+  String get advancedSettingSplashQuotesDescription =>
+      'Show a random quote on the splash screen. Won\'t sync across devices.';
 
   @override
   String get advancedSettingKeyboardHintsLabel => 'Savjeti za tipkovnicu';
@@ -12008,6 +12196,83 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
   }
 
   @override
+  String get guildSettingsRolesRoleIcon => 'Role icon';
+
+  @override
+  String get guildSettingsRolesRoleIconHelper =>
+      'Upload an image or pick an emoji. Members get the icon of their highest role that has one.';
+
+  @override
+  String guildSettingsRolesRoleIconUploadHint(
+    String formats,
+    String minimumSize,
+    String maxSize,
+  ) {
+    return '$formats. At least $minimumSize, up to $maxSize.';
+  }
+
+  @override
+  String get guildSettingsRolesRoleIconUploadAccessibility =>
+      'Upload role icon';
+
+  @override
+  String guildSettingsRolesRoleIconCurrentEmojiAccessibility(String emojiName) {
+    return 'Current role icon, $emojiName';
+  }
+
+  @override
+  String get guildSettingsRolesRoleIconCurrentImageAccessibility =>
+      'Current role icon, uploaded image';
+
+  @override
+  String get guildSettingsRolesRoleIconChooseEmoji => 'Choose emoji';
+
+  @override
+  String get guildSettingsRolesRoleIconUploadImage => 'Upload image';
+
+  @override
+  String get guildSettingsRolesRoleIconRemove => 'Remove icon';
+
+  @override
+  String get guildSettingsRolesRoleIconAnimatedError =>
+      'Animated icons are not supported. Use a static image.';
+
+  @override
+  String guildSettingsRolesRoleIconUnsupportedTypeError(String formats) {
+    return 'This file type is not supported. Supported types are $formats.';
+  }
+
+  @override
+  String get guildSettingsRolesRoleIconLoadError =>
+      'This image could not be loaded. Try another one.';
+
+  @override
+  String get guildSettingsRolesRoleIconUsagePreviewMessage =>
+      'This is how messages appear';
+
+  @override
+  String roleIconAccessibilityLabel(String roleName) {
+    return 'Role icon, $roleName';
+  }
+
+  @override
+  String get roleIconCropTitle => 'Crop role icon';
+
+  @override
+  String get roleIconCropSave => 'Save icon';
+
+  @override
+  String get roleIconCropSkip => 'Skip cropping';
+
+  @override
+  String get roleIconCropFailed => 'Failed to crop icon. Try again.';
+
+  @override
+  String roleIconCropDescription(int minimumWidth, int minimumHeight) {
+    return 'Drag to reposition your role icon and use the scroll wheel or pinch to zoom. The recommended minimum size is $minimumWidth×$minimumHeight pixels.';
+  }
+
+  @override
   String get guildSettingsRolesClearPermissionsHelp =>
       'Koristite ovaj gumb za brzo brisanje svih dopuštenja.';
 
@@ -13369,6 +13634,28 @@ class FluxerLocalizationsHr extends FluxerLocalizations {
   String auditLogChangeRemovedRoles(String roles) {
     return 'Uklonjene su $roles.';
   }
+
+  @override
+  String auditLogChangeRoleEmojiSet(String emoji) {
+    return 'Set the role icon to $emoji';
+  }
+
+  @override
+  String auditLogChangeRoleEmojiChanged(String oldEmoji, String newEmoji) {
+    return 'Changed the role icon from $oldEmoji to $newEmoji';
+  }
+
+  @override
+  String get auditLogChangeRoleEmojiRemoved => 'Removed the role icon';
+
+  @override
+  String get auditLogChangeRoleIconSet => 'Set a custom role icon';
+
+  @override
+  String get auditLogChangeRoleIconChanged => 'Changed the custom role icon';
+
+  @override
+  String get auditLogChangeRoleIconRemoved => 'Removed the custom role icon';
 
   @override
   String auditLogOptionChannel(String value) {

@@ -38,8 +38,8 @@ import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/profile/providers/user_presence_provider.dart';
 import 'package:fluxer_app/features/profile/providers/user_settings_status_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/fluxer_localizations_delegates.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
@@ -235,6 +235,35 @@ void main() {
       expect(find.text('Add friend'), findsOneWidget);
       expect(find.text("Friend's username"), findsOneWidget);
     });
+
+    testWidgets(
+      'personal notes long-press menu keeps a gap above the navigation bar',
+      (tester) async {
+        _setMobileSurface(tester);
+        tester.view.padding = FakeViewPadding.zero;
+        tester.view.viewPadding = FakeViewPadding.zero;
+        addTearDown(tester.view.resetPadding);
+        addTearDown(tester.view.resetViewPadding);
+
+        await tester.pumpWidget(
+          _buildTestApp(overrides: _buildOverrides(conversations: const [])),
+        );
+        await tester.pump();
+
+        await tester.longPress(find.text('Personal notes'));
+        await tester.pumpAndSettle();
+
+        final double itemBottom = tester
+            .getRect(
+              find.ancestor(
+                of: find.text('Purge personal notes'),
+                matching: find.byType(FluxerBottomSheetMenuItem),
+              ),
+            )
+            .bottom;
+        expect(itemBottom, lessThanOrEqualTo(844 - 16));
+      },
+    );
 
     testWidgets('Add friends badge is a capped pill cut out of the sidebar', (
       tester,
@@ -1246,6 +1275,7 @@ User _testUser({required String id, required String status}) {
     system: false,
     status: status,
     mobile: false,
+    hiddenProfileBadgesJson: '[]',
   );
 }
 

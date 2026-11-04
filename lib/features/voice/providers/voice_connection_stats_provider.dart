@@ -30,7 +30,8 @@ class VoiceConnectionStats {
 
 @Riverpod(keepAlive: true)
 class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
-  Timer? _timer;
+  Timer? _latencyTimer;
+  Timer? _durationTimer;
   DateTime? _connectedAt;
   EventsListener<RoomEvent>? _listener;
   Room? _listenedRoom;
@@ -38,7 +39,8 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
   @override
   VoiceConnectionStats build() {
     ref.onDispose(() {
-      _timer?.cancel();
+      _latencyTimer?.cancel();
+      _durationTimer?.cancel();
       unawaited(_listener?.dispose());
     });
     ref.listen<VoiceSessionState>(voiceSessionProvider, _syncSession);
@@ -46,7 +48,17 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
     if (voice.isConnected) {
       _connectedAt ??= DateTime.now();
     }
-    _syncSession(null, voice, trackConnectEdge: false, resetWhenIdle: false);
+    scheduleMicrotask(() {
+      if (!ref.mounted) {
+        return;
+      }
+      _syncSession(
+        null,
+        ref.read(voiceSessionProvider),
+        trackConnectEdge: false,
+        resetWhenIdle: false,
+      );
+    });
     return const VoiceConnectionStats();
   }
 
@@ -65,10 +77,12 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
       }
     }
     if (!next.isInVoice) {
-      _timer?.cancel();
-      _timer = null;
+      _latencyTimer?.cancel();
+      _latencyTimer = null;
+      _durationTimer?.cancel();
+      _durationTimer = null;
       _detachListener();
-      if (resetWhenIdle) {
+      if (resetWhenIdle && ref.mounted) {
         state = const VoiceConnectionStats();
       }
       return;
@@ -103,11 +117,41 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
   }
 
   void _startPolling() {
-    if (_timer != null) {
+    _durationTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      _tickSessionDuration();
+    });
+    if (_latencyTimer != null) {
       return;
     }
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) => _refresh());
-    _refresh();
+    _latencyTimer = Timer.periodic(
+      const Duration(seconds: 2),
+      (_) => _refresh(),
+    );
+    scheduleMicrotask(() {
+      if (!ref.mounted) {
+        return;
+      }
+      _refresh();
+    });
+  }
+
+  void _tickSessionDuration() {
+    if (!ref.mounted || _connectedAt == null) {
+      return;
+    }
+    final Duration duration = DateTime.now().difference(_connectedAt!);
+    if (duration.inSeconds == state.sessionDuration?.inSeconds) {
+      return;
+    }
+    state = VoiceConnectionStats(
+      currentLatencyMs: state.currentLatencyMs,
+      latencyHistory: state.latencyHistory,
+      sessionDuration: duration,
+      participantCount: state.participantCount,
+      jitterMs: state.jitterMs,
+      sendBandwidthBps: state.sendBandwidthBps,
+      receiveBandwidthBps: state.receiveBandwidthBps,
+    );
   }
 
   void _refresh() {
@@ -138,14 +182,14 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
   }
 
   void _applySample({required int? rtt, required int participantCount}) {
+    if (!ref.mounted) {
+      return;
+    }
     final VoiceSessionState voice = ref.read(voiceSessionProvider);
     if (!voice.isConnected) {
       return;
     }
     final int? latency = rtt ?? state.currentLatencyMs;
-    final Duration? duration = _connectedAt == null
-        ? null
-        : DateTime.now().difference(_connectedAt!);
     final VoiceLatencySignalTone tone = voiceLatencySignalTone(
       latencyMs: latency,
     );
@@ -157,9 +201,7 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
         latency != state.currentLatencyMs ||
         participantCount != state.participantCount ||
         tone != previousTone;
-    final bool durationChanged =
-        duration?.inSeconds != state.sessionDuration?.inSeconds;
-    if (!signalChanged && !durationChanged) {
+    if (!signalChanged) {
       return;
     }
     List<int> history = state.latencyHistory;
@@ -172,7 +214,7 @@ class VoiceConnectionStatsNotifier extends _$VoiceConnectionStatsNotifier {
     state = VoiceConnectionStats(
       currentLatencyMs: latency,
       latencyHistory: history,
-      sessionDuration: duration,
+      sessionDuration: state.sessionDuration,
       participantCount: participantCount,
     );
   }

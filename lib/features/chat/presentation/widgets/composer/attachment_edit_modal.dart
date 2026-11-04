@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/features/chat/domain/message.dart';
 import 'package:fluxer_app/features/chat/domain/pending_attachment.dart';
 import 'package:fluxer_app/features/chat/providers/upload/cloud_upload_controller.dart';
@@ -83,7 +84,12 @@ class _AttachmentEditSheetBodyState
       flags |= attachmentFlagIsSpoiler;
     }
     ref
-        .read(cloudUploadControllerProvider(widget.channelId).notifier)
+        .read(
+          cloudUploadControllerProvider(
+            readAccountUserId(ref),
+            widget.channelId,
+          ).notifier,
+        )
         .updateAttachment(
           widget.attachment.id,
           filename: name.isNotEmpty ? name : widget.attachment.filename,
@@ -99,7 +105,7 @@ class _AttachmentEditSheetBodyState
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

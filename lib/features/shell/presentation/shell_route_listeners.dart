@@ -11,9 +11,10 @@ import 'package:fluxer_app/core/observability/reporting_consent/observability_re
 import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_prompt_logic.dart';
 import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_prompt_provider.dart';
 import 'package:fluxer_app/core/permissions/guild_channel_permission_cleanup.dart';
-import 'package:fluxer_app/core/providers/active_instance_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/app/splash_exit_allowed_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/splash_exit_allowed_provider.dart';
+import 'package:fluxer_app/core/providers/instance/active_instance_provider.dart';
 import 'package:fluxer_app/core/push/push_notifications_coordinator.dart';
 import 'package:fluxer_app/core/push/relay_consent/push_relay_consent_prompt_provider.dart';
 import 'package:fluxer_app/core/push/relay_consent/push_relay_consent_provider.dart';
@@ -249,7 +250,11 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
       });
       return;
     }
-    ref.read(pushRelayConsentPromptProvider.notifier).beginPresentation();
+    if (!ref
+        .read(pushRelayConsentPromptProvider.notifier)
+        .beginPresentation()) {
+      return;
+    }
     unawaited(_presentPushRelayConsent(rootContext));
   }
 
@@ -328,7 +333,11 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
       });
       return;
     }
-    ref.read(observabilityReportingPromptProvider.notifier).beginPresentation();
+    if (!ref
+        .read(observabilityReportingPromptProvider.notifier)
+        .beginPresentation()) {
+      return;
+    }
     unawaited(_presentObservabilityReportingConsent(rootContext));
   }
 
@@ -338,18 +347,19 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
     final ObservabilityReportingPrompt promptNotifier = ref.read(
       observabilityReportingPromptProvider.notifier,
     );
+    final ObservabilityReporting reporting = ref.read(
+      observabilityReportingProvider.notifier,
+    );
+    final ObservabilityReportingPromptDismissed dismissed = ref.read(
+      observabilityReportingPromptDismissedProvider.notifier,
+    );
     try {
       final bool? optedIn = await showObservabilityReportingConsentSheet(
         rootContext,
       );
-      if (!mounted) {
-        return;
-      }
       await recordObservabilityReportingConsentSheetResult(
-        reporting: ref.read(observabilityReportingProvider.notifier),
-        dismissed: ref.read(
-          observabilityReportingPromptDismissedProvider.notifier,
-        ),
+        reporting: reporting,
+        dismissed: dismissed,
         optedIn: optedIn,
       );
     } finally {
@@ -393,7 +403,9 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
     required String? previous,
     required String? next,
   }) {
-    final bool available = next != null && _loadActiveGuildChannels(next);
+    if (next != null) {
+      _loadActiveGuildChannels(next);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -402,16 +414,23 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
       if (previous != null && previous != activeGuildId) {
         unawaited(evictInactiveGuildPermissionState(ref.container, previous));
       }
-      if (!available || activeGuildId != next) {
+      if (next == null || activeGuildId != next) {
         return;
       }
-      ref.read(guildSyncProvider.notifier).syncIfNeeded(next);
+      if (!_loadActiveGuildChannels(next)) {
+        return;
+      }
+      ref
+          .read(guildSyncProvider(readAccountUserId(ref)).notifier)
+          .syncIfNeeded(next);
     });
   }
 
   void _applyActiveGuildEffects(String guildId) {
     if (_loadActiveGuildChannels(guildId)) {
-      ref.read(guildSyncProvider.notifier).syncIfNeeded(guildId);
+      ref
+          .read(guildSyncProvider(readAccountUserId(ref)).notifier)
+          .syncIfNeeded(guildId);
     }
   }
 
@@ -475,10 +494,12 @@ class _ShellRouteListenersState extends ConsumerState<ShellRouteListeners> {
         return;
       }
       ref
-          .read(memberListViewportProvider.notifier)
+          .read(memberListViewportProvider(readAccountUserId(ref)).notifier)
           .clearChannel(guildId: guildId, channelId: previousChannelId);
       ref
-          .read(memberListDesiredRangesProvider.notifier)
+          .read(
+            memberListDesiredRangesProvider(readAccountUserId(ref)).notifier,
+          )
           .clearChannel(guildId: guildId, channelId: previousChannelId);
     });
   }

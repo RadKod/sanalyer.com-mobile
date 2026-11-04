@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluxer_app/core/providers/local_day_provider.dart';
+import 'package:fluxer_app/core/providers/app/local_day_provider.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
@@ -63,14 +63,15 @@ import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
 import 'package:fluxer_app/features/forum/domain/forum_channel.dart';
 import 'package:fluxer_app/features/input/providers/focused_message_provider.dart';
 import 'package:fluxer_app/features/input/providers/keyboard_mode_provider.dart';
+import 'package:fluxer_app/features/members/domain/member.dart';
+import 'package:fluxer_app/features/members/presentation/widgets/role_icon.dart';
 import 'package:fluxer_app/features/profile/presentation/user_profile_sheet.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/double_tap_action_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/swipe_right_to_left_action_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/use_12_hour_time_format_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/message_ui_preferences_providers.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/time_format_providers.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_messages.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
@@ -79,6 +80,7 @@ import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/markdown/message_markdown_settings.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
+import 'package:fluxer_app/shared/providers/member_icon_role_provider.dart';
 import 'package:fluxer_app/shared/providers/member_role_color.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
@@ -797,6 +799,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                           (
                             GuildUserDisplay authorDisplay,
                             Color? authorRoleColor,
+                            MemberRole? iconRole,
                           ) => _buildCompactMessageRow(
                             context,
                             msg,
@@ -804,6 +807,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                             isGrouped: isGrouped,
                             authorDisplay: authorDisplay,
                             authorRoleColor: authorRoleColor,
+                            iconRole: iconRole,
                             showUserAvatarsInCompactMode:
                                 showUserAvatarsInCompactMode,
                             dimMessagePartsExceptAttachments:
@@ -838,11 +842,13 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                           (
                             GuildUserDisplay authorDisplay,
                             Color? authorRoleColor,
+                            MemberRole? iconRole,
                           ) => _buildMainRow(
                             context,
                             msg,
                             authorDisplay,
                             authorRoleColor,
+                            iconRole,
                             isMobile,
                             dimMessagePartsExceptAttachments:
                                 dimMessagePartsExceptAttachments,
@@ -1580,6 +1586,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
     GuildUserDisplay authorDisplay,
     Color? roleColor, {
     required bool showAvatar,
+    MemberRole? iconRole,
   }) {
     final TextStyle nameStyle = context.textStyles.username.copyWith(
       color: roleColor ?? context.colors.textChat,
@@ -1625,6 +1632,8 @@ class _MessageItemState extends ConsumerState<MessageItem> {
             maxLines: 1,
           ),
         ),
+        if (iconRole != null && iconRole.hasIcon)
+          RoleIcon(role: iconRole, size: 16),
         Text(':', style: nameStyle),
       ],
     );
@@ -1644,6 +1653,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
     required ChatPreferencesState chatPreferences,
     GuildUserDisplay? authorDisplay,
     Color? authorRoleColor,
+    MemberRole? iconRole,
   }) {
     final bool showCompactMetadata = !isGrouped || !isMobile;
     final bool showsAuthor = authorDisplay != null && showCompactMetadata;
@@ -1696,6 +1706,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                       msg,
                       authorDisplay,
                       authorRoleColor,
+                      iconRole: iconRole,
                       showAvatar: showUserAvatarsInCompactMode,
                     ),
                   ?inlineText,
@@ -1711,6 +1722,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                       msg,
                       authorDisplay!,
                       authorRoleColor,
+                      iconRole: iconRole,
                       showAvatar: showUserAvatarsInCompactMode,
                     ),
                   ),
@@ -1863,6 +1875,7 @@ class _MessageItemState extends ConsumerState<MessageItem> {
     Message msg,
     GuildUserDisplay authorDisplay,
     Color? roleColor,
+    MemberRole? iconRole,
     bool isMobile, {
     required bool dimMessagePartsExceptAttachments,
     required bool renderEmbeds,
@@ -1936,6 +1949,11 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                             ),
                           ),
                         ),
+                        if (iconRole != null && iconRole.hasIcon)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: RoleIcon(role: iconRole, size: 20),
+                          ),
                         for (final Widget tag in _authorTags(context, msg)) ...[
                           const SizedBox(width: 6),
                           tag,
@@ -2406,14 +2424,23 @@ class _MessageAuthorScope extends ConsumerWidget {
   final String? guildId;
   final String? currentUserId;
   final bool prefersPersistedAuthor;
-  final Widget Function(GuildUserDisplay display, Color? roleColor) builder;
+  final Widget Function(
+    GuildUserDisplay display,
+    Color? roleColor,
+    MemberRole? iconRole,
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Color? authorRoleColor;
+    MemberRole? iconRole;
     if (guildId != null && !prefersPersistedAuthor) {
       authorRoleColor = ref.watch(
         memberRoleColorProvider((message.authorId, guildId!)),
+      );
+      iconRole = ref.watch(
+        memberIconRoleProvider((message.authorId, guildId!)),
       );
     }
     final GuildUserDisplay authorDisplay = watchMessageAuthorDisplay(
@@ -2422,6 +2449,6 @@ class _MessageAuthorScope extends ConsumerWidget {
       guildId: guildId,
       currentUserId: currentUserId,
     );
-    return builder(authorDisplay, authorRoleColor);
+    return builder(authorDisplay, authorRoleColor, iconRole);
   }
 }

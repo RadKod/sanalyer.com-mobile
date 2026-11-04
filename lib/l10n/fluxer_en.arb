@@ -2517,7 +2517,7 @@
     },
     "customizeTagWithPlutoniumTooltip": "Customize your 4-digit tag (#{discriminator}) to your liking with Plutonium",
     "@customizeTagWithPlutoniumTooltip": {
-        "description": "Tooltip on the crown upsell button next to the username button.",
+        "description": "Tooltip on the Plutonium upsell button next to the username button.",
         "placeholders": {
             "discriminator": {
                 "type": "String"
@@ -2597,6 +2597,57 @@
     "@emojiPickerTitle": {
         "description": "Title for the emoji picker sheet."
     },
+    "profileBadgesSettingsTitle": "Badges",
+    "@profileBadgesSettingsTitle": {
+        "description": "Title of the profile settings section that lists held badges and visibility toggles."
+    },
+    "profileBadgesSettingsDescription": "Choose which badges other people see on your profile.",
+    "@profileBadgesSettingsDescription": {
+        "description": "Description under the Badges title in profile settings."
+    },
+    "profileBadgesSettingsEmpty": "You don't have any badges yet.",
+    "@profileBadgesSettingsEmpty": {
+        "description": "Shown in profile badge settings when the user holds no badges."
+    },
+    "profileBadgesSettingsLoadFailed": "Your badges couldn't be loaded.",
+    "@profileBadgesSettingsLoadFailed": {
+        "description": "Shown when the badge list fails to load in profile settings."
+    },
+    "profileBadgesShowOnProfile": "Show {badgeLabel} on your profile",
+    "@profileBadgesShowOnProfile": {
+        "description": "Screen reader label for a badge visibility switch in profile settings.",
+        "placeholders": {
+            "badgeLabel": {
+                "type": "String"
+            }
+        }
+    },
+    "profileBadgesOverflowButton": "+{count}",
+    "@profileBadgesOverflowButton": {
+        "description": "Short count of profile badges not shown inline, opens the full list.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "profileBadgesShowAllTooltip": "Show all badges",
+    "@profileBadgesShowAllTooltip": {
+        "description": "Tooltip for the overflow control that opens every profile badge."
+    },
+    "profileBadgesShowAllSemantic": "{count, plural, one {+{count} more badge, show all} other {+{count} more badges, show all}}",
+    "@profileBadgesShowAllSemantic": {
+        "description": "Screen reader label for the profile badge overflow control.",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "profileBadgesVisionaryNumberNote": "Shown only when your Visionary badge is visible and not masked.",
+    "@profileBadgesVisionaryNumberNote": {
+        "description": "Note under the Visionary ID row when its visibility switch is disabled."
+    },
     "plutoniumBadgePrivacyTitle": "Plutonium badge privacy",
     "@plutoniumBadgePrivacyTitle": {
         "description": "Heading for the premium badge privacy settings section."
@@ -2654,6 +2705,166 @@
     "hideVisionaryIdDescription": "Remove your Visionary ID badge",
     "@hideVisionaryIdDescription": {
         "description": "Description for the toggle to hide the Visionary ID badge."
+    },
+    "operatorPassName": "Operator Pass",
+    "@operatorPassName": {
+        "description": "Product name for Operator Pass."
+    },
+    "operatorPassSince": "Operator Pass since {since}",
+    "@operatorPassSince": {
+        "description": "Subtitle under Operator Pass settings heading.",
+        "placeholders": {
+            "since": {
+                "type": "String"
+            }
+        }
+    },
+    "operatorPassShowBadgeOnProfile": "Show badge on my profile",
+    "@operatorPassShowBadgeOnProfile": {
+        "description": "Switch to show the Operator Pass badge on the profile."
+    },
+    "operatorPassHideDate": "Hide when you got your {operatorPassName}",
+    "@operatorPassHideDate": {
+        "description": "Switch to hide Operator Pass date on the badge.",
+        "placeholders": {
+            "operatorPassName": {
+                "type": "String"
+            }
+        }
+    },
+    "operatorPassHideCount": "Hide how many Operator Passes you have",
+    "@operatorPassHideCount": {
+        "description": "Switch to hide Operator Pass count on the badge."
+    },
+    "operatorPassWallTitle": "Operators' wall",
+    "@operatorPassWallTitle": {
+        "description": "Heading for Operators' wall settings."
+    },
+    "operatorPassWallHowItWorks": "How the wall works",
+    "@operatorPassWallHowItWorks": {
+        "description": "Link to Operator Pass wall help."
+    },
+    "operatorPassWallNotListed": "Not listed.",
+    "@operatorPassWallNotListed": {
+        "description": "Status when not on the Operators' wall."
+    },
+    "operatorPassWallOnTheWall": "On the wall",
+    "@operatorPassWallOnTheWall": {
+        "description": "Label for the live wall entry."
+    },
+    "operatorPassWallInReview": "In review",
+    "@operatorPassWallInReview": {
+        "description": "Label for a pending wall name."
+    },
+    "operatorPassWallReviewBy": "by {date}",
+    "@operatorPassWallReviewBy": {
+        "description": "Review due date label.",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "operatorPassWallLive": "Live",
+    "@operatorPassWallLive": {
+        "description": "Status when a wall name is live."
+    },
+    "operatorPassWallDeclined": "Declined: {name}. {reason}.",
+    "@operatorPassWallDeclined": {
+        "description": "Declined wall name status.",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "reason": {
+                "type": "String"
+            }
+        }
+    },
+    "operatorPassWallTeamNote": "Team note: {note}",
+    "@operatorPassWallTeamNote": {
+        "description": "Team note on a declined wall name.",
+        "placeholders": {
+            "note": {
+                "type": "String"
+            }
+        }
+    },
+    "operatorPassWallHidden": "Hidden by our team for now.",
+    "@operatorPassWallHidden": {
+        "description": "Wall listing hidden by staff."
+    },
+    "operatorPassWallHiddenWhy": "Why?",
+    "@operatorPassWallHiddenWhy": {
+        "description": "Link after hidden wall status."
+    },
+    "operatorPassWallRemoved": "Off the wall while your benefits are removed.",
+    "@operatorPassWallRemoved": {
+        "description": "Wall listing removed when benefits are removed."
+    },
+    "operatorPassTermsLink": "Operator Pass terms",
+    "@operatorPassTermsLink": {
+        "description": "Link to Operator Pass terms."
+    },
+    "operatorPassWallSendChanges": "Send profile changes to the wall",
+    "@operatorPassWallSendChanges": {
+        "description": "Switch to send profile changes to the wall."
+    },
+    "operatorPassWallReleaseList": "Add my name to the yearly Operators list",
+    "@operatorPassWallReleaseList": {
+        "description": "Switch for yearly Operators list opt-in."
+    },
+    "operatorPassWallReleaseListHint": "Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.",
+    "@operatorPassWallReleaseListHint": {
+        "description": "Hint for yearly Operators list opt-in."
+    },
+    "operatorPassWallSave": "Save",
+    "@operatorPassWallSave": {
+        "description": "Save Operators' wall settings."
+    },
+    "operatorPassWallSaved": "Saved.",
+    "@operatorPassWallSaved": {
+        "description": "Toast after saving wall settings."
+    },
+    "operatorPassWallSaveFailed": "Couldn't save. Try again.",
+    "@operatorPassWallSaveFailed": {
+        "description": "Toast when wall settings save fails."
+    },
+    "operatorPassWallNameSettingsLabel": "Name on the wall",
+    "@operatorPassWallNameSettingsLabel": {
+        "description": "Label for wall name field in settings."
+    },
+    "operatorPassWallNameHint": "We check new names before they go live.",
+    "@operatorPassWallNameHint": {
+        "description": "Hint under wall name field."
+    },
+    "operatorPassWallDontListMe": "Don't list me",
+    "@operatorPassWallDontListMe": {
+        "description": "Opt out of the Operators' wall."
+    },
+    "operatorPassWallNameRequired": "Enter a name, or check Don't list me.",
+    "@operatorPassWallNameRequired": {
+        "description": "Validation when wall name is empty."
+    },
+    "operatorPassWallNameTooLong": "Use 32 characters or fewer.",
+    "@operatorPassWallNameTooLong": {
+        "description": "Validation when wall name is too long."
+    },
+    "operatorPassWallDeclineGuidelines": "Breaks the community guidelines",
+    "@operatorPassWallDeclineGuidelines": {
+        "description": "Decline reason for wall name."
+    },
+    "operatorPassWallDeclineImpersonation": "Pretends to be someone else",
+    "@operatorPassWallDeclineImpersonation": {
+        "description": "Decline reason for wall name."
+    },
+    "operatorPassWallDeclineRights": "Uses a name or image without the rights to it",
+    "@operatorPassWallDeclineRights": {
+        "description": "Decline reason for wall name."
+    },
+    "operatorPassWallDeclineAge": "Not suitable for younger users",
+    "@operatorPassWallDeclineAge": {
+        "description": "Decline reason for wall name."
     },
     "avatarDescriptionNonPremium": "JPEG, PNG, WebP. Max 10MB. Recommended: 512×512px. Animated avatars (GIF) require Plutonium.",
     "@avatarDescriptionNonPremium": {
@@ -5458,6 +5669,10 @@
     "@matureCommunityUnavailableBody": {
         "description": "Body when a minor cannot access a mature community."
     },
+    "matureContentIosWebOptInBody": "Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.",
+    "@matureContentIosWebOptInBody": {
+        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
+    },
     "matureCategoryUnavailableBody": "This mature category is not available to your account.",
     "@matureCategoryUnavailableBody": {
         "description": "Body when a minor cannot access a mature category."
@@ -7658,6 +7873,10 @@
     "@voiceOutputRouteHeadset": {
         "description": "Voice output route that plays call audio through a connected Bluetooth or wired headset."
     },
+    "voiceChangeAudioOutputLabel": "Change audio output",
+    "@voiceChangeAudioOutputLabel": {
+        "description": "Opens the system audio route picker for voice calls on iOS."
+    },
     "voicePanelOnlyShowVideosLabel": "Only show videos",
     "@voicePanelOnlyShowVideosLabel": {
         "description": "Switch label to hide voice participants who do not have their camera on."
@@ -7722,6 +7941,15 @@
     "voiceScreenShareExitFullscreenTooltip": "Exit full screen",
     "@voiceScreenShareExitFullscreenTooltip": {
         "description": "Tooltip for leaving full screen while watching a screen share."
+    },
+    "voiceVideoZoomLevel": "Zoom {scale}",
+    "@voiceVideoZoomLevel": {
+        "description": "Accessibility label for the fullscreen call video pinch-zoom level indicator.",
+        "placeholders": {
+            "scale": {
+                "type": "String"
+            }
+        }
     },
     "voiceOwnScreenShareTitle": "You are broadcasting",
     "@voiceOwnScreenShareTitle": {
@@ -9971,9 +10199,9 @@
     "@channelSettingsSlowmode": {
         "description": "Label for slowmode control in channel settings."
     },
-    "channelSettingsSlowmodeDescription": "Wait between messages. \"{bypassSlowmodePermissionLabel}\" can bypass it.",
+    "channelSettingsSlowmodeDescription": "Wait between messages. Members with \"{bypassSlowmodePermissionLabel}\" can bypass this.",
     "@channelSettingsSlowmodeDescription": {
-        "description": "Description under the slowmode select in channel settings.",
+        "description": "Description under the slowmode slider in channel settings.",
         "placeholders": {
             "bypassSlowmodePermissionLabel": {
                 "type": "String"
@@ -11892,6 +12120,9 @@
     "storePlutoniumProfileBody": "Get an animated avatar and banner, a subscriber badge, the four-digit tag you want after your username*, and a separate profile for each community.",
     "storePlutoniumFilesTitle": "Send files up to 500 MB",
     "storePlutoniumFilesBody": "Share full-length videos and big files without shrinking them first. Free accounts can send up to 25 MB.",
+    "storePlutoniumStreamTitle": "Stream in 4K at 60 FPS",
+    "storePlutoniumStreamBody": "Share your screen or camera in up to 4K at 60 frames per second. Free accounts stream in up to 720p at 30.",
+    "storePlutoniumManageHeading": "Your subscription",
     "storePlutoniumCompareTitle": "Compare Free and Plutonium",
     "storePlutoniumCompareMobileNote": "Not all of these features are in the mobile app. Some are only available on desktop.",
     "storePlutoniumNotAvailable": "Not available",
@@ -12826,6 +13057,14 @@
     "advancedSettingShowNekoDescriptionTouch": "Show Neko on your chat input",
     "advancedSettingMobileSplashZoomAnimationLabel": "Splash zoom animation",
     "advancedSettingMobileSplashZoomAnimationDescription": "Zoom the logo out when leaving the splash screen",
+    "advancedSettingSplashQuotesLabel": "Splash screen quotes",
+    "@advancedSettingSplashQuotesLabel": {
+        "description": "Toggle label for splash screen loading quotes in advanced settings."
+    },
+    "advancedSettingSplashQuotesDescription": "Show a random quote on the splash screen. Won't sync across devices.",
+    "@advancedSettingSplashQuotesDescription": {
+        "description": "Toggle description for the local-only splash screen quotes setting."
+    },
     "advancedSettingKeyboardHintsLabel": "Keyboard hints",
     "advancedSettingKeyboardHintsDescription": "Keyboard shortcut hints in tooltips",
     "advancedSettingEnableFavoritesLabel": "Enable favorites",
@@ -14284,6 +14523,116 @@
         "placeholders": {
             "permission": {
                 "type": "String"
+            }
+        }
+    },
+    "guildSettingsRolesRoleIcon": "Role icon",
+    "@guildSettingsRolesRoleIcon": {
+        "description": "Label for the role icon field in role settings."
+    },
+    "guildSettingsRolesRoleIconHelper": "Upload an image or pick an emoji. Members get the icon of their highest role that has one.",
+    "@guildSettingsRolesRoleIconHelper": {
+        "description": "Helper text under the role icon field."
+    },
+    "guildSettingsRolesRoleIconUploadHint": "{formats}. At least {minimumSize}, up to {maxSize}.",
+    "@guildSettingsRolesRoleIconUploadHint": {
+        "description": "File requirements hint under role icon upload controls.",
+        "placeholders": {
+            "formats": {
+                "type": "String"
+            },
+            "minimumSize": {
+                "type": "String"
+            },
+            "maxSize": {
+                "type": "String"
+            }
+        }
+    },
+    "guildSettingsRolesRoleIconUploadAccessibility": "Upload role icon",
+    "@guildSettingsRolesRoleIconUploadAccessibility": {
+        "description": "Accessibility label for empty role icon upload tile."
+    },
+    "guildSettingsRolesRoleIconCurrentEmojiAccessibility": "Current role icon, {emojiName}",
+    "@guildSettingsRolesRoleIconCurrentEmojiAccessibility": {
+        "description": "Accessibility label when role icon is an emoji.",
+        "placeholders": {
+            "emojiName": {
+                "type": "String"
+            }
+        }
+    },
+    "guildSettingsRolesRoleIconCurrentImageAccessibility": "Current role icon, uploaded image",
+    "@guildSettingsRolesRoleIconCurrentImageAccessibility": {
+        "description": "Accessibility label when role icon is an uploaded image."
+    },
+    "guildSettingsRolesRoleIconChooseEmoji": "Choose emoji",
+    "@guildSettingsRolesRoleIconChooseEmoji": {
+        "description": "Button to pick a unicode or guild emoji as role icon."
+    },
+    "guildSettingsRolesRoleIconUploadImage": "Upload image",
+    "@guildSettingsRolesRoleIconUploadImage": {
+        "description": "Button to upload a role icon image."
+    },
+    "guildSettingsRolesRoleIconRemove": "Remove icon",
+    "@guildSettingsRolesRoleIconRemove": {
+        "description": "Button to remove the role icon."
+    },
+    "guildSettingsRolesRoleIconAnimatedError": "Animated icons are not supported. Use a static image.",
+    "@guildSettingsRolesRoleIconAnimatedError": {
+        "description": "Error when user picks an animated image for role icon."
+    },
+    "guildSettingsRolesRoleIconUnsupportedTypeError": "This file type is not supported. Supported types are {formats}.",
+    "@guildSettingsRolesRoleIconUnsupportedTypeError": {
+        "description": "Error when role icon file type is not allowed.",
+        "placeholders": {
+            "formats": {
+                "type": "String"
+            }
+        }
+    },
+    "guildSettingsRolesRoleIconLoadError": "This image could not be loaded. Try another one.",
+    "@guildSettingsRolesRoleIconLoadError": {
+        "description": "Error when role icon image or emoji could not be loaded."
+    },
+    "guildSettingsRolesRoleIconUsagePreviewMessage": "This is how messages appear",
+    "@guildSettingsRolesRoleIconUsagePreviewMessage": {
+        "description": "Sample message body in role icon usage preview."
+    },
+    "roleIconAccessibilityLabel": "Role icon, {roleName}",
+    "@roleIconAccessibilityLabel": {
+        "description": "Accessibility label for a role icon next to a member name.",
+        "placeholders": {
+            "roleName": {
+                "type": "String"
+            }
+        }
+    },
+    "roleIconCropTitle": "Crop role icon",
+    "@roleIconCropTitle": {
+        "description": "Title for role icon crop sheet."
+    },
+    "roleIconCropSave": "Save icon",
+    "@roleIconCropSave": {
+        "description": "Primary action on role icon crop sheet."
+    },
+    "roleIconCropSkip": "Skip cropping",
+    "@roleIconCropSkip": {
+        "description": "Skip crop and use original image for role icon."
+    },
+    "roleIconCropFailed": "Failed to crop icon. Try again.",
+    "@roleIconCropFailed": {
+        "description": "Toast when role icon crop fails."
+    },
+    "roleIconCropDescription": "Drag to reposition your role icon and use the scroll wheel or pinch to zoom. The recommended minimum size is {minimumWidth}×{minimumHeight} pixels.",
+    "@roleIconCropDescription": {
+        "description": "Instructions on role icon crop sheet.",
+        "placeholders": {
+            "minimumWidth": {
+                "type": "int"
+            },
+            "minimumHeight": {
+                "type": "int"
             }
         }
     },
@@ -16225,6 +16574,43 @@
                 "type": "String"
             }
         }
+    },
+    "auditLogChangeRoleEmojiSet": "Set the role icon to {emoji}",
+    "@auditLogChangeRoleEmojiSet": {
+        "description": "Role audit log detail when emoji icon is set.",
+        "placeholders": {
+            "emoji": {
+                "type": "String"
+            }
+        }
+    },
+    "auditLogChangeRoleEmojiChanged": "Changed the role icon from {oldEmoji} to {newEmoji}",
+    "@auditLogChangeRoleEmojiChanged": {
+        "description": "Role audit log detail when emoji icon changes.",
+        "placeholders": {
+            "oldEmoji": {
+                "type": "String"
+            },
+            "newEmoji": {
+                "type": "String"
+            }
+        }
+    },
+    "auditLogChangeRoleEmojiRemoved": "Removed the role icon",
+    "@auditLogChangeRoleEmojiRemoved": {
+        "description": "Role audit log detail when emoji icon is removed."
+    },
+    "auditLogChangeRoleIconSet": "Set a custom role icon",
+    "@auditLogChangeRoleIconSet": {
+        "description": "Role audit log detail when image icon is set."
+    },
+    "auditLogChangeRoleIconChanged": "Changed the custom role icon",
+    "@auditLogChangeRoleIconChanged": {
+        "description": "Role audit log detail when image icon changes."
+    },
+    "auditLogChangeRoleIconRemoved": "Removed the custom role icon",
+    "@auditLogChangeRoleIconRemoved": {
+        "description": "Role audit log detail when image icon is removed."
     },
     "auditLogOptionChannel": "Channel: {value}.",
     "@auditLogOptionChannel": {

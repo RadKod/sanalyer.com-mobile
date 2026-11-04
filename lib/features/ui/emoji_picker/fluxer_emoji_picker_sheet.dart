@@ -74,6 +74,7 @@ class FluxerEmojiPickerSheet {
     ],
     ExpressionPickerTab initialTab = ExpressionPickerTab.emojis,
     String? channelId,
+    String? roleIconGuildId,
   }) {
     final bool emojiOnly =
         visibleTabs.length == 1 &&
@@ -87,6 +88,7 @@ class FluxerEmojiPickerSheet {
       context,
       title: title,
       subtitle: subtitle,
+      bottomGap: false,
       sheetHeight: sheetHeight,
       animationStyle: sheetHeight == null
           ? null
@@ -103,6 +105,7 @@ class FluxerEmojiPickerSheet {
           onStickerSelected: onStickerSelected,
           onFavoriteMemeSelected: onFavoriteMemeSelected,
           channelId: channelId,
+          roleIconGuildId: roleIconGuildId,
         );
       },
     );
@@ -121,6 +124,7 @@ class _SheetContent extends StatefulWidget {
     this.onStickerSelected,
     this.onFavoriteMemeSelected,
     this.channelId,
+    this.roleIconGuildId,
   });
 
   final ScrollController scrollController;
@@ -133,6 +137,7 @@ class _SheetContent extends StatefulWidget {
   final ValueChanged<StickerEntry>? onStickerSelected;
   final ValueChanged<FavoriteMemeSelection>? onFavoriteMemeSelected;
   final String? channelId;
+  final String? roleIconGuildId;
 
   @override
   State<_SheetContent> createState() => _SheetContentState();
@@ -182,6 +187,7 @@ class _SheetContentState extends State<_SheetContent> {
             initialTab: _selectedTab,
             showTabs: false,
             channelId: widget.channelId,
+            roleIconGuildId: widget.roleIconGuildId,
             contentSearchTopPadding: widget.searchFollowsHandle ? 0 : null,
           ),
         ),

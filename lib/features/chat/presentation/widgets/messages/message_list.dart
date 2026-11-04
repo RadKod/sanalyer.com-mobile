@@ -6,8 +6,9 @@ import 'package:flutter/scheduler.dart' show SchedulerBinding, SchedulerPhase;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart' as drift_db;
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_performance_providers.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_performance_providers.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/core/talker.dart';
@@ -92,11 +93,11 @@ import 'package:fluxer_app/features/moderation/domain/iar_context.dart';
 import 'package:fluxer_app/features/moderation/presentation/report_flow/open_report_flow.dart';
 import 'package:fluxer_app/features/moderation/providers/local_user_spam_override_provider.dart';
 import 'package:fluxer_app/features/settings/domain/search_provider_engine.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/use_12_hour_time_format_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/time_format_providers.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/shell/presentation/sidebar_drawer.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_browser_sheet.dart';
@@ -129,13 +130,27 @@ const double _kMessageListStatusOverlayInsetWide =
 
 const int _kPinnedRecenterTrailingThreshold = 60;
 
+typedef MessageListUnreadAckFields = ({
+  bool manual,
+  String? lastMessageId,
+  int mentionCount,
+});
+
 @visibleForTesting
 // Riverpod family type is not expressible without this ignore.
 // ignore: specify_nonobvious_property_types
 final messageListReadStateProvider = StreamProvider.autoDispose
-    .family<drift_db.ReadState?, String>((ref, channelId) {
+    .family<MessageListUnreadAckFields, String>((ref, channelId) {
       final db = ref.watch(fluxerDatabaseProvider);
-      return db.readStateDao.watchReadState(channelId);
+      return db.readStateDao.watchReadState(channelId).map((
+        drift_db.ReadState? row,
+      ) {
+        return (
+          manual: row?.manual ?? false,
+          lastMessageId: row?.lastMessageId,
+          mentionCount: row?.mentionCount ?? 0,
+        );
+      });
     });
 
 // Riverpod does not export the concrete auto-dispose family type.
@@ -322,6 +337,10 @@ class _MessageListState extends ConsumerState<MessageList> {
     _demandSource = MessageListDemandSource(
       port: ref.read(messagePaginationCoordinatorProvider),
     );
+    _chatViewModel.registerScrollAnchorSource(
+      channelId: _viewportChannelId,
+      read: _captureScrollAnchor,
+    );
     _scrollController.addListener(_onScroll);
     _setPendingScrollTarget(widget.targetMessageId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -403,6 +422,7 @@ class _MessageListState extends ConsumerState<MessageList> {
 
   @override
   void dispose() {
+    _chatViewModel.unregisterScrollAnchorSource(_captureScrollAnchor);
     _chatKeybindEffectsSubscription?.close();
     _messageKeyboardNavigation.unregister(
       focusNext: _focusNextMessage,
@@ -645,18 +665,25 @@ class _MessageListState extends ConsumerState<MessageList> {
     final int? channelPermissionBits = channelId.isEmpty
         ? null
         : ref.watch(
-            channelPermissionCacheProvider.select(
+            channelPermissionCacheProvider(watchAccountUserId(ref)).select(
               (ChannelPermissionCaches caches) => caches.effective[channelId],
             ),
           );
-    final AsyncValue<drift_db.ReadState?> readStateAsync = channelId.isEmpty
-        ? const AsyncValue<drift_db.ReadState?>.data(null)
+    final AsyncValue<MessageListUnreadAckFields> readStateAsync =
+        channelId.isEmpty
+        ? const AsyncValue<MessageListUnreadAckFields>.data((
+            manual: false,
+            lastMessageId: null,
+            mentionCount: 0,
+          ))
         : ref.watch(messageListReadStateProvider(channelId));
-    final drift_db.ReadState? readState = readStateAsync.asData?.value;
+    final MessageListUnreadAckFields readState =
+        readStateAsync.asData?.value ??
+        (manual: false, lastMessageId: null, mentionCount: 0);
     final bool autoAckImminent =
         channelId.isNotEmpty &&
         !hasMoreNewerMessages &&
-        !(readState?.manual ?? false) &&
+        !readState.manual &&
         ref.watch(
           chatReadViewportProvider.select(
             (ChatReadViewportState viewport) =>
@@ -665,11 +692,11 @@ class _MessageListState extends ConsumerState<MessageList> {
                 viewport.canAutoAck,
           ),
         );
-    final String? effectiveAckId = readState?.manual ?? false
-        ? readState?.lastMessageId
-        : compareSnowflakeIds(pendingAutoAckId, readState?.lastMessageId) > 0
+    final String? effectiveAckId = readState.manual
+        ? readState.lastMessageId
+        : compareSnowflakeIds(pendingAutoAckId, readState.lastMessageId) > 0
         ? pendingAutoAckId
-        : readState?.lastMessageId;
+        : readState.lastMessageId;
     final int cachedUnreadCount =
         hasMoreNewerMessages &&
             effectiveAckId != null &&
@@ -688,7 +715,7 @@ class _MessageListState extends ConsumerState<MessageList> {
     final ChatUnreadSummary unreadSummary = _unreadSummaryFor(
       messages: messages,
       ackLastMessageId: effectiveAckId,
-      mentionCount: readState?.mentionCount ?? 0,
+      mentionCount: readState.mentionCount,
       channelLastMessageId: _channelLastMessageIdFor(channelId),
       hasMoreNewerMessages: hasMoreNewerMessages,
       hasMoreOlderMessages: hasMoreMessages,
@@ -709,8 +736,6 @@ class _MessageListState extends ConsumerState<MessageList> {
         _channelStreamFor(
           messages: displayMessages,
           oldestUnreadMessageId: visualUnreadId,
-          currentUserId: currentUserId,
-          blockedUserIds: blockedUserIds,
         );
     final List<ChannelStreamItem> channelStream = built.items;
     final ChannelStreamIndex streamIndex = built.index;
@@ -753,6 +778,8 @@ class _MessageListState extends ConsumerState<MessageList> {
                 messageIds: messages.map((Message m) => m.id),
               )
             : null;
+        final ChannelScrollAnchor? restoredAnchor = _chatViewModel
+            .takeRestoredScrollAnchor(channelId);
         _anchorResolved = true;
         _anchorEpoch++;
         _pin.pinned = false;
@@ -773,6 +800,13 @@ class _MessageListState extends ConsumerState<MessageList> {
           _anchorEdge = MessageListAnchorEdge.before;
           _scheduleUnderfillBottomReanchor();
           _scheduleJumpHighlightConfirm(jumpRequestId!);
+        } else if (restoredAnchor != null &&
+            streamIndex.itemOfMessage(restoredAnchor.messageId) != null) {
+          _anchorId = restoredAnchor.messageId;
+          _anchorFraction = restoredAnchor.fraction;
+          _anchorEdge = MessageListAnchorEdge.before;
+          _scrollController.armedInitialOffset = restoredAnchor.offset;
+          _scheduleUnderfillBottomReanchor();
         } else {
           _anchorId = messages.isEmpty ? null : messages.last.id;
           _anchorFraction = 1;
@@ -1825,7 +1859,14 @@ class _MessageListState extends ConsumerState<MessageList> {
     if (removed.isEmpty || removed.length > _kMaxSimultaneousDeleteCollapses) {
       return false;
     }
-    for (final (int index, Message message) in removed) {
+    final List<(int index, Message message)> animated = <(int, Message)>[
+      for (final (int index, Message message) in removed)
+        if (_messageRemovalAnimates(message, previous)) (index, message),
+    ];
+    if (animated.isEmpty) {
+      return false;
+    }
+    for (final (int index, Message message) in animated) {
       _collapsingMessageSnapshots[message.id] = message;
       _collapsingMessageIndex[message.id] = index;
       _collapsingMessageIds.add(message.id);
@@ -1899,14 +1940,67 @@ class _MessageListState extends ConsumerState<MessageList> {
     });
   }
 
+  bool _messageRemovalAnimates(Message message, List<Message> messages) {
+    final String? groupKey = getCollapsedMessageGroupKey(
+      messages: messages,
+      messageId: message.id,
+      context: _collapseContext(),
+    );
+    if (groupKey == null) {
+      return true;
+    }
+    return ref.read(chatViewModelProvider).revealedCollapsedGroupKey ==
+        groupKey;
+  }
+
+  Message? _successorMessage(List<Message> messages, String messageId) {
+    for (final Message message in messages) {
+      if (compareSnowflakeIds(message.id, messageId) > 0) {
+        return message;
+      }
+    }
+    return null;
+  }
+
+  void _retargetRevealedCollapsedGroup(String messageId) {
+    if (ref.read(chatViewModelProvider).revealedCollapsedGroupKey !=
+        messageId) {
+      return;
+    }
+    final Message? removed = _collapsingMessageSnapshots[messageId];
+    final Message? successor = removed == null
+        ? null
+        : _successorMessage(
+            ref.read(chatViewModelProvider).messages,
+            messageId,
+          );
+    if (removed == null ||
+        successor == null ||
+        !_sameCollapsedRun(removed, successor)) {
+      _chatViewModel.setCollapsedGroupRevealed(null);
+      return;
+    }
+    _chatViewModel.setCollapsedGroupRevealed(successor.id);
+  }
+
+  bool _sameCollapsedRun(Message a, Message b) {
+    final ChannelCollapseContext collapse = _collapseContext();
+    final ChannelStreamType? type = collapse.collapsedTypeFor(a);
+    return type != null &&
+        type == collapse.collapsedTypeFor(b) &&
+        isSameLocalDay(a.timestamp, b.timestamp);
+  }
+
   void _finishMessageCollapse(String messageId) {
+    if (!mounted || !_collapsingMessageIds.contains(messageId)) {
+      return;
+    }
+    _retargetRevealedCollapsedGroup(messageId);
     _collapsingMessageIds.remove(messageId);
     _collapsingMessageSnapshots.remove(messageId);
     _collapsingMessageIndex.remove(messageId);
     _rowResizeMessageIds.remove(messageId);
-    if (mounted) {
-      setState(() {});
-    }
+    setState(() {});
     if (_pin.pinned && _isNearLiveTail()) {
       _schedulePinnedTailGlue();
     }
@@ -2603,13 +2697,10 @@ class _MessageListState extends ConsumerState<MessageList> {
     );
   }
 
-  void _holdReadingRowAcrossRegroup() {
+  ({String id, double fraction, double correction})? _measureReadingRow() {
     final MessageListViewport? built = _builtViewport;
-    if (built == null ||
-        !_anchorResolved ||
-        !_scrollController.hasClients ||
-        _isNearLiveTail()) {
-      return;
+    if (built == null || !_anchorResolved || !_scrollController.hasClients) {
+      return null;
     }
     RenderViewport? viewport;
     void findViewport(RenderObject node) {
@@ -2633,7 +2724,7 @@ class _MessageListState extends ConsumerState<MessageList> {
     }
     final RenderViewport? laidOut = viewport;
     if (laidOut == null || !laidOut.hasSize) {
-      return;
+      return null;
     }
     final double viewportTop = laidOut.localToGlobal(Offset.zero).dy;
     final double viewportHeight = laidOut.size.height;
@@ -2661,25 +2752,50 @@ class _MessageListState extends ConsumerState<MessageList> {
     });
     final String? anchorId = rowId ?? straddlingId;
     if (anchorId == null) {
-      return;
+      return null;
     }
     final double splitY = rowId != null ? rowTop : straddlingTop;
     final double fraction = ((splitY - viewportTop) / viewportHeight).clamp(
       0.0,
       1.0,
     );
-    _scrollController.listPosition!.correctPixels(
-      viewportTop + fraction * viewportHeight - splitY,
+    return (
+      id: anchorId,
+      fraction: fraction,
+      correction: viewportTop + fraction * viewportHeight - splitY,
     );
+  }
+
+  void _holdReadingRowAcrossRegroup() {
+    if (_isNearLiveTail()) {
+      return;
+    }
+    final ({String id, double fraction, double correction})? row =
+        _measureReadingRow();
+    if (row == null) {
+      return;
+    }
+    _scrollController.listPosition!.correctPixels(row.correction);
     setState(() {
-      _anchorId = anchorId;
-      _anchorFraction = fraction;
+      _anchorId = row.id;
+      _anchorFraction = row.fraction;
       _anchorEdge = MessageListAnchorEdge.before;
       _unreadOpenLayout = false;
       _setUnreadLeadingPad(0);
       _exposeOlderRowsNow();
       _uiEpoch++;
     });
+  }
+
+  ChannelScrollAnchor? _captureScrollAnchor() {
+    if (_isNearLiveTail()) {
+      return null;
+    }
+    final ({String id, double fraction, double correction})? row =
+        _measureReadingRow();
+    return row == null
+        ? null
+        : (messageId: row.id, fraction: row.fraction, offset: row.correction);
   }
 
   void _maybeRecenterPinnedTail(List<Message> messages) {
@@ -2885,8 +3001,6 @@ class _MessageListState extends ConsumerState<MessageList> {
   _channelStreamFor({
     required List<Message> messages,
     required String? oldestUnreadMessageId,
-    required String? currentUserId,
-    required Set<String> blockedUserIds,
   }) {
     return createIndexedChannelStream(
       messages: messages,
@@ -2894,14 +3008,18 @@ class _MessageListState extends ConsumerState<MessageList> {
       groupSplitBoundaryId: _anchorEdge == MessageListAnchorEdge.after
           ? _anchorId
           : null,
-      context: ChannelCollapseContext(
-        treatSpam: true,
-        currentUserId: currentUserId,
-        blockedUserIds: blockedUserIds,
-        isUserMarkedAsSpammer: ref
-            .read(localUserSpamOverrideProvider.notifier)
-            .isUserMarkedAsSpammer,
-      ),
+      context: _collapseContext(),
+    );
+  }
+
+  ChannelCollapseContext _collapseContext() {
+    return ChannelCollapseContext(
+      treatSpam: true,
+      currentUserId: ref.read(currentUserIdProvider),
+      blockedUserIds: ref.read(blockedUserIdsProvider),
+      isUserMarkedAsSpammer: ref
+          .read(localUserSpamOverrideProvider.notifier)
+          .isUserMarkedAsSpammer,
     );
   }
 
@@ -2917,7 +3035,7 @@ class _MessageListState extends ConsumerState<MessageList> {
       return null;
     }
     final String? indexed = ref
-        .read(channelLastMessageIndexProvider)
+        .read(channelLastMessageIndexProvider(readAccountUserId(ref)))
         .lastMessageIdFor(channelId);
     return compareSnowflakeIds(indexed, row) > 0 ? indexed : row;
   }
@@ -3494,6 +3612,7 @@ class _MessageListState extends ConsumerState<MessageList> {
                     ref,
                     guildId: guildId,
                     threadId: message.messageReference?.channelId ?? '',
+                    fromParent: true,
                   ),
                 )
               : null,
@@ -3700,18 +3819,7 @@ class _MessageListState extends ConsumerState<MessageList> {
           dataIndex,
           spacing: renderSettings.messageGroupSpacing,
         );
-        final Object signature = (
-          item.type,
-          item.messages.length,
-          isRevealed,
-          item.showUnreadDividerBefore,
-          streamOwnsUnreadBoundary,
-          visualUnreadId,
-          highlightedMessageId,
-          replyingToMessageId,
-          leadingSpacing,
-        );
-        return _tileCache.resolve('group-$groupKey', signature, () {
+        Widget buildGroup() {
           return _wrapWithUnreadSeparator(
             context,
             BlockedMessageGroups(
@@ -3732,32 +3840,50 @@ class _MessageListState extends ConsumerState<MessageList> {
                 }
               },
               messageBuilder: (Message message, Message? previousMessage) {
-                return _buildMessageTile(
-                  context: context,
-                  message: message,
-                  previousMessage: previousMessage,
-                  visualUnreadId: visualUnreadId,
-                  highlightedMessageId: highlightedMessageId,
-                  replyingToMessageId: replyingToMessageId,
-                  currentUserId: currentUserId,
-                  isDmChannel: isDmChannel,
-                  guildId: guildId,
-                  channelPermissionBits: channelPermissionBits,
-                  channelCanSendMessages: channelCanSendMessages,
-                  channelCanAddReactions: channelCanAddReactions,
-                  channelCanPinMessage: channelCanPinMessage,
-                  channelCanManageMessages: channelCanManageMessages,
-                  renderSettings: renderSettings,
-                  blockedUserIds: blockedUserIds,
-                  renderDaySeparator: false,
-                  prependUnreadSeparator: streamOwnsUnreadBoundary,
-                  isGuildSendDisabled: isGuildSendDisabled,
+                return _wrapMessageRowMotion(
+                  messageId: message.id,
+                  child: _buildMessageTile(
+                    context: context,
+                    message: message,
+                    previousMessage: previousMessage,
+                    visualUnreadId: visualUnreadId,
+                    highlightedMessageId: highlightedMessageId,
+                    replyingToMessageId: replyingToMessageId,
+                    currentUserId: currentUserId,
+                    isDmChannel: isDmChannel,
+                    guildId: guildId,
+                    channelPermissionBits: channelPermissionBits,
+                    channelCanSendMessages: channelCanSendMessages,
+                    channelCanAddReactions: channelCanAddReactions,
+                    channelCanPinMessage: channelCanPinMessage,
+                    channelCanManageMessages: channelCanManageMessages,
+                    renderSettings: renderSettings,
+                    blockedUserIds: blockedUserIds,
+                    renderDaySeparator: false,
+                    prependUnreadSeparator: streamOwnsUnreadBoundary,
+                    isGuildSendDisabled: isGuildSendDisabled,
+                  ),
                 );
               },
             ),
             show: item.showUnreadDividerBefore,
           );
-        });
+        }
+
+        if (isRevealed) {
+          return buildGroup();
+        }
+        final Object signature = (
+          item.type,
+          item.messages.length,
+          item.showUnreadDividerBefore,
+          streamOwnsUnreadBoundary,
+          visualUnreadId,
+          highlightedMessageId,
+          replyingToMessageId,
+          leadingSpacing,
+        );
+        return _tileCache.resolve('group-$groupKey', signature, buildGroup);
       case ChannelStreamType.message:
         final Message? message = item.singleMessage;
         if (message == null) {

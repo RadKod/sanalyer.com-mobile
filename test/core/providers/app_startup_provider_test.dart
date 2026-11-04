@@ -10,12 +10,12 @@ import 'package:fluxer_app/core/api/service_unavailable.dart';
 import 'package:fluxer_app/core/build/app_build_config.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
+import 'package:fluxer_app/core/providers/app/app_startup_provider.dart';
 import 'package:fluxer_app/core/providers/app_runtime_info_provider.dart';
-import 'package:fluxer_app/core/providers/app_startup_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_connection_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/core/router/app_location_persistence.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/auth/data/auth_token_storage.dart';
@@ -47,9 +47,7 @@ class _FakeWellKnown extends WellKnown {
         gift: '',
         webapp: '',
       ),
-      captcha: InstanceCaptchaSchema(
-        provider: InstanceCaptchaProviderSchema.none,
-      ),
+      captcha: InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
       features: InstanceFeaturesSchema(
         voiceEnabled: false,
         stripeEnabled: false,
@@ -70,7 +68,9 @@ class _FakeWellKnown extends WellKnown {
       sso: InstanceSsoSchema(
         enabled: false,
         enforced: false,
+        usernameFromProvider: false,
         displayName: null,
+        buttonLabel: null,
         redirectUri: '',
       ),
       registration: InstanceRegistrationSchema(
@@ -105,9 +105,15 @@ class _FakeWellKnown extends WellKnown {
           faviconUrl: null,
           themeColor: null,
           statusPageUrl: null,
+          statusPageInstatus: false,
           statusPageIncidentHistoryUrl: null,
           premiumProductName: 'Plutonium',
           premiumInfoUrl: null,
+          faviconDarkUrl: null,
+          signInBackdropUrl: null,
+          customCss: null,
+          uploadLimitMessage: null,
+          trustedDomains: <String>[],
         ),
         setup: InstanceSetupSchema(configured: true, adminUrl: null),
         legal: InstanceAppPublicSchemaLegal(
@@ -119,6 +125,7 @@ class _FakeWellKnown extends WellKnown {
           collectDateOfBirth: false,
         ),
       ),
+      agePolicy: InstanceAgePolicySchema(geos: []),
     );
   }
 }

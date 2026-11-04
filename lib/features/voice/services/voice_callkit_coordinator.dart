@@ -10,16 +10,18 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:fluxer_app/core/audio/chat_attachment/chat_attachment_audio_session.dart';
+import 'package:fluxer_app/core/audio/system_voice_call_guard.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
-import 'package:fluxer_app/core/providers/app_ui_lifecycle_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_connection_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_reconnect_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_reconnect_provider.dart';
 import 'package:fluxer_app/core/push/apns/apns_voip_mobile_device_registration.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/talker.dart';
 import 'package:fluxer_app/features/auth/providers/account_manager_provider.dart';
-import 'package:fluxer_app/features/settings/providers/voice_settings_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/voice_settings_provider.dart';
 import 'package:fluxer_app/features/voice/domain/voice_settings_state.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/foreign_incoming_voice_call_sheet.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/incoming_voice_call_sheet.dart';
@@ -29,14 +31,15 @@ import 'package:fluxer_app/features/voice/providers/voice_callkit_engine_gate_pr
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/services/voice_settings_applicator.dart';
-import 'package:fluxer_app/features/voice/utils/foreign_account_call_ring.dart';
-import 'package:fluxer_app/features/voice/utils/incoming_voice_call_actions.dart';
-import 'package:fluxer_app/features/voice/utils/voice_call_in_progress_marker.dart';
-import 'package:fluxer_app/features/voice/utils/voice_call_ring.dart';
-import 'package:fluxer_app/features/voice/utils/voice_callkit_params.dart';
-import 'package:fluxer_app/features/voice/utils/voice_callkit_policy.dart';
-import 'package:fluxer_app/features/voice/utils/voice_callkit_session_store.dart';
-import 'package:fluxer_app/features/voice/utils/voice_session_navigation.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/call_in_progress_marker.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/call_ring.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/callkit_params.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/callkit_policy.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/callkit_session_store.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/foreign_account_call_ring.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/incoming_call_actions.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/voice_task_removed_watcher.dart';
+import 'package:fluxer_app/features/voice/utils/connection/session_navigation.dart';
 import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_dart/gateway.dart';
@@ -46,6 +49,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'voice_callkit_coordinator.g.dart';
 
 const MethodChannel _iosVoipCallKit = MethodChannel('fluxer_app/voip_callkit');
+
+const MethodChannel _androidVoiceTaskRemovedChannel = MethodChannel(
+  'fluxer_app/voice_task_removed',
+);
 
 VoiceCallKitVoiceSnapshot _voiceCallKitVoiceSnapshot(VoiceSessionState state) {
   return (
@@ -90,8 +97,19 @@ class VoiceCallKitCoordinatorLogic {
   final Set<String> _handledEndIds = <String>{};
   Timer? _audioSessionRecoveryTimer;
   final List<Timer> _speakerReapplyTimers = <Timer>[];
+  String? _interruptedChannelIdPendingLeave;
 
   void init() {
+    if (Platform.isAndroid) {
+      _androidVoiceTaskRemovedChannel.setMethodCallHandler((
+        MethodCall call,
+      ) async {
+        if (call.method != 'notifyTaskRemoved') {
+          return;
+        }
+        await _enqueueSync(_handleAppTaskRemoved);
+      });
+    }
     _ref.listen<PendingForeignCallJoin?>(pendingForeignCallJoinProvider, (
       PendingForeignCallJoin? _,
       PendingForeignCallJoin? next,
@@ -122,15 +140,15 @@ class VoiceCallKitCoordinatorLogic {
           ),
         );
       })
-      ..listen<Map<String, CallState>>(activeCallsProvider, (
-        Map<String, CallState>? _,
-        Map<String, CallState> next,
-      ) {
-        if (_sessions.isEmpty) {
-          return;
-        }
-        _scheduleSync(() => _syncStaleCallKitSessions(next));
-      })
+      ..listen<Map<String, CallState>>(
+        activeCallsProvider(readAccountUserId(_ref)),
+        (Map<String, CallState>? _, Map<String, CallState> next) {
+          if (_sessions.isEmpty) {
+            return;
+          }
+          _scheduleSync(() => _syncStaleCallKitSessions(next));
+        },
+      )
       ..listen<VoiceSessionState>(voiceSessionProvider, (
         VoiceSessionState? previous,
         VoiceSessionState next,
@@ -155,6 +173,7 @@ class VoiceCallKitCoordinatorLogic {
         _scheduleSync(() async {
           await _flushForeignCallJoin();
           await _endRingsMissingFromGateway();
+          await _leaveInterruptedVoiceSessionIfNeeded();
         });
       })
       ..listen<bool>(appUiForegroundProvider, (bool? previous, bool next) {
@@ -163,17 +182,21 @@ class VoiceCallKitCoordinatorLogic {
         }
         _scheduleSync(() => _syncForegroundChange(isForeground: next));
       })
-      ..listen<Map<String, VoiceState>>(voiceStatesMapProvider, (
-        Map<String, VoiceState>? previous,
-        Map<String, VoiceState> next,
-      ) {
-        if (_sessions.isEmpty) {
-          return;
-        }
-        _scheduleSync(
-          () => _syncCallKitMuteFromVoiceStates(previous: previous, next: next),
-        );
-      })
+      ..listen<Map<String, VoiceState>>(
+        voiceStatesMapProvider(readAccountUserId(_ref)),
+        (Map<String, VoiceState>? previous, Map<String, VoiceState> next) {
+          if (_interruptedChannelIdPendingLeave != null) {
+            _scheduleSync(_leaveInterruptedVoiceSessionIfNeeded);
+          }
+          if (_sessions.isEmpty) {
+            return;
+          }
+          _scheduleSync(
+            () =>
+                _syncCallKitMuteFromVoiceStates(previous: previous, next: next),
+          );
+        },
+      )
       ..listen<VoiceSettingsState>(voiceSettingsProvider, (
         VoiceSettingsState? previous,
         VoiceSettingsState next,
@@ -184,6 +207,7 @@ class VoiceCallKitCoordinatorLogic {
         if (!shouldReapplySpeakerOutputOnPreferenceChange(
           isInVoice: voice.isInVoice,
           speakerPreferenceChanged: previous?.outputRoute != next.outputRoute,
+          isAndroid: Platform.isAndroid,
         )) {
           return;
         }
@@ -194,6 +218,9 @@ class VoiceCallKitCoordinatorLogic {
   }
 
   void dispose() {
+    if (Platform.isAndroid) {
+      _androidVoiceTaskRemovedChannel.setMethodCallHandler(null);
+    }
     _cancelAudioSessionRecovery();
     _cancelSpeakerOutputReapply();
     unawaited(_eventSubscription?.cancel());
@@ -352,27 +379,36 @@ class VoiceCallKitCoordinatorLogic {
     }
   }
 
-  bool _shouldApplySpeakerOutput() {
-    return shouldApplySpeakerOutputWhileInVoice(
+  Future<bool> _shouldApplySpeakerOutput() async {
+    if (!shouldApplySpeakerOutputWhileInVoice(
       hasActiveVoiceSession: _sessions.hasActiveVoiceSession,
       isInVoice: _voiceCallKitVoiceSnapshot(
         _ref.read(voiceSessionProvider),
       ).isInVoice,
-    );
+    )) {
+      return false;
+    }
+    if (await isExternalSystemVoiceCallActive()) {
+      return false;
+    }
+    return true;
   }
 
   Future<void> _applySpeakerOutputAndRetry({required String reason}) async {
-    if (!_shouldApplySpeakerOutput()) {
+    if (!await _shouldApplySpeakerOutput()) {
       return;
     }
     await _applySpeakerOutputForCallKitAudioSession(reason: reason);
+    if (!await _shouldApplySpeakerOutput()) {
+      return;
+    }
     _scheduleSpeakerOutputReapply();
   }
 
   Future<void> _applySpeakerOutputForCallKitAudioSession({
     required String reason,
   }) async {
-    if (!_shouldApplySpeakerOutput()) {
+    if (!await _shouldApplySpeakerOutput()) {
       return;
     }
     try {
@@ -531,6 +567,9 @@ class VoiceCallKitCoordinatorLogic {
     VoiceCallKitVoiceSnapshot? previous,
     VoiceCallKitVoiceSnapshot next,
   ) async {
+    if (Platform.isAndroid) {
+      await syncAndroidVoiceTaskRemovedWatcher(active: next.isInVoice);
+    }
     if (!next.isInVoice) {
       _cancelSpeakerOutputReapply();
       ChatAttachmentAudioSession.instance.restoreAfterVoiceCall();
@@ -621,7 +660,11 @@ class VoiceCallKitCoordinatorLogic {
     final String? interruptedChannelId = Platform.isAndroid
         ? await takeInterruptedVoiceCallChannelId()
         : null;
+    _interruptedChannelIdPendingLeave = interruptedChannelId;
     await _adoptNativeCalls(interruptedChannelId: interruptedChannelId);
+    if (interruptedChannelId != null && _ref.read(gatewayReadyProvider)) {
+      _scheduleSync(_leaveInterruptedVoiceSessionIfNeeded);
+    }
   }
 
   Future<List<CallKitParams>> _reportedCalls() async {
@@ -767,7 +810,7 @@ class VoiceCallKitCoordinatorLogic {
       return;
     }
     final List<String> stale = _sessions.incomingRingChannelIdsAbsentFrom(
-      _ref.read(activeCallsProvider).keys.toSet(),
+      _ref.read(activeCallsProvider(readAccountUserId(_ref))).keys.toSet(),
     );
     final String? activeUserId = _ref.read(currentUserIdProvider);
     final String? pendingChannelId = _ref
@@ -802,7 +845,9 @@ class VoiceCallKitCoordinatorLogic {
       _sessions.markIncomingPresented(channelId);
       return;
     }
-    final CallState? callState = _ref.read(activeCallsProvider)[channelId];
+    final CallState? callState = _ref.read(
+      activeCallsProvider(readAccountUserId(_ref)),
+    )[channelId];
     final String? messageId = callState?.messageId;
     final String callKitId = _sessions.registerSession(
       channelId: channelId,
@@ -876,7 +921,9 @@ class VoiceCallKitCoordinatorLogic {
     }
     await _ensureAndroidPermissions();
     await _enterCallKitAudioOwnership();
-    final CallState? callState = _ref.read(activeCallsProvider)[channelId];
+    final CallState? callState = _ref.read(
+      activeCallsProvider(readAccountUserId(_ref)),
+    )[channelId];
     final String callKitId = _sessions.registerSession(
       channelId: channelId,
       messageId: callState?.messageId,
@@ -1067,6 +1114,89 @@ class VoiceCallKitCoordinatorLogic {
     });
     _publishIncomingHold();
     await _exitCallKitAudioOwnership();
+  }
+
+  Future<void> _handleAppTaskRemoved() async {
+    final VoiceCallKitVoiceSnapshot voice = _voiceCallKitVoiceSnapshot(
+      _ref.read(voiceSessionProvider),
+    );
+    if (!shouldHandleAndroidAppTaskRemoved(
+      isInVoice: voice.isInVoice,
+      hasTrackedCallKitSessions: !_sessions.isEmpty,
+    )) {
+      return;
+    }
+    talker.info('[VoiceCallKit] app task removed, tearing down voice');
+    await _runProgrammaticCallKitEnd(() async {
+      if (shouldLeaveVoiceOnAndroidTaskRemoved(isInVoice: voice.isInVoice)) {
+        try {
+          await _ref
+              .read(voiceSessionProvider.notifier)
+              .leaveVoice(endCall: false);
+        } on Object catch (error) {
+          talker.warning('[VoiceCallKit] leaveVoice on task removed: $error');
+        }
+      }
+      await clearVoiceCallInProgress();
+      try {
+        if (!Platform.isIOS) {
+          await FlutterCallkitIncoming.endAllCalls();
+        }
+      } on Object catch (error) {
+        talker.warning('[VoiceCallKit] endAllCalls on task removed: $error');
+      }
+      _sessions.clearAll();
+      _pendingRingsSeen.clear();
+    });
+    await _exitCallKitAudioOwnership();
+  }
+
+  Future<void> _leaveInterruptedVoiceSessionIfNeeded() async {
+    final String? interruptedChannelId = _interruptedChannelIdPendingLeave;
+    if (interruptedChannelId == null) {
+      return;
+    }
+    if (!_ref.read(gatewayReadyProvider)) {
+      return;
+    }
+    final VoiceCallKitVoiceSnapshot voice = _voiceCallKitVoiceSnapshot(
+      _ref.read(voiceSessionProvider),
+    );
+    final bool selfInChannelOnServer = selfVoiceStateInChannel(
+      voiceStates: _ref
+          .read(voiceStatesMapProvider(readAccountUserId(_ref)))
+          .values,
+      currentUserId: _ref.read(currentUserIdProvider),
+      channelId: interruptedChannelId,
+    );
+    if (!shouldLeaveVoiceForInterruptedSession(
+      interruptedChannelId: interruptedChannelId,
+      voice: voice,
+      selfInChannelOnServer: selfInChannelOnServer,
+    )) {
+      if (!voice.isInVoice && !selfInChannelOnServer) {
+        _interruptedChannelIdPendingLeave = null;
+      }
+      return;
+    }
+    talker.info(
+      '[VoiceCallKit] leaving interrupted voice session '
+      '(channelId=$interruptedChannelId)',
+    );
+    final bool left = await _ref
+        .read(voiceSessionProvider.notifier)
+        .leaveInterruptedGatewayVoice(interruptedChannelId);
+    if (!left) {
+      return;
+    }
+    _interruptedChannelIdPendingLeave = null;
+    try {
+      await _endAllCallKitSessions();
+    } on Object catch (error) {
+      talker.warning(
+        '[VoiceCallKit] end CallKit after interrupted session: $error',
+      );
+    }
   }
 
   Future<void> _endAllCallKitSessions() async {

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/channels/data/read_state_repository.dart';
 import 'package:fluxer_app/features/channels/data/read_state_write_batcher.dart';
@@ -110,7 +110,6 @@ void main() {
           (Ref ref) => ReadStateWriteBatcher(
             database: db,
             window: const Duration(hours: 1),
-            ackWindow: const Duration(hours: 1),
             mentionWindow: const Duration(hours: 1),
             onOverlayChanged: () =>
                 ref.read(readStateOverlayVersionProvider.notifier).bump(),
@@ -231,9 +230,7 @@ void main() {
     batcher.enqueueAck(
       channelId: _channelId,
       messageId: ownId,
-      isDm: false,
       clearSticky: true,
-      markDmRead: false,
     );
     await batcher.flushAck(_channelId);
     await _settle();

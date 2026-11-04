@@ -188,7 +188,7 @@ class AuthRepository {
         );
       }
 
-      final tokenResponse = response.toAuthTokenWithUserIdResponse();
+      final tokenResponse = response.toAuthRegisterSuccessResponse();
       final session = AuthSession(
         token: tokenResponse.token,
         userId: tokenResponse.userId,
@@ -231,7 +231,11 @@ class AuthRepository {
       return;
     }
     for (final ({String userId, String token}) entry in legacyTokens) {
-      await _tokenStorage.saveToken(userId: entry.userId, token: entry.token);
+      try {
+        await _tokenStorage.saveToken(userId: entry.userId, token: entry.token);
+      } on AuthTokenStorageException {
+        return;
+      }
     }
     await _db.authSessionDao.clearLegacyTokens();
     await _db.authSessionDao.dropLegacyTokenColumnIfPresent();
@@ -310,7 +314,7 @@ class AuthRepository {
     if (migrated == null) {
       return;
     }
-    await _tokenStorage.saveApiBaseUrl(userId: userId, apiBaseUrl: migrated);
+    await _persistApiBaseUrl(userId, migrated);
   }
 
   Future<void> pruneTokenlessSessions() async {
@@ -432,7 +436,14 @@ class AuthRepository {
     if (existing == apiBaseUrl) {
       return;
     }
-    await _tokenStorage.saveApiBaseUrl(userId: userId, apiBaseUrl: apiBaseUrl);
+    try {
+      await _tokenStorage.saveApiBaseUrl(
+        userId: userId,
+        apiBaseUrl: apiBaseUrl,
+      );
+    } on AuthTokenStorageException {
+      return;
+    }
   }
 
   Future<InstanceConfigSnapshot> resolveInstanceSnapshotForUser(
@@ -581,15 +592,19 @@ class AuthRepository {
       final SsoCompleteResponse response = await _client.auth.completeSso(
         body: SsoCompleteRequest(code: code, state: state),
       );
+      if (response.toJson()['mfa'] == true) {
+        throw const AuthFailure('MFA is required to complete SSO.');
+      }
+      final SsoCompleteResponseVariant1 success = response.toVariant1();
       final AuthSession session = AuthSession(
-        token: response.token,
-        userId: response.userId,
+        token: success.token,
+        userId: success.userId,
       );
       await _saveSession(
         session,
-        username: response.user.username,
-        discriminator: response.user.discriminator,
-        avatar: response.user.avatar,
+        username: success.user.username,
+        discriminator: success.user.discriminator,
+        avatar: success.user.avatar,
       );
       return session;
     } on DioException catch (error) {

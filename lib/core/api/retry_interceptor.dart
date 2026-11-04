@@ -1,21 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fluxer_app/core/api/service_unavailable.dart';
 import 'package:fluxer_app/core/api/session_authorization_header.dart';
+import 'package:fluxer_app/core/api/transient_network_error.dart';
+
+export 'package:fluxer_app/core/api/transient_network_error.dart';
 
 const _kRetryCountKey = '_retryCount';
 
 const kNoRetryKey = 'noRetry';
-
-const Set<DioExceptionType> _kRetryableTypes = {
-  DioExceptionType.connectionError,
-  DioExceptionType.connectionTimeout,
-  DioExceptionType.sendTimeout,
-};
 
 const Set<String> _kIdempotentMethods = <String>{
   'GET',
@@ -24,26 +19,6 @@ const Set<String> _kIdempotentMethods = <String>{
   'PUT',
   'DELETE',
 };
-
-bool _isTransientIoFailure(Object? error) =>
-    error is SocketException || error is TlsException || error is HttpException;
-
-bool isTransientConnectionError(DioException error) =>
-    _kRetryableTypes.contains(error.type) || error.error is HandshakeException;
-
-bool isTransientNetworkError(Object error) {
-  if (error is DioException) {
-    return isTransientConnectionError(error) ||
-        error.type == DioExceptionType.receiveTimeout ||
-        (error.type == DioExceptionType.unknown &&
-            _isTransientIoFailure(error.error)) ||
-        error.response?.statusCode == 429 ||
-        isHttpServiceUnavailable(error);
-  }
-  return error is ServiceUnavailableException ||
-      error is TimeoutException ||
-      _isTransientIoFailure(error);
-}
 
 bool _isSafeToReplay(DioException error) {
   if (error.response?.statusCode == 429) {

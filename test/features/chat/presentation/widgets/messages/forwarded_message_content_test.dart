@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart'
     show ChannelsCompanion, FluxerDatabase, ServersCompanion;
-import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme.dart';
@@ -16,13 +15,14 @@ import 'package:fluxer_app/features/chat/presentation/widgets/messages/forwarded
 import 'package:fluxer_app/features/chat/presentation/widgets/messages/message_sticker_image.dart';
 import 'package:fluxer_app/features/chat/providers/pickers/favorite_media_provider.dart';
 import 'package:fluxer_app/features/chat/utils/media/save_message_media_favorite.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
 import 'package:fluxer_app/features/ui/media_viewer/attachment_media_viewer.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_dart/export.dart' show MessageReferenceType;
 import 'package:fluxer_markdown/fluxer_markdown.dart';
 import 'package:riverpod/src/framework.dart' show Override;
 
+import '../../../../../helpers/core_test_provider_overrides.dart';
 import '../../../../../helpers/open_test_database.dart';
 import '../../../../../helpers/test_l10n.dart';
 import '../../../../../helpers/wide_layout_test_sizes.dart';
@@ -161,7 +161,6 @@ void main() {
       await tester.pumpWidget(
         _buildTestApp(
           overrides: [
-            fluxerDatabaseProvider.overrideWithValue(openTestDatabase()),
             favoriteMemesProvider.overrideWith((ref) => Stream.value(const [])),
           ],
           child: _content(
@@ -221,7 +220,7 @@ void main() {
 
     await tester.pumpWidget(
       _buildTestApp(
-        overrides: [fluxerDatabaseProvider.overrideWithValue(db)],
+        database: db,
         child: ForwardedMessageContent(
           message: Message(
             id: _messageId,
@@ -263,6 +262,7 @@ void main() {
       tester.getSize(find.byType(ForwardedMessageContent)).height,
       loading,
     );
+    await releaseTestWidgetTree(tester);
   });
 }
 
@@ -310,10 +310,11 @@ Attachment _imageAttachment({required String filename}) {
 Widget _buildTestApp({
   required Widget child,
   List<Override> overrides = const [],
+  FluxerDatabase? database,
 }) {
   final colorTheme = buildDarkColorTheme();
   return ProviderScope(
-    overrides: overrides,
+    overrides: coreTestProviderOverrides(database: database, extra: overrides),
     child: MaterialApp(
       locale: kTestLocale,
       localizationsDelegates: fluxerLocalizationsDelegates,

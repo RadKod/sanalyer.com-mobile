@@ -7,8 +7,8 @@ import 'package:fluxer_app/core/limits/limit_context.dart';
 import 'package:fluxer_app/core/limits/limit_defaults.dart';
 import 'package:fluxer_app/core/limits/limit_key.dart';
 import 'package:fluxer_app/core/premium/current_user_entitlements_provider.dart';
-import 'package:fluxer_app/core/providers/active_instance_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/instance/active_instance_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/features/chat/providers/messages/message_length_limits_provider.dart';
 import 'package:fluxer_dart/export.dart';
 
@@ -44,9 +44,7 @@ WellKnownFluxerResponse _wellKnownWithMessageLength(int length) {
       gift: 'https://example.test/gift',
       webapp: 'https://example.test/webapp',
     ),
-    captcha: const InstanceCaptchaSchema(
-      provider: InstanceCaptchaProviderSchema.none,
-    ),
+    captcha: const InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
     features: const InstanceFeaturesSchema(
       voiceEnabled: true,
       stripeEnabled: false,
@@ -67,7 +65,9 @@ WellKnownFluxerResponse _wellKnownWithMessageLength(int length) {
     sso: const InstanceSsoSchema(
       enabled: false,
       enforced: false,
+      usernameFromProvider: false,
       displayName: null,
+      buttonLabel: null,
       redirectUri: 'https://example.test/sso',
     ),
     registration: const InstanceRegistrationSchema(
@@ -107,9 +107,15 @@ WellKnownFluxerResponse _wellKnownWithMessageLength(int length) {
         faviconUrl: null,
         themeColor: null,
         statusPageUrl: null,
+        statusPageInstatus: false,
         statusPageIncidentHistoryUrl: null,
         premiumProductName: 'Plutonium',
         premiumInfoUrl: null,
+        faviconDarkUrl: null,
+        signInBackdropUrl: null,
+        customCss: null,
+        uploadLimitMessage: null,
+        trustedDomains: <String>[],
       ),
       setup: InstanceSetupSchema(configured: true, adminUrl: null),
       legal: InstanceAppPublicSchemaLegal(
@@ -121,6 +127,7 @@ WellKnownFluxerResponse _wellKnownWithMessageLength(int length) {
         collectDateOfBirth: true,
       ),
     ),
+    agePolicy: const InstanceAgePolicySchema(geos: []),
   );
 }
 

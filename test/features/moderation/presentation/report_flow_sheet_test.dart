@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/limits/instance_limit_provider.dart';
 import 'package:fluxer_app/core/limits/limit_key.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
+import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
@@ -35,11 +36,11 @@ import 'package:fluxer_app/features/moderation/presentation/report_flow/report_f
 import 'package:fluxer_app/features/moderation/providers/report_flow_provider.dart';
 import 'package:fluxer_app/features/settings/presentation/sheets/claim_account_sheet.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_security_login.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/use_12_hour_time_format_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
-import 'package:fluxer_app/features/settings/providers/webauthn_credentials_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/time_format_providers.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/webauthn_credentials_view_model.dart';
 import 'package:fluxer_app/features/ui/button/fluxer_button.dart';
 import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -242,10 +243,11 @@ class _Harness {
           androidAnimatorDurationDisabledProvider.overrideWith(
             (ref) => Stream<bool>.value(false),
           ),
+          currentUserIdProvider.overrideWithValue('test-user'),
           userSettingsViewModelProvider.overrideWith(() => settings),
-          webauthnCredentialsViewModelProvider.overrideWithValue(
-            const WebauthnCredentialsViewState(),
-          ),
+          webauthnCredentialsViewModelProvider(
+            'test-user',
+          ).overrideWithValue(const WebauthnCredentialsViewState()),
           use12HourTimeFormatProvider.overrideWithValue(false),
           fluxerDatabaseProvider.overrideWithValue(openTestDatabase()),
           contextualGuildIdProvider.overrideWithValue(null),

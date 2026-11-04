@@ -10,26 +10,25 @@ import 'package:fluxer_app/features/chat/presentation/widgets/attachments/attach
 import 'package:fluxer_app/features/chat/presentation/widgets/media/alt_text_badge.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/media/embed_animated_image.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/media/fluxer_animated_image.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../../../../../helpers/core_test_provider_overrides.dart';
 import '../../../../../helpers/test_l10n.dart';
-
-class _ShowAltTextAppearance extends AppearancePreferences {
-  @override
-  AppearancePreferencesState build() =>
-      const AppearancePreferencesState(showAltTextOnImages: true);
-}
 
 Widget _app(Widget child, {bool showAltText = false}) {
   final colorTheme = buildDarkColorTheme();
   return ProviderScope(
-    overrides: [
-      if (showAltText)
-        appearancePreferencesProvider.overrideWith(_ShowAltTextAppearance.new),
-    ],
+    overrides: coreTestProviderOverrides(
+      extra: [
+        if (showAltText)
+          appearancePreferencesProvider.overrideWithValue(
+            const AppearancePreferencesState(showAltTextOnImages: true),
+          ),
+      ],
+    ),
     child: MaterialApp(
       locale: kTestLocale,
       localizationsDelegates: fluxerLocalizationsDelegates,

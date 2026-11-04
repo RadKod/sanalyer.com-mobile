@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
+import 'package:fluxer_app/core/instance/instance_constants.dart';
 import 'package:fluxer_app/core/instance/instance_runtime_config.dart';
-import 'package:fluxer_app/core/providers/instance_runtime_config_provider.dart';
+import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme.dart';
@@ -85,26 +86,25 @@ void main() {
     );
   });
 
-  testWidgets(
-    'falls back to the instance marketing site when not self-hosted',
-    (tester) async {
-      final ProviderContainer container = _containerFor(_snapshot());
+  testWidgets('falls back to default Fluxer legal URLs when not self-hosted', (
+    tester,
+  ) async {
+    final ProviderContainer container = _containerFor(_snapshot());
 
-      await tester.pumpWidget(_app(container));
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(_app(container));
+    await tester.pumpAndSettle();
 
-      final Iterable<String?> urls = tester
-          .widgetList<FluxerTextLink>(find.byType(FluxerTextLink))
-          .map((FluxerTextLink link) => link.url);
-      expect(
-        urls,
-        containsAll(<String>[
-          'https://self.example/terms',
-          'https://self.example/privacy',
-        ]),
-      );
-    },
-  );
+    final Iterable<String?> urls = tester
+        .widgetList<FluxerTextLink>(find.byType(FluxerTextLink))
+        .map((FluxerTextLink link) => link.url);
+    expect(
+      urls,
+      containsAll(<String>[
+        InstanceConstants.defaultTermsUrl,
+        InstanceConstants.defaultPrivacyUrl,
+      ]),
+    );
+  });
 
   testWidgets('renders only the terms link when no privacy URL exists', (
     tester,
@@ -399,7 +399,7 @@ InstanceConfigSnapshot _snapshot({
         webapp: 'https://self.example/webapp',
       ),
       captcha: const InstanceCaptchaSchema(
-        provider: InstanceCaptchaProviderSchema.none,
+        provider: CaptchaProviderSchema.none,
       ),
       features: InstanceFeaturesSchema(
         voiceEnabled: true,
@@ -421,7 +421,9 @@ InstanceConfigSnapshot _snapshot({
       sso: const InstanceSsoSchema(
         enabled: false,
         enforced: false,
+        usernameFromProvider: false,
         displayName: null,
+        buttonLabel: null,
         redirectUri: 'https://self.example/sso',
       ),
       registration: InstanceRegistrationSchema(
@@ -456,9 +458,15 @@ InstanceConfigSnapshot _snapshot({
           faviconUrl: null,
           themeColor: null,
           statusPageUrl: null,
+          statusPageInstatus: false,
           statusPageIncidentHistoryUrl: null,
           premiumProductName: 'Plutonium',
           premiumInfoUrl: null,
+          faviconDarkUrl: null,
+          signInBackdropUrl: null,
+          customCss: null,
+          uploadLimitMessage: null,
+          trustedDomains: <String>[],
         ),
         setup: const InstanceSetupSchema(configured: true, adminUrl: null),
         legal: InstanceAppPublicSchemaLegal(
@@ -470,6 +478,7 @@ InstanceConfigSnapshot _snapshot({
           collectDateOfBirth: collectDateOfBirth,
         ),
       ),
+      agePolicy: const InstanceAgePolicySchema(geos: []),
     ),
   );
 }

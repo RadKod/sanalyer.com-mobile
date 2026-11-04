@@ -3386,7 +3386,7 @@ abstract class FluxerLocalizations {
   /// **'Change username'**
   String get changeFluxerTag;
 
-  /// Tooltip on the crown upsell button next to the username button.
+  /// Tooltip on the Plutonium upsell button next to the username button.
   ///
   /// In en, this message translates to:
   /// **'Customize your 4-digit tag (#{discriminator}) to your liking with Plutonium'**
@@ -3494,6 +3494,60 @@ abstract class FluxerLocalizations {
   /// **'Emoji'**
   String get emojiPickerTitle;
 
+  /// Title of the profile settings section that lists held badges and visibility toggles.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get profileBadgesSettingsTitle;
+
+  /// Description under the Badges title in profile settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which badges other people see on your profile.'**
+  String get profileBadgesSettingsDescription;
+
+  /// Shown in profile badge settings when the user holds no badges.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any badges yet.'**
+  String get profileBadgesSettingsEmpty;
+
+  /// Shown when the badge list fails to load in profile settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Your badges couldn\'t be loaded.'**
+  String get profileBadgesSettingsLoadFailed;
+
+  /// Screen reader label for a badge visibility switch in profile settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {badgeLabel} on your profile'**
+  String profileBadgesShowOnProfile(String badgeLabel);
+
+  /// Short count of profile badges not shown inline, opens the full list.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count}'**
+  String profileBadgesOverflowButton(int count);
+
+  /// Tooltip for the overflow control that opens every profile badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all badges'**
+  String get profileBadgesShowAllTooltip;
+
+  /// Screen reader label for the profile badge overflow control.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {+{count} more badge, show all} other {+{count} more badges, show all}}'**
+  String profileBadgesShowAllSemantic(int count);
+
+  /// Note under the Visionary ID row when its visibility switch is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown only when your Visionary badge is visible and not masked.'**
+  String get profileBadgesVisionaryNumberNote;
+
   /// Heading for the premium badge privacy settings section.
   ///
   /// In en, this message translates to:
@@ -3565,6 +3619,204 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'Remove your Visionary ID badge'**
   String get hideVisionaryIdDescription;
+
+  /// Product name for Operator Pass.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator Pass'**
+  String get operatorPassName;
+
+  /// Subtitle under Operator Pass settings heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator Pass since {since}'**
+  String operatorPassSince(String since);
+
+  /// Switch to show the Operator Pass badge on the profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Show badge on my profile'**
+  String get operatorPassShowBadgeOnProfile;
+
+  /// Switch to hide Operator Pass date on the badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide when you got your {operatorPassName}'**
+  String operatorPassHideDate(String operatorPassName);
+
+  /// Switch to hide Operator Pass count on the badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide how many Operator Passes you have'**
+  String get operatorPassHideCount;
+
+  /// Heading for Operators' wall settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Operators\' wall'**
+  String get operatorPassWallTitle;
+
+  /// Link to Operator Pass wall help.
+  ///
+  /// In en, this message translates to:
+  /// **'How the wall works'**
+  String get operatorPassWallHowItWorks;
+
+  /// Status when not on the Operators' wall.
+  ///
+  /// In en, this message translates to:
+  /// **'Not listed.'**
+  String get operatorPassWallNotListed;
+
+  /// Label for the live wall entry.
+  ///
+  /// In en, this message translates to:
+  /// **'On the wall'**
+  String get operatorPassWallOnTheWall;
+
+  /// Label for a pending wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get operatorPassWallInReview;
+
+  /// Review due date label.
+  ///
+  /// In en, this message translates to:
+  /// **'by {date}'**
+  String operatorPassWallReviewBy(String date);
+
+  /// Status when a wall name is live.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get operatorPassWallLive;
+
+  /// Declined wall name status.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: {name}. {reason}.'**
+  String operatorPassWallDeclined(String name, String reason);
+
+  /// Team note on a declined wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'Team note: {note}'**
+  String operatorPassWallTeamNote(String note);
+
+  /// Wall listing hidden by staff.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden by our team for now.'**
+  String get operatorPassWallHidden;
+
+  /// Link after hidden wall status.
+  ///
+  /// In en, this message translates to:
+  /// **'Why?'**
+  String get operatorPassWallHiddenWhy;
+
+  /// Wall listing removed when benefits are removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Off the wall while your benefits are removed.'**
+  String get operatorPassWallRemoved;
+
+  /// Link to Operator Pass terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator Pass terms'**
+  String get operatorPassTermsLink;
+
+  /// Switch to send profile changes to the wall.
+  ///
+  /// In en, this message translates to:
+  /// **'Send profile changes to the wall'**
+  String get operatorPassWallSendChanges;
+
+  /// Switch for yearly Operators list opt-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Add my name to the yearly Operators list'**
+  String get operatorPassWallReleaseList;
+
+  /// Hint for yearly Operators list opt-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Once a year, we publish a list of Operators in the notes of a Fluxer release and in its source code. Your wall name is only on it if you turn this on.'**
+  String get operatorPassWallReleaseListHint;
+
+  /// Save Operators' wall settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get operatorPassWallSave;
+
+  /// Toast after saving wall settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get operatorPassWallSaved;
+
+  /// Toast when wall settings save fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Try again.'**
+  String get operatorPassWallSaveFailed;
+
+  /// Label for wall name field in settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Name on the wall'**
+  String get operatorPassWallNameSettingsLabel;
+
+  /// Hint under wall name field.
+  ///
+  /// In en, this message translates to:
+  /// **'We check new names before they go live.'**
+  String get operatorPassWallNameHint;
+
+  /// Opt out of the Operators' wall.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t list me'**
+  String get operatorPassWallDontListMe;
+
+  /// Validation when wall name is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name, or check Don\'t list me.'**
+  String get operatorPassWallNameRequired;
+
+  /// Validation when wall name is too long.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 32 characters or fewer.'**
+  String get operatorPassWallNameTooLong;
+
+  /// Decline reason for wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'Breaks the community guidelines'**
+  String get operatorPassWallDeclineGuidelines;
+
+  /// Decline reason for wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'Pretends to be someone else'**
+  String get operatorPassWallDeclineImpersonation;
+
+  /// Decline reason for wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses a name or image without the rights to it'**
+  String get operatorPassWallDeclineRights;
+
+  /// Decline reason for wall name.
+  ///
+  /// In en, this message translates to:
+  /// **'Not suitable for younger users'**
+  String get operatorPassWallDeclineAge;
 
   /// Avatar helper text for non-premium users, mentioning Plutonium requirement for animated avatars.
   ///
@@ -6878,6 +7130,12 @@ abstract class FluxerLocalizations {
   /// **'This mature community is not available to your account.'**
   String get matureCommunityUnavailableBody;
 
+  /// Body when mature access must be enabled on web or desktop instead of in the iOS app.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on age-restricted communities and channels at fluxer.com in your browser or in the desktop app. They stay hidden in the iOS app until you do.'**
+  String get matureContentIosWebOptInBody;
+
   /// Body when a minor cannot access a mature category.
   ///
   /// In en, this message translates to:
@@ -9765,6 +10023,12 @@ abstract class FluxerLocalizations {
   /// **'Headphones'**
   String get voiceOutputRouteHeadset;
 
+  /// Opens the system audio route picker for voice calls on iOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Change audio output'**
+  String get voiceChangeAudioOutputLabel;
+
   /// Switch label to hide voice participants who do not have their camera on.
   ///
   /// In en, this message translates to:
@@ -9854,6 +10118,12 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'Exit full screen'**
   String get voiceScreenShareExitFullscreenTooltip;
+
+  /// Accessibility label for the fullscreen call video pinch-zoom level indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom {scale}'**
+  String voiceVideoZoomLevel(String scale);
 
   /// Title on the participant's own screen-share tile when they are sharing their screen.
   ///
@@ -12823,10 +13093,10 @@ abstract class FluxerLocalizations {
   /// **'Slowmode'**
   String get channelSettingsSlowmode;
 
-  /// Description under the slowmode select in channel settings.
+  /// Description under the slowmode slider in channel settings.
   ///
   /// In en, this message translates to:
-  /// **'Wait between messages. \"{bypassSlowmodePermissionLabel}\" can bypass it.'**
+  /// **'Wait between messages. Members with \"{bypassSlowmodePermissionLabel}\" can bypass this.'**
   String channelSettingsSlowmodeDescription(
     String bypassSlowmodePermissionLabel,
   );
@@ -15777,6 +16047,24 @@ abstract class FluxerLocalizations {
   /// **'Share full-length videos and big files without shrinking them first. Free accounts can send up to 25 MB.'**
   String get storePlutoniumFilesBody;
 
+  /// No description provided for @storePlutoniumStreamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream in 4K at 60 FPS'**
+  String get storePlutoniumStreamTitle;
+
+  /// No description provided for @storePlutoniumStreamBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your screen or camera in up to 4K at 60 frames per second. Free accounts stream in up to 720p at 30.'**
+  String get storePlutoniumStreamBody;
+
+  /// No description provided for @storePlutoniumManageHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription'**
+  String get storePlutoniumManageHeading;
+
   /// No description provided for @storePlutoniumCompareTitle.
   ///
   /// In en, this message translates to:
@@ -17294,6 +17582,18 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'Zoom the logo out when leaving the splash screen'**
   String get advancedSettingMobileSplashZoomAnimationDescription;
+
+  /// Toggle label for splash screen loading quotes in advanced settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Splash screen quotes'**
+  String get advancedSettingSplashQuotesLabel;
+
+  /// Toggle description for the local-only splash screen quotes setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a random quote on the splash screen. Won\'t sync across devices.'**
+  String get advancedSettingSplashQuotesDescription;
 
   /// No description provided for @advancedSettingKeyboardHintsLabel.
   ///
@@ -19865,6 +20165,124 @@ abstract class FluxerLocalizations {
   /// **'Members with the \"{permission}\" permission can always mention roles, regardless of this setting.'**
   String guildSettingsRolesAllowMentionsHelper(String permission);
 
+  /// Label for the role icon field in role settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Role icon'**
+  String get guildSettingsRolesRoleIcon;
+
+  /// Helper text under the role icon field.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload an image or pick an emoji. Members get the icon of their highest role that has one.'**
+  String get guildSettingsRolesRoleIconHelper;
+
+  /// File requirements hint under role icon upload controls.
+  ///
+  /// In en, this message translates to:
+  /// **'{formats}. At least {minimumSize}, up to {maxSize}.'**
+  String guildSettingsRolesRoleIconUploadHint(
+    String formats,
+    String minimumSize,
+    String maxSize,
+  );
+
+  /// Accessibility label for empty role icon upload tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload role icon'**
+  String get guildSettingsRolesRoleIconUploadAccessibility;
+
+  /// Accessibility label when role icon is an emoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Current role icon, {emojiName}'**
+  String guildSettingsRolesRoleIconCurrentEmojiAccessibility(String emojiName);
+
+  /// Accessibility label when role icon is an uploaded image.
+  ///
+  /// In en, this message translates to:
+  /// **'Current role icon, uploaded image'**
+  String get guildSettingsRolesRoleIconCurrentImageAccessibility;
+
+  /// Button to pick a unicode or guild emoji as role icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose emoji'**
+  String get guildSettingsRolesRoleIconChooseEmoji;
+
+  /// Button to upload a role icon image.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload image'**
+  String get guildSettingsRolesRoleIconUploadImage;
+
+  /// Button to remove the role icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove icon'**
+  String get guildSettingsRolesRoleIconRemove;
+
+  /// Error when user picks an animated image for role icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Animated icons are not supported. Use a static image.'**
+  String get guildSettingsRolesRoleIconAnimatedError;
+
+  /// Error when role icon file type is not allowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This file type is not supported. Supported types are {formats}.'**
+  String guildSettingsRolesRoleIconUnsupportedTypeError(String formats);
+
+  /// Error when role icon image or emoji could not be loaded.
+  ///
+  /// In en, this message translates to:
+  /// **'This image could not be loaded. Try another one.'**
+  String get guildSettingsRolesRoleIconLoadError;
+
+  /// Sample message body in role icon usage preview.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how messages appear'**
+  String get guildSettingsRolesRoleIconUsagePreviewMessage;
+
+  /// Accessibility label for a role icon next to a member name.
+  ///
+  /// In en, this message translates to:
+  /// **'Role icon, {roleName}'**
+  String roleIconAccessibilityLabel(String roleName);
+
+  /// Title for role icon crop sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop role icon'**
+  String get roleIconCropTitle;
+
+  /// Primary action on role icon crop sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Save icon'**
+  String get roleIconCropSave;
+
+  /// Skip crop and use original image for role icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip cropping'**
+  String get roleIconCropSkip;
+
+  /// Toast when role icon crop fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to crop icon. Try again.'**
+  String get roleIconCropFailed;
+
+  /// Instructions on role icon crop sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reposition your role icon and use the scroll wheel or pinch to zoom. The recommended minimum size is {minimumWidth}×{minimumHeight} pixels.'**
+  String roleIconCropDescription(int minimumWidth, int minimumHeight);
+
   /// Help text above the clear permissions button.
   ///
   /// In en, this message translates to:
@@ -22007,6 +22425,42 @@ abstract class FluxerLocalizations {
   /// In en, this message translates to:
   /// **'Removed {roles}.'**
   String auditLogChangeRemovedRoles(String roles);
+
+  /// Role audit log detail when emoji icon is set.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the role icon to {emoji}'**
+  String auditLogChangeRoleEmojiSet(String emoji);
+
+  /// Role audit log detail when emoji icon changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed the role icon from {oldEmoji} to {newEmoji}'**
+  String auditLogChangeRoleEmojiChanged(String oldEmoji, String newEmoji);
+
+  /// Role audit log detail when emoji icon is removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed the role icon'**
+  String get auditLogChangeRoleEmojiRemoved;
+
+  /// Role audit log detail when image icon is set.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a custom role icon'**
+  String get auditLogChangeRoleIconSet;
+
+  /// Role audit log detail when image icon changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed the custom role icon'**
+  String get auditLogChangeRoleIconChanged;
+
+  /// Role audit log detail when image icon is removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed the custom role icon'**
+  String get auditLogChangeRoleIconRemoved;
 
   /// Audit log option detail sentence.
   ///

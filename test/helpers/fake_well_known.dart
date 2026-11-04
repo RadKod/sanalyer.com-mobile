@@ -1,4 +1,4 @@
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_dart/export.dart';
 
 class FakeWellKnown extends WellKnown {
@@ -19,9 +19,7 @@ class FakeWellKnown extends WellKnown {
         gift: '',
         webapp: '',
       ),
-      captcha: InstanceCaptchaSchema(
-        provider: InstanceCaptchaProviderSchema.none,
-      ),
+      captcha: InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
       features: InstanceFeaturesSchema(
         voiceEnabled: false,
         stripeEnabled: false,
@@ -42,7 +40,9 @@ class FakeWellKnown extends WellKnown {
       sso: InstanceSsoSchema(
         enabled: false,
         enforced: false,
+        usernameFromProvider: false,
         displayName: null,
+        buttonLabel: null,
         redirectUri: '',
       ),
       registration: InstanceRegistrationSchema(
@@ -77,9 +77,15 @@ class FakeWellKnown extends WellKnown {
           faviconUrl: null,
           themeColor: null,
           statusPageUrl: null,
+          statusPageInstatus: false,
           statusPageIncidentHistoryUrl: null,
           premiumProductName: 'Plutonium',
           premiumInfoUrl: null,
+          faviconDarkUrl: null,
+          signInBackdropUrl: null,
+          customCss: null,
+          uploadLimitMessage: null,
+          trustedDomains: <String>[],
         ),
         setup: InstanceSetupSchema(configured: true, adminUrl: null),
         legal: InstanceAppPublicSchemaLegal(
@@ -91,6 +97,7 @@ class FakeWellKnown extends WellKnown {
           collectDateOfBirth: false,
         ),
       ),
+      agePolicy: InstanceAgePolicySchema(geos: []),
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/settings/domain/privacy_permission.dart';
-import 'package:fluxer_app/features/settings/providers/privacy_dashboard_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/privacy_dashboard_view_model.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -13,10 +14,14 @@ class PrivacyCommunicationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(privacyDashboardViewModelProvider);
+    final state = ref.watch(
+      privacyDashboardViewModelProvider(watchAccountUserId(ref)),
+    );
     final l10n = FluxerLocalizations.of(context);
     final layout = context.layout;
-    final vm = ref.read(privacyDashboardViewModelProvider.notifier);
+    final vm = ref.read(
+      privacyDashboardViewModelProvider(readAccountUserId(ref)).notifier,
+    );
 
     return FluxerSettingsSection(
       sectionId: 'communication',

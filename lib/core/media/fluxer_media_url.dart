@@ -16,18 +16,19 @@ abstract final class FluxerMediaUrl {
 
   static const int defaultAvatarCount = 6;
 
-  static String? defaultAvatar({required String userId}) {
+  static String? defaultAvatar({required String userId, String? staticCdn}) {
     if (userId.isEmpty) {
       return null;
     }
+    final String cdn = staticCdn ?? fluxerStaticCdn;
     final int? index = _decimalMod(userId, defaultAvatarCount);
     if (index != null) {
-      return '$fluxerStaticCdn/avatars/$index.png';
+      return '$cdn/avatars/$index.png';
     }
     try {
       final BigInt bigIndex =
           BigInt.parse(userId) % BigInt.from(defaultAvatarCount);
-      return '$fluxerStaticCdn/avatars/$bigIndex.png';
+      return '$cdn/avatars/$bigIndex.png';
     } on FormatException {
       return null;
     }
@@ -215,6 +216,30 @@ abstract final class FluxerMediaUrl {
     }
     return _url(
       path: 'embed-splashes/$guildId/$hash.webp',
+      query: <String, String>{'size': '$size'},
+    );
+  }
+
+  static String? roleIcon({
+    required String roleId,
+    required String? hash,
+    required double cssSize,
+    double devicePixelRatio = 2,
+  }) {
+    if (hash == null || hash.isEmpty) {
+      return null;
+    }
+    if (hash.startsWith('data:')) {
+      return hash;
+    }
+    final int requested = (cssSize * devicePixelRatio * 2).round();
+    final int size = requested.clamp(
+      MediaProxySizes.roleIconMin,
+      MediaProxySizes.roleIconMax,
+    );
+    final String normalizedHash = normalizeMediaHash(hash);
+    return _url(
+      path: 'role-icons/$roleId/$normalizedHash.webp',
       query: <String, String>{'size': '$size'},
     );
   }

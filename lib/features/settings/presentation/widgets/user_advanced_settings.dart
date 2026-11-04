@@ -3,14 +3,14 @@ import 'package:fluxer_app/core/observability/observability_reporting_provider.d
 import 'package:fluxer_app/features/settings/presentation/sheets/advanced_configure_sheets.dart';
 import 'package:fluxer_app/features/settings/presentation/sheets/advanced_search_sheets.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_content_layout.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/haptics_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
-import 'package:fluxer_app/features/settings/providers/voice_settings_provider.dart';
-import 'package:fluxer_app/features/settings/utils/advanced_setting_visibility.dart';
-import 'package:fluxer_app/features/settings/utils/user_settings_domain_actions.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/local_settings_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/voice_settings_provider.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/utils/user_settings/advanced_setting_visibility.dart';
+import 'package:fluxer_app/features/settings/utils/user_settings/user_settings_domain_actions.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/features/voice/domain/voice_settings_state.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
@@ -124,6 +124,18 @@ class UserAdvancedSettings extends ConsumerWidget {
                     .read(appearancePreferencesProvider.notifier)
                     .setMobileSplashZoomAnimation(value: value),
               ),
+              FluxerSettingsSwitchItem(
+                label: l10n.advancedSettingSplashQuotesLabel,
+                description: l10n.advancedSettingSplashQuotesDescription,
+                value: ref.watch(
+                  localSettingsProvider.select(
+                    (state) => state.splashQuotesEnabled,
+                  ),
+                ),
+                onChanged: (value) => ref
+                    .read(localSettingsProvider.notifier)
+                    .setSplashQuotesEnabled(value: value),
+              ),
               if (showKeyboardShortcutAdvancedSettings(context))
                 FluxerSettingsSwitchItem(
                   label: l10n.advancedSettingKeyboardHintsLabel,
@@ -191,10 +203,12 @@ class UserAdvancedSettings extends ConsumerWidget {
               FluxerSettingsSwitchItem(
                 label: l10n.advancedSettingHapticFeedbackLabel,
                 description: l10n.advancedSettingHapticFeedbackDescription,
-                value: ref.watch(hapticsPreferencesProvider),
+                value: ref.watch(
+                  localSettingsProvider.select((state) => state.hapticsEnabled),
+                ),
                 onChanged: (value) => ref
-                    .read(hapticsPreferencesProvider.notifier)
-                    .setEnabled(value: value),
+                    .read(localSettingsProvider.notifier)
+                    .setHapticsEnabled(value: value),
               ),
             ],
           ),

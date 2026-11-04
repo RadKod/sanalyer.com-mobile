@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/premium/current_user_entitlements_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/gifts/services/gift_redeem_service.dart';
 import 'package:fluxer_app/features/gifts/utils/gift_code_utils.dart';
-import 'package:fluxer_app/features/settings/utils/premium_formatting.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_formatting.dart';
 import 'package:fluxer_app/features/ui/button/fluxer_button.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -49,7 +50,9 @@ class GiftInventoryCard extends ConsumerWidget {
             formatPremiumShortDate(gift.createdAt, l10n.localeName),
           );
     final bool isLifetime =
-        ref.watch(currentUserEntitlementsProvider).premiumType ==
+        ref
+            .watch(currentUserEntitlementsProvider(watchAccountUserId(ref)))
+            .premiumType ==
         UserPremiumTypes.lifetime.json;
 
     return DecoratedBox(

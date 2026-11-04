@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/theme/fluxer_color_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/settings/domain/privacy_data_request.dart';
-import 'package:fluxer_app/features/settings/providers/privacy_dashboard_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/privacy_dashboard_view_model.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:intl/intl.dart';
+import 'package:fluxer_app/shared/utils/user_date_formatting.dart';
 
 class PrivacyDataRequestSheet extends ConsumerStatefulWidget {
   const PrivacyDataRequestSheet({
@@ -136,7 +137,9 @@ class _PrivacyDataRequestSheetState
       return;
     }
     setState(() => _isSubmitting = true);
-    final vm = ref.read(privacyDashboardViewModelProvider.notifier);
+    final vm = ref.read(
+      privacyDashboardViewModelProvider(readAccountUserId(ref)).notifier,
+    );
     final l10n = FluxerLocalizations.of(context);
     final bool success;
     if (_isExport) {
@@ -187,7 +190,10 @@ class _PrivacyDataRequestSheetState
   }
 
   String _formatSummaryDate(DateTime date) {
-    return DateFormat.yMMMd().format(date);
+    return formatUserMediumDate(
+      date,
+      FluxerLocalizations.of(context).localeName,
+    );
   }
 
   @override
@@ -236,7 +242,7 @@ class _PrivacyDataRequestSheetState
             layout.s4,
             layout.s2,
             layout.s4,
-            layout.s4,
+            FluxerBottomSheet.scrollBottomPaddingOf(context),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -676,7 +682,10 @@ class _DateField extends StatelessWidget {
     final colors = context.colors;
     final String display = value == null
         ? '—'
-        : DateFormat.yMMMd().format(value!);
+        : formatUserMediumDate(
+            value!,
+            FluxerLocalizations.of(context).localeName,
+          );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

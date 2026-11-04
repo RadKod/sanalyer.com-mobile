@@ -1,0 +1,385 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/instance/instance_legal_links.dart';
+import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
+import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_button.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_style.dart';
+import 'package:fluxer_app/features/settings/providers/commerce/plutonium_store_provider.dart';
+import 'package:fluxer_app/features/settings/services/plutonium_store_products.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/plutonium_store_bar_mode.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_formatting.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_purchases_disabled_l10n.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_subscription_status.dart';
+import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
+import 'package:fluxer_app/features/ui/button/fluxer_button.dart';
+import 'package:fluxer_app/features/ui/button/fluxer_button_size.dart';
+import 'package:fluxer_app/features/ui/spinner/fluxer_loading_spinner.dart';
+import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
+import 'package:fluxer_app/material_ui.dart';
+
+class PremiumStoreBar extends StatelessWidget {
+  const PremiumStoreBar({
+    required this.mode,
+    required this.status,
+    required this.store,
+    required this.purchaseDisabled,
+    required this.purchaseDisabledMessage,
+    required this.onBuy,
+    required this.onManage,
+    this.onRestore,
+    this.otherStoreNotice,
+    super.key,
+  });
+
+  final PremiumStoreBarMode mode;
+  final PremiumSubscriptionStatus status;
+  final PremiumStoreState store;
+  final bool purchaseDisabled;
+  final String? purchaseDisabledMessage;
+  final void Function(PremiumStorePlan plan) onBuy;
+  final VoidCallback? onManage;
+  final Future<void> Function()? onRestore;
+  final String? otherStoreNotice;
+
+  @override
+  Widget build(BuildContext context) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+    final layout = context.layout;
+    final double bottom = MediaQuery.paddingOf(context).bottom;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: style.line)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          layout.s4,
+          layout.s3,
+          layout.s4,
+          layout.s3 + bottom,
+        ),
+        child: switch (mode) {
+          PremiumStoreBarMode.visionary => _StatusText(
+            l10n.storePlutoniumVisionaryStatus,
+          ),
+          PremiumStoreBarMode.gift => _SubscribeActions(
+            l10n: l10n,
+            store: store,
+            purchaseDisabled: purchaseDisabled,
+            purchaseDisabledMessage: purchaseDisabledMessage,
+            otherStoreNotice: otherStoreNotice,
+            onBuy: onBuy,
+            onRestore: onRestore,
+            statusLines: [
+              _giftText(l10n),
+              l10n.premiumGiftTimeAddedAfterSubscription,
+            ],
+          ),
+          PremiumStoreBarMode.waiting => const _WaitingStatus(),
+          PremiumStoreBarMode.manage => _ManageStatus(
+            detail: _manageDetail(l10n),
+            cycle: _cycleLabel(l10n),
+            onManage: onManage,
+            otherStoreNotice: otherStoreNotice,
+          ),
+          PremiumStoreBarMode.subscribe => _SubscribeActions(
+            l10n: l10n,
+            store: store,
+            purchaseDisabled: purchaseDisabled,
+            purchaseDisabledMessage: purchaseDisabledMessage,
+            otherStoreNotice: otherStoreNotice,
+            onBuy: onBuy,
+            onRestore: onRestore,
+          ),
+        },
+      ),
+    );
+  }
+
+  String _giftText(FluxerLocalizations l10n) {
+    final DateTime? until = status.actualPremiumUntil;
+    if (until == null) {
+      return l10n.premiumGiftBadge;
+    }
+    return l10n.premiumGiftedUntil(
+      formatPremiumShortDate(until, l10n.localeName),
+    );
+  }
+
+  String? _manageDetail(FluxerLocalizations l10n) {
+    final DateTime? until = status.actualPremiumUntil;
+    if (until == null) {
+      return null;
+    }
+    final String date = formatPremiumShortDate(until, l10n.localeName);
+    if (status.premiumWillCancel) {
+      return l10n.premiumCancelsOn(date);
+    }
+    return l10n.premiumActiveUntil(date);
+  }
+
+  String? _cycleLabel(FluxerLocalizations l10n) {
+    return switch (status.billingCycle) {
+      'monthly' => l10n.premiumMonthly,
+      'yearly' => l10n.premiumYearly,
+      _ => null,
+    };
+  }
+}
+
+class _StatusText extends StatelessWidget {
+  const _StatusText(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: context.textStyles.bodySmall.copyWith(color: style.ink),
+    );
+  }
+}
+
+class _WaitingStatus extends StatelessWidget {
+  const _WaitingStatus();
+
+  @override
+  Widget build(BuildContext context) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    final layout = context.layout;
+    return Row(
+      children: [
+        const FluxerLoadingSpinner(size: FluxerLoadingSpinnerSize.small),
+        SizedBox(width: layout.s3),
+        Expanded(
+          child: Text(
+            FluxerLocalizations.of(context).storePlutoniumWaiting,
+            style: context.textStyles.bodySmall.copyWith(color: style.ink),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ManageStatus extends StatelessWidget {
+  const _ManageStatus({
+    required this.detail,
+    required this.cycle,
+    required this.onManage,
+    required this.otherStoreNotice,
+  });
+
+  final String? detail;
+  final String? cycle;
+  final VoidCallback? onManage;
+  final String? otherStoreNotice;
+
+  @override
+  Widget build(BuildContext context) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+    final layout = context.layout;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (cycle != null)
+          Text(
+            cycle!,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodySmall.copyWith(color: style.ink),
+          ),
+        if (detail != null) ...[
+          SizedBox(height: layout.s1),
+          Text(
+            detail!,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodySmall.copyWith(color: style.inkMuted),
+          ),
+        ],
+        if (onManage != null) ...[
+          SizedBox(height: layout.s3),
+          FluxerButton.secondary(
+            label: l10n.premiumManageSubscription,
+            onPressed: onManage,
+          ),
+        ] else if (otherStoreNotice != null) ...[
+          SizedBox(height: layout.s3),
+          Text(
+            otherStoreNotice!,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodySmall.copyWith(color: style.inkMuted),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _SubscribeActions extends ConsumerWidget {
+  const _SubscribeActions({
+    required this.l10n,
+    required this.store,
+    required this.purchaseDisabled,
+    required this.purchaseDisabledMessage,
+    required this.otherStoreNotice,
+    required this.onBuy,
+    required this.onRestore,
+    this.statusLines = const [],
+  });
+
+  final FluxerLocalizations l10n;
+  final PremiumStoreState store;
+  final bool purchaseDisabled;
+  final String? purchaseDisabledMessage;
+  final String? otherStoreNotice;
+  final void Function(PremiumStorePlan plan) onBuy;
+  final Future<void> Function()? onRestore;
+  final List<String> statusLines;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    final layout = context.layout;
+    final bool sideBySide = !isMobileLayout(context);
+    final int? savings = plutoniumYearlySavingsPercent(
+      monthlyRawPrice: store.monthly?.rawPrice ?? 0,
+      yearlyRawPrice: store.yearly?.rawPrice ?? 0,
+    );
+    final bool selfHosted = ref.watch(
+      instanceRuntimeConfigProvider.select((config) => config.selfHosted),
+    );
+    final bool missingProducts =
+        !store.loading && store.monthly == null && store.yearly == null;
+    final String? blockMessage = purchaseDisabled
+        ? purchaseDisabledMessage
+        : store.storeUnavailable
+        ? l10n.storePlutoniumUnavailable
+        : store.accountPurchasesDisabled
+        ? premiumPurchasesDisabledMessage(l10n, selfHosted: selfHosted)
+        : otherStoreNotice ??
+              (store.subscriptionPurchaseBlocked
+                  ? l10n.storePlutoniumAlreadySubscribed
+                  : missingProducts
+                  ? premiumPlanUnavailableMessage(l10n, selfHosted: selfHosted)
+                  : null);
+    final String? renewsThrough = switch (store.billingStore) {
+      PremiumBillingStore.appStore => l10n.storePlutoniumRenewsThroughAppStore,
+      PremiumBillingStore.googlePlay => l10n.storePlutoniumRenewsThroughPlay,
+      null => null,
+    };
+
+    final Widget yearly = PremiumStoreButton(
+      label: l10n.premiumYearly,
+      price: _priced(store.yearly?.priceLabel, l10n.storePlutoniumYearSuffix),
+      savings: savings == null ? null : l10n.storePlutoniumSavePercent(savings),
+      primary: true,
+      isLoading: store.purchasingPlan == PremiumStorePlan.yearly,
+      onPressed:
+          purchaseDisabled ||
+              store.storeUnavailable ||
+              store.subscriptionPurchaseBlocked ||
+              store.yearly == null ||
+              store.purchasingPlan != null
+          ? null
+          : () => onBuy(PremiumStorePlan.yearly),
+    );
+    final Widget monthly = PremiumStoreButton(
+      label: l10n.premiumMonthly,
+      price: _priced(store.monthly?.priceLabel, l10n.storePlutoniumMonthSuffix),
+      primary: false,
+      isLoading: store.purchasingPlan == PremiumStorePlan.monthly,
+      onPressed:
+          purchaseDisabled ||
+              store.storeUnavailable ||
+              store.subscriptionPurchaseBlocked ||
+              store.monthly == null ||
+              store.purchasingPlan != null
+          ? null
+          : () => onBuy(PremiumStorePlan.monthly),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final String line in statusLines) ...[
+          _StatusText(line),
+          SizedBox(height: layout.s2),
+        ],
+        if (renewsThrough != null &&
+            !store.storeUnavailable &&
+            !missingProducts &&
+            !store.subscriptionPurchaseBlocked)
+          Text(
+            renewsThrough,
+            textAlign: TextAlign.center,
+            style: context.textStyles.timestamp.copyWith(color: style.inkMuted),
+          ),
+        if (blockMessage != null) ...[
+          SizedBox(height: layout.s2),
+          Text(
+            blockMessage,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodySmall.copyWith(color: style.inkMuted),
+          ),
+        ],
+        if (!store.subscriptionPurchaseBlocked) ...[
+          SizedBox(height: layout.s3),
+          if (sideBySide)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: yearly),
+                SizedBox(width: layout.s3),
+                Expanded(child: monthly),
+              ],
+            )
+          else ...[
+            yearly,
+            SizedBox(height: layout.s2),
+            monthly,
+          ],
+          SizedBox(height: layout.s3),
+          const _PurchaseTerms(),
+        ],
+        if (onRestore != null) ...[
+          SizedBox(height: layout.s2),
+          FluxerButton.ghost(
+            size: FluxerButtonSize.compact,
+            label: l10n.storePlutoniumRestorePurchases,
+            onPressedAsync: onRestore,
+          ),
+        ],
+      ],
+    );
+  }
+
+  String? _priced(String? price, String suffix) {
+    if (price == null) {
+      return null;
+    }
+    return '$price$suffix';
+  }
+}
+
+class _PurchaseTerms extends ConsumerWidget {
+  const _PurchaseTerms();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final PremiumStoreStyle style = PremiumStoreStyle.of(context);
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+    final TextStyle muted = context.textStyles.timestamp.copyWith(
+      color: style.inkMuted,
+    );
+    return InstanceLegalAgreementText(
+      prefix: l10n.premiumDisclaimerAgreementPrefix,
+      baseStyle: muted,
+      linkStyle: muted.copyWith(color: style.accent),
+    );
+  }
+}

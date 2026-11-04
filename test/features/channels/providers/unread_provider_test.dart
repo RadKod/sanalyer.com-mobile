@@ -9,9 +9,10 @@ import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/gateway/gateway_event_handler.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_performance_providers.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_performance_providers.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/channels/data/read_state_utils.dart';
 import 'package:fluxer_app/features/channels/providers/guild_channel_unread_snapshot_provider.dart';
@@ -20,7 +21,7 @@ import 'package:fluxer_app/features/channels/providers/unread_provider.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_read_state_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/shared/utils/snowflake_time.dart';
 import 'package:fluxer_dart/gateway.dart' show PassiveUpdatesEvent;
 
@@ -310,7 +311,10 @@ void main() {
 
     await _waitFor(
       () =>
-          container.read(channelPermissionCacheProvider)[channelId] != null &&
+          container.read(
+                channelPermissionCacheProvider(readAccountUserId(container)),
+              )[channelId] !=
+              null &&
           container.read(channelUnreadProvider(channelId)).value?.hasUnread ==
               false,
     );
@@ -324,7 +328,9 @@ void main() {
       ),
     );
     await container
-        .read(channelPermissionCacheProvider.notifier)
+        .read(
+          channelPermissionCacheProvider(readAccountUserId(container)).notifier,
+        )
         .rebuildGuild(guildId);
 
     await _waitFor(
@@ -896,7 +902,9 @@ void main() {
 
     await GatewayEventHandler(
       database: watched.db,
-      channelLastMessageIndex: container.read(channelLastMessageIndexProvider),
+      channelLastMessageIndex: container.read(
+        channelLastMessageIndexProvider(readAccountUserId(container)),
+      ),
     ).handle(
       PassiveUpdatesEvent(
         guildId: 'guild-1',

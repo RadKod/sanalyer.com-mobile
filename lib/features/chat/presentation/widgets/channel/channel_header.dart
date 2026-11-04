@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/accessibility/domain/text_scale.dart';
@@ -30,7 +31,7 @@ import 'package:fluxer_app/features/forum/presentation/widgets/forum_mobile_head
 import 'package:fluxer_app/features/forum/providers/forum_header_search_provider.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/navigation/invoke_shell_back.dart';
 import 'package:fluxer_app/features/shell/navigation/shell_chat_back.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
@@ -39,9 +40,9 @@ import 'package:fluxer_app/features/threads/presentation/thread_menu_sheet.dart'
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
-import 'package:fluxer_app/features/voice/utils/call_actions.dart';
-import 'package:fluxer_app/features/voice/utils/voice_camera_platform.dart';
-import 'package:fluxer_app/features/voice/utils/voice_e2ee_display.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/call_actions.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/e2ee_display.dart';
+import 'package:fluxer_app/features/voice/utils/media/camera_platform.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
@@ -206,6 +207,15 @@ class ChannelHeader extends ConsumerWidget {
     required bool isMemberListVisible,
     required bool highContrast,
   }) {
+    final bool isThread = channel?.isThread ?? false;
+    final int backButtonUnreadCount = ref.watch(
+      chatBackButtonUnreadCountProvider(channelId),
+    );
+    final bool showBackButton = showsChannelHeaderBackButton(
+      context,
+      ref,
+      isThread: isThread,
+    );
     return FluxerConstrainedUiTextScale(
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: context.layout.headerHeight),
@@ -213,6 +223,14 @@ class ChannelHeader extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: context.layout.s4),
           child: Row(
             children: [
+              if (showBackButton)
+                ChatBackButton(
+                  unreadCount: backButtonUnreadCount,
+                  badgeCutoutColor: highContrast
+                      ? Colors.transparent
+                      : context.colors.backgroundSecondaryLighter,
+                  onPressed: () => invokeShellBack(context, ref),
+                ),
               Expanded(
                 child: ChannelHeaderLeftSection(
                   channelId: channelId,
@@ -276,8 +294,9 @@ class ChannelHeader extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
-            if (showsInAppShellChatBackButton(
+            if (showsChannelHeaderBackButton(
               context,
+              ref,
               isThread: channel?.isThread ?? false,
             ))
               ChatBackButton(
@@ -522,11 +541,13 @@ class ChannelHeader extends ConsumerWidget {
     }
     if (channel != null) {
       final int? effectivePermissionBits = ref.watch(
-        channelPermissionCacheProvider.select((m) => m[channel.id]),
+        channelPermissionCacheProvider(
+          watchAccountUserId(ref),
+        ).select((m) => m[channel.id]),
       );
       final VoiceSessionState voice = ref.watch(voiceSessionProvider);
       final Map<String, VoiceState> voiceStates = ref.watch(
-        voiceStatesMapProvider,
+        voiceStatesMapProvider(readAccountUserId(ref)),
       );
       final bool isVoiceChannel = channel.type == ChannelType.guildVoice;
       final Guild? guild = ref

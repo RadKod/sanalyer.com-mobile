@@ -13,10 +13,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
 import 'package:fluxer_app/core/database/daos/composer_draft_dao.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart' hide Message;
-import 'package:fluxer_app/core/providers/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_connection_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_session_recovery_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_session_recovery_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/channels/data/ack_batcher.dart';
 import 'package:fluxer_app/features/channels/providers/ack_batcher_provider.dart';
@@ -1356,7 +1357,12 @@ void main() {
       );
       final notifier = container.read(chatViewModelProvider.notifier);
       final validation = await container
-          .read(cloudUploadControllerProvider('channel-1').notifier)
+          .read(
+            cloudUploadControllerProvider(
+              readAccountUserId(container),
+              'channel-1',
+            ).notifier,
+          )
           .addFiles(<ComposerUploadFile>[
             composerUploadFile(
               XFile.fromData(Uint8List.fromList(<int>[1, 2, 3]), name: 'a.png'),
@@ -1729,7 +1735,12 @@ void main() {
       );
       final notifier = container.read(chatViewModelProvider.notifier);
       final validation = await container
-          .read(cloudUploadControllerProvider('channel-1').notifier)
+          .read(
+            cloudUploadControllerProvider(
+              readAccountUserId(container),
+              'channel-1',
+            ).notifier,
+          )
           .addFiles(<ComposerUploadFile>[
             composerUploadFile(
               XFile.fromData(Uint8List.fromList(<int>[1, 2, 3]), name: 'a.png'),
@@ -2013,6 +2024,40 @@ void main() {
       },
     );
   });
+
+  test(
+    'send in a guild channel with unresolved permissions makes no request',
+    () async {
+      final db = openTestDatabase();
+      await db.guildDao.upsertServer(
+        ServersCompanion.insert(id: 'guild-1', name: 'Guild'),
+      );
+      await db.channelDao.upsertChannel(
+        ChannelsCompanion.insert(
+          id: 'channel-1',
+          guildId: 'guild-1',
+          name: 'general',
+        ),
+      );
+      final adapter = _SendAdapter(
+        serverMessageId: _snowflakeForUtc(DateTime.utc(2026, 6, 16, 12)),
+      );
+      final container = _container(db, adapter);
+      addTearDown(container.dispose);
+      final notifier = container.read(chatViewModelProvider.notifier);
+      await notifier.switchChannel('channel-1');
+      await _flushAsync();
+
+      await notifier.sendMessage(text: 'hi');
+      await _flushAsync();
+
+      expect(adapter.messagePostCount, 0);
+      expect(
+        container.read(toastProvider).single.toast.message,
+        container.read(appLocalizationsProvider).chatChannelNotReady,
+      );
+    },
+  );
 }
 
 ProviderContainer _container(

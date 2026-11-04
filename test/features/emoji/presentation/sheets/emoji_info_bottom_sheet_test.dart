@@ -18,8 +18,9 @@ import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_providers.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:fluxer_app/shared/utils/emoji_registry.dart';
+import 'package:fluxer_app/shared/utils/emoji/emoji_registry.dart';
 
+import '../../../../helpers/core_test_provider_overrides.dart';
 import '../../../../helpers/test_l10n.dart';
 
 class _FakeFavoriteEmojiKeys extends FavoriteEmojiKeys {
@@ -41,19 +42,21 @@ Widget _buildTestApp({
   final colorTheme = buildDarkColorTheme();
 
   return ProviderScope(
-    overrides: [
-      favoriteEmojiKeysProvider.overrideWith(_FakeFavoriteEmojiKeys.new),
-      guildListViewModelProvider.overrideWith(_FakeGuildListViewModel.new),
-      contextualGuildIdProvider.overrideWithValue(currentGuildId),
-      guildByIdProvider('guild-1').overrideWith(
-        (ref) => const Guild(
-          id: 'guild-1',
-          name: 'Test Community',
-          ownerId: 'owner',
+    overrides: coreTestProviderOverrides(
+      extra: [
+        favoriteEmojiKeysProvider.overrideWith(_FakeFavoriteEmojiKeys.new),
+        guildListViewModelProvider.overrideWith(_FakeGuildListViewModel.new),
+        contextualGuildIdProvider.overrideWithValue(currentGuildId),
+        guildByIdProvider('guild-1').overrideWith(
+          (ref) => const Guild(
+            id: 'guild-1',
+            name: 'Test Community',
+            ownerId: 'owner',
+          ),
         ),
-      ),
-      guildByIdProvider('guild-3').overrideWith((ref) => null),
-    ],
+        guildByIdProvider('guild-3').overrideWith((ref) => null),
+      ],
+    ),
     child: MaterialApp(
       locale: kTestLocale,
       localizationsDelegates: fluxerLocalizationsDelegates,

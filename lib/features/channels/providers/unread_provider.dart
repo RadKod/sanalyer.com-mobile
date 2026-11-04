@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart' as local;
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_performance_providers.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_performance_providers.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/talker.dart';
 import 'package:fluxer_app/features/channels/data/channel_unread_sources.dart';
@@ -92,14 +93,14 @@ class RecentGuildUnreadRetention extends _$RecentGuildUnreadRetention {
 @riverpod
 bool? channelUnreadCanView(Ref ref, String channelId) {
   final int? bits = ref.watch(
-    channelPermissionCacheProvider.select(
-      (ChannelPermissionCaches caches) => caches[channelId],
-    ),
+    channelPermissionCacheProvider(
+      watchAccountUserId(ref),
+    ).select((ChannelPermissionCaches caches) => caches[channelId]),
   );
   if (bits == null) {
     unawaited(
       ref
-          .read(channelPermissionCacheProvider.notifier)
+          .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
           .rebuildChannel(channelId),
     );
     return null;
@@ -128,6 +129,11 @@ Stream<UnreadState> channelUnread(Ref ref, String channelId) {
   UnreadState? lastEmitted;
   local.ReadState? lastReadState;
   ({String? lastMessageId, int mentionCount})? lastEffective;
+  String? resolvedLatestId;
+  var resolvedLatest = false;
+  var unreadTracked = false;
+  var fallbackAckMs = 0;
+  var guildChannel = false;
 
   void emit(UnreadState next) {
     if (disposed || next == lastEmitted) {
@@ -207,15 +213,18 @@ Stream<UnreadState> channelUnread(Ref ref, String channelId) {
             channel: channel,
             guildSettings: decodedGuildSettings,
           );
-    final fallbackAckMs = channel == null ? snowflakeTimestampMs(channelId) : 0;
+    fallbackAckMs = channel == null ? snowflakeTimestampMs(channelId) : 0;
+    guildChannel = channel != null;
     final bool isThread = channel != null && isThreadChannelType(channel.type);
-    final bool unreadTracked =
+    unreadTracked =
         (!isThread || await db.threadDao.getMember(channelId) != null) &&
         !(channel != null &&
             isThreadOnlyChannelType(channel.type) &&
             !forumNewPostsUnreadEnabled(
               decodedGuildSettings?.channelOverrides?[channelId]?.flags,
             ));
+    resolvedLatestId = latestMessageId;
+    resolvedLatest = true;
     final hasUnreadMessage =
         unreadTracked &&
         hasUnreadByReadState(
@@ -276,7 +285,7 @@ Stream<UnreadState> channelUnread(Ref ref, String channelId) {
       .changes(channelId)
       .listen((_) => scheduleRecompute());
   final indexSub = ref
-      .watch(channelLastMessageIndexProvider)
+      .watch(channelLastMessageIndexProvider(readAccountUserId(ref)))
       .flushStream
       .where((Map<String, String> updates) => updates.containsKey(channelId))
       .listen((_) => scheduleRecompute());
@@ -290,14 +299,39 @@ Stream<UnreadState> channelUnread(Ref ref, String channelId) {
         scheduleRecompute();
         return;
       }
+      final local.ReadState? persisted = readStateWriteBatcher
+          .persistedReadState(channelId);
       final next = readStateWriteBatcher.effectiveFields(
         channelId,
-        lastReadState,
+        persisted ?? lastReadState,
       );
-      if (next.lastMessageId != used.lastMessageId ||
-          next.mentionCount != used.mentionCount) {
-        scheduleRecompute();
+      if (next.lastMessageId == used.lastMessageId &&
+          next.mentionCount == used.mentionCount) {
+        return;
       }
+      final bool ackOnly =
+          compareSnowflakeIds(next.lastMessageId, used.lastMessageId) >= 0 &&
+          next.mentionCount <= used.mentionCount;
+      final UnreadState? emitted = lastEmitted;
+      if (ackOnly && emitted != null && resolvedLatest) {
+        lastEffective = (
+          lastMessageId: next.lastMessageId,
+          mentionCount: next.mentionCount,
+        );
+        emit(
+          unreadStateForAckCursor(
+            previous: emitted,
+            latestMessageId: resolvedLatestId,
+            ackLastMessageId: next.lastMessageId,
+            mentionCount: next.mentionCount,
+            unreadTracked: unreadTracked,
+            fallbackAckMs: fallbackAckMs,
+            isGuildChannel: guildChannel,
+          ),
+        );
+        return;
+      }
+      scheduleRecompute();
     })
     ..onDispose(() {
       disposed = true;
@@ -350,4 +384,31 @@ Future<void> primeGuildChannelUnreads(
       sub.close();
     }
   }
+}
+
+UnreadState unreadStateForAckCursor({
+  required UnreadState previous,
+  required String? latestMessageId,
+  required String? ackLastMessageId,
+  required int mentionCount,
+  required bool unreadTracked,
+  required int fallbackAckMs,
+  required bool isGuildChannel,
+}) {
+  final bool hasUnreadMessage =
+      unreadTracked &&
+      hasUnreadByReadState(
+        channelLastMessageId: latestMessageId,
+        ackLastMessageId: ackLastMessageId,
+        fallbackAckMs: fallbackAckMs,
+        mentionCount: 0,
+        isGuildChannel: isGuildChannel,
+      );
+  return UnreadState(
+    hasUnread: mentionCount > 0 || hasUnreadMessage,
+    hasUnreadMessages: hasUnreadMessage,
+    mentionCount: mentionCount,
+    hasUnreadPins: previous.hasUnreadPins,
+    unreadBadgesLevel: previous.unreadBadgesLevel,
+  );
 }

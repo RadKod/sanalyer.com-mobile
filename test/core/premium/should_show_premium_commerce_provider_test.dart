@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
 import 'package:fluxer_app/core/premium/should_show_premium_commerce_provider.dart';
-import 'package:fluxer_app/core/providers/active_instance_provider.dart';
-import 'package:fluxer_app/core/providers/instance_runtime_config_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/instance/active_instance_provider.dart';
+import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_dart/export.dart';
 
 class _PendingWellKnown extends WellKnown {
@@ -31,9 +31,7 @@ WellKnownFluxerResponse _selfHostedWellKnown({bool premiumEnabled = false}) {
       gift: 'https://example.test/gift',
       webapp: 'https://example.test/webapp',
     ),
-    captcha: const InstanceCaptchaSchema(
-      provider: InstanceCaptchaProviderSchema.none,
-    ),
+    captcha: const InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
     features: InstanceFeaturesSchema(
       voiceEnabled: true,
       stripeEnabled: false,
@@ -54,7 +52,9 @@ WellKnownFluxerResponse _selfHostedWellKnown({bool premiumEnabled = false}) {
     sso: const InstanceSsoSchema(
       enabled: false,
       enforced: false,
+      usernameFromProvider: false,
       displayName: null,
+      buttonLabel: null,
       redirectUri: 'https://example.test/sso',
     ),
     registration: const InstanceRegistrationSchema(
@@ -94,9 +94,15 @@ WellKnownFluxerResponse _selfHostedWellKnown({bool premiumEnabled = false}) {
         faviconUrl: null,
         themeColor: null,
         statusPageUrl: null,
+        statusPageInstatus: false,
         statusPageIncidentHistoryUrl: null,
         premiumProductName: 'Plutonium',
         premiumInfoUrl: null,
+        faviconDarkUrl: null,
+        signInBackdropUrl: null,
+        customCss: null,
+        uploadLimitMessage: null,
+        trustedDomains: <String>[],
       ),
       setup: InstanceSetupSchema(configured: true, adminUrl: null),
       legal: InstanceAppPublicSchemaLegal(
@@ -108,6 +114,7 @@ WellKnownFluxerResponse _selfHostedWellKnown({bool premiumEnabled = false}) {
         collectDateOfBirth: true,
       ),
     ),
+    agePolicy: const InstanceAgePolicySchema(geos: []),
   );
 }
 

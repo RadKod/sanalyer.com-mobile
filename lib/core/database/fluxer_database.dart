@@ -147,7 +147,7 @@ class FluxerDatabase extends _$FluxerDatabase {
   FluxerDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 99;
+  int get schemaVersion => 103;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1576,6 +1576,61 @@ class FluxerDatabase extends _$FluxerDatabase {
           )) {
         await customStatement(
           'ALTER TABLE read_states DROP COLUMN missing_since',
+        );
+      }
+      if (from < 100) {
+        for (final GeneratedColumn<Object> column in <GeneratedColumn<Object>>[
+          users.operatorPassBadgeHidden,
+          users.operatorPassBadgeTimestampHidden,
+          users.operatorPassBadgeCountHidden,
+        ]) {
+          if (!await _tableHasColumn(
+            m.database,
+            tableName: 'users',
+            columnName: column.name,
+          )) {
+            await m.addColumn(users, column);
+          }
+        }
+      }
+      if (from < 101) {
+        if (!await _tableHasColumn(
+          m.database,
+          tableName: 'servers',
+          columnName: servers.badgeIdsJson.name,
+        )) {
+          await m.addColumn(servers, servers.badgeIdsJson);
+        }
+        if (!await _tableHasColumn(
+          m.database,
+          tableName: 'users',
+          columnName: users.hiddenProfileBadgesJson.name,
+        )) {
+          await m.addColumn(users, users.hiddenProfileBadgesJson);
+        }
+      }
+      if (from < 102) {
+        if (!await _tableHasColumn(
+          m.database,
+          tableName: 'roles',
+          columnName: roles.icon.name,
+        )) {
+          await m.addColumn(roles, roles.icon);
+        }
+        if (!await _tableHasColumn(
+          m.database,
+          tableName: 'roles',
+          columnName: roles.unicodeEmoji.name,
+        )) {
+          await m.addColumn(roles, roles.unicodeEmoji);
+        }
+      }
+      if (from < 103) {
+        await m.database.customStatement(
+          'DROP INDEX IF EXISTS idx_messages_channel',
+        );
+        await m.database.customStatement(
+          'DROP INDEX IF EXISTS idx_messages_author',
         );
       }
     },

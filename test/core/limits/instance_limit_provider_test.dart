@@ -4,7 +4,7 @@ import 'package:fluxer_app/core/limits/instance_limit_provider.dart';
 import 'package:fluxer_app/core/limits/limit_context.dart';
 import 'package:fluxer_app/core/limits/limit_key.dart';
 import 'package:fluxer_app/core/premium/should_show_premium_commerce_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_dart/export.dart';
 
 class _EveryoneModeWellKnown extends WellKnown {
@@ -32,9 +32,7 @@ WellKnownFluxerResponse _buildEveryoneModeWellKnown() {
       gift: 'https://example.test/gift',
       webapp: 'https://example.test/webapp',
     ),
-    captcha: InstanceCaptchaSchema(
-      provider: InstanceCaptchaProviderSchema.none,
-    ),
+    captcha: InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
     features: InstanceFeaturesSchema(
       voiceEnabled: true,
       stripeEnabled: false,
@@ -55,7 +53,9 @@ WellKnownFluxerResponse _buildEveryoneModeWellKnown() {
     sso: InstanceSsoSchema(
       enabled: false,
       enforced: false,
+      usernameFromProvider: false,
       displayName: null,
+      buttonLabel: null,
       redirectUri: 'https://example.test/sso',
     ),
     registration: InstanceRegistrationSchema(
@@ -95,9 +95,15 @@ WellKnownFluxerResponse _buildEveryoneModeWellKnown() {
         faviconUrl: null,
         themeColor: null,
         statusPageUrl: null,
+        statusPageInstatus: false,
         statusPageIncidentHistoryUrl: null,
         premiumProductName: 'Plutonium',
         premiumInfoUrl: null,
+        faviconDarkUrl: null,
+        signInBackdropUrl: null,
+        customCss: null,
+        uploadLimitMessage: null,
+        trustedDomains: <String>[],
       ),
       setup: InstanceSetupSchema(configured: true, adminUrl: null),
       legal: InstanceAppPublicSchemaLegal(
@@ -109,6 +115,7 @@ WellKnownFluxerResponse _buildEveryoneModeWellKnown() {
         collectDateOfBirth: true,
       ),
     ),
+    agePolicy: InstanceAgePolicySchema(geos: []),
   );
 }
 

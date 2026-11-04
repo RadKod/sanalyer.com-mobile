@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/limits/instance_limit_provider.dart';
 import 'package:fluxer_app/core/limits/limit_key.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_names.dart';
 import 'package:fluxer_app/features/channels/domain/announcement_follow.dart';
@@ -25,11 +26,11 @@ import 'package:fluxer_app/features/favorites/domain/favorite_guild_id.dart';
 import 'package:fluxer_app/features/favorites/providers/favorite_channels_provider.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_permissions_provider.dart';
 import 'package:fluxer_app/features/notifications/presentation/inbox_popout.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_header_buttons.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
-import 'package:fluxer_app/features/voice/utils/call_actions.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/call_actions.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -89,7 +90,7 @@ class ChannelHeaderToolbar extends ConsumerWidget {
         ..._buildCallButtons(context, ref),
         if (canOfferAnnouncementFollow(
           channel,
-          ref.watch(guildPermissionsProvider),
+          ref.watch(guildPermissionsProvider(watchAccountUserId(ref))),
         ))
           ChannelHeaderIconButton(
             icon: PhosphorIconsFill.megaphone,

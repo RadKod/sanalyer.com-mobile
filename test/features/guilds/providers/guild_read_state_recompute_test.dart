@@ -2,9 +2,10 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_performance_providers.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_performance_providers.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/channels/data/read_state_write_batcher.dart';
 import 'package:fluxer_app/features/channels/providers/guild_channel_unread_snapshot_provider.dart';
@@ -96,7 +97,6 @@ void main() {
           (Ref ref) => ReadStateWriteBatcher(
             database: db,
             window: const Duration(hours: 1),
-            ackWindow: const Duration(hours: 1),
             mentionWindow: const Duration(hours: 1),
             onOverlayChanged: () =>
                 ref.read(readStateOverlayVersionProvider.notifier).bump(),
@@ -163,9 +163,9 @@ void main() {
       isDm: false,
       seedAckCandidate: null,
     );
-    container.read(channelLastMessageIndexProvider).applyBatch(<String, String>{
-      otherId: otherNew,
-    });
+    container
+        .read(channelLastMessageIndexProvider(readAccountUserId(container)))
+        .applyBatch(<String, String>{otherId: otherNew});
     await _settle();
 
     expect(snapshot()?.mentionCount, 2, reason: 'mentioned channel');

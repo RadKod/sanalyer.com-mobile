@@ -3,9 +3,16 @@ name: Android Beta FCM Build
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      android_build_number:
+        description: Pre-allocated Nodus Android versionCode for this release
+        required: false
+        type: string
 
 permissions:
   contents: read
+  id-token: write
+  attestations: write
 
 jobs:
   build-beta:
@@ -25,24 +32,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/resolve_beta_version_name.sh
 
-      - name: Fetch Android build number
+      - name: Resolve Android build number
         id: android_build_number
         env:
-          BUILD_SERVICE_TOKEN: ${{ secrets.BUILD_SERVICE_TOKEN }}
-          BUILD_SERVICE_URL: ${{ secrets.BUILD_SERVICE_URL }}
-        run: |
-          set -euo pipefail
-          URL="https://$BUILD_SERVICE_URL/v1/build-number?platform=android"
-          echo "Calling build service at $URL"
-          RESPONSE=$(curl -sS -X POST "$URL" \
-            -H "Authorization: Bearer $BUILD_SERVICE_TOKEN")
-          RESPONSE_ONE_LINE=$(printf '%s' "$RESPONSE" | tr -d '\n')
-          BUILD_NUMBER=$(printf '%s\n' "$RESPONSE_ONE_LINE" | sed -n 's/.*"buildNumber"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p')
-          if ! [[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "::error::Invalid or missing buildNumber in response: $RESPONSE"
-            exit 1
-          fi
-          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          NODUS_CI_TOKEN: ${{ secrets.NODUS_CI_TOKEN }}
+          NODUS_APP: fluxer
+          PREALLOCATED_BUILD_NUMBER: ${{ inputs.android_build_number }}
+        run: bash .github/scripts/resolve_nodus_android_build_number.sh
 
       - name: Sync submodules
         run: git submodule update --init --recursive
@@ -151,7 +147,7 @@ jobs:
         run: tool/measure/write_native_measure_config.sh
 
       - name: Build beta split APKs
-        run: flutter build apk --release --split-per-abi --flavor betaFcm --build-name ${{ steps.beta_version_name.outputs.version_name }} --build-number ${{ steps.android_build_number.outputs.build_number }} --dart-define-from-file=tool/dart_defines/beta.json --dart-define=PUSH_PROVIDER=fcm --dart-define=BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --dart-define=BETA_NUMBER=${{ steps.beta_version_name.outputs.beta_number }}
+        run: flutter build apk --release --split-per-abi --flavor betaFcm --build-name ${{ steps.beta_version_name.outputs.version_name }} --build-number ${{ steps.android_build_number.outputs.build_number }} -P force-version-code-ignoring-abi=true --dart-define-from-file=tool/dart_defines/beta.json --dart-define=PUSH_PROVIDER=fcm --dart-define=BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --dart-define=BETA_NUMBER=${{ steps.beta_version_name.outputs.beta_number }}
 
       - name: Build beta combined APK
         run: flutter build apk --release --flavor betaFcm --build-name ${{ steps.beta_version_name.outputs.version_name }} --build-number ${{ steps.android_build_number.outputs.build_number }} --dart-define-from-file=tool/dart_defines/beta.json --dart-define=PUSH_PROVIDER=fcm --dart-define=BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --dart-define=BETA_NUMBER=${{ steps.beta_version_name.outputs.beta_number }}
@@ -159,18 +155,49 @@ jobs:
       - name: Build beta app bundle
         run: flutter build appbundle --release --flavor betaFcm --build-name ${{ steps.beta_version_name.outputs.version_name }} --build-number ${{ steps.android_build_number.outputs.build_number }} --dart-define-from-file=tool/dart_defines/beta.json --dart-define=PUSH_PROVIDER=fcm --dart-define=BUILD_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --dart-define=BETA_NUMBER=${{ steps.beta_version_name.outputs.beta_number }}
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5
+        with:
+          ruby-version: "4.0"
+      - name: Restore Bundler cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-bundler-ruby-4.0-${{ hashFiles('Gemfile.lock', 'Gemfile') }}
+          restore-keys: |
+            ${{ runner.os }}-bundler-ruby-4.0-
+      - name: Install Ruby gems
+        run: |
+          bundle config set path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
+
+      - name: Upload beta AAB to Google Play
+        env:
+          BETA_RELEASE_TAG: ${{ steps.beta_version_name.outputs.tag_name }}
+          PLAY_STORE_TRACK: beta
+          SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}
+        run: |
+          if ! bundle exec fastlane android upload_beta_fcm_aab; then
+            echo "::warning::Google Play upload failed. APK/AAB artifacts will still be uploaded."
+          fi
+
+      - name: Attest beta FCM release binaries
+        uses: ./.github/actions/attest-android-binaries
+        with:
+          patterns: |
+            build/app/outputs/flutter-apk/*-betafcm-release.apk
+            build/app/outputs/bundle/betaFcmRelease/app-beta-fcm-release.aab
+
       - name: Upload beta APK artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: beta-fcm-apk
-          path: |
-            build/app/outputs/flutter-apk/app-*-betafcm-release.apk
-            build/app/outputs/flutter-apk/app-betafcm-release.apk
+          path: build/app/outputs/flutter-apk/*-betafcm-release.apk
           if-no-files-found: error
 
       - name: Upload beta AAB artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: beta-fcm-aab
-          path: build/app/outputs/bundle/betaFcmRelease/*.aab
+          path: build/app/outputs/bundle/betaFcmRelease/app-beta-fcm-release.aab
           if-no-files-found: error

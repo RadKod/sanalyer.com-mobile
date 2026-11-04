@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/shell/presentation/widgets/user_panel_widgets.dart';
-import 'package:fluxer_app/features/voice/providers/screen_share_capability_provider.dart';
-import 'package:fluxer_app/features/voice/providers/video_camera_capability_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_capability_providers.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
@@ -104,7 +104,7 @@ class VoiceConnectionLocalControls extends ConsumerWidget {
       return true;
     }
     final int? permissionBits = ref
-        .read(channelPermissionCacheProvider.notifier)
+        .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
         .getChannelBits(channelId);
     if (permissionBits == null) {
       return true;

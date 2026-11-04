@@ -8,10 +8,11 @@ import 'package:fluxer_app/core/theme/themes/dark.dart';
 import 'package:fluxer_app/features/shell/domain/nagbar_state.dart';
 import 'package:fluxer_app/features/shell/domain/nagbar_type.dart';
 import 'package:fluxer_app/features/shell/presentation/widgets/nagbar_container.dart';
-import 'package:fluxer_app/features/shell/providers/visible_nagbars_provider.dart';
+import 'package:fluxer_app/features/shell/providers/nagbar/nagbar_providers.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:riverpod/src/framework.dart' show Override;
 
+import '../../../../helpers/core_test_provider_overrides.dart';
 import '../../../../helpers/test_l10n.dart';
 
 void main() {
@@ -21,18 +22,20 @@ void main() {
     final FluxerColorTheme colorTheme = buildDarkColorTheme();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: <Override>[
-          visibleNagbarsProvider.overrideWith(
-            (Ref ref) => <NagbarState>[
-              const NagbarState(
-                type: NagbarType.unclaimedAccount,
-                priority: -4,
-                visible: true,
-                dismissible: false,
-              ),
-            ],
-          ),
-        ],
+        overrides: coreTestProviderOverrides(
+          extra: <Override>[
+            visibleNagbarsProvider.overrideWith(
+              (Ref ref) => <NagbarState>[
+                const NagbarState(
+                  type: NagbarType.unclaimedAccount,
+                  priority: -4,
+                  visible: true,
+                  dismissible: false,
+                ),
+              ],
+            ),
+          ],
+        ),
         child: MaterialApp(
           locale: kTestLocale,
           localizationsDelegates: fluxerLocalizationsDelegates,

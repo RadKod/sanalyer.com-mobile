@@ -126,6 +126,14 @@ class InstanceConfigSnapshot {
 
   String get mediaBaseUrl => InstanceEndpoints.mediaOf(wellKnown);
 
+  String get staticCdnBaseUrl {
+    final String configured = wellKnown?.endpoints.staticCdn.trim() ?? '';
+    if (configured.isEmpty) {
+      return InstanceEndpoints.defaultStaticCdn;
+    }
+    return configured.replaceAll(RegExp(r'/+$'), '');
+  }
+
   InstanceSsoSchema? get ssoConfig => wellKnown?.sso;
 
   bool get isSsoEnabled => ssoConfig?.enabled ?? false;
@@ -135,23 +143,24 @@ class InstanceConfigSnapshot {
     return config != null && config.enabled && config.enforced;
   }
 
-  String? get termsUrl =>
-      _legalUrl(wellKnown?.appPublic.legal.termsUrl, 'terms');
+  String? get termsUrl => _legalUrl(
+    wellKnown?.appPublic.legal.termsUrl,
+    InstanceConstants.defaultTermsUrl,
+  );
 
-  String? get privacyUrl =>
-      _legalUrl(wellKnown?.appPublic.legal.privacyUrl, 'privacy');
+  String? get privacyUrl => _legalUrl(
+    wellKnown?.appPublic.legal.privacyUrl,
+    InstanceConstants.defaultPrivacyUrl,
+  );
 
-  String? _legalUrl(String? configured, String marketingPath) {
+  String? _legalUrl(String? configured, String defaultUrl) {
     if (configured != null) {
       return configured;
     }
     if (wellKnown?.features.selfHosted ?? false) {
       return null;
     }
-    final String marketing =
-        wellKnown?.endpoints.marketing ??
-        InstanceConstants.defaultMarketingBaseUrl;
-    return '$marketing/$marketingPath';
+    return defaultUrl;
   }
 
   String get productName {

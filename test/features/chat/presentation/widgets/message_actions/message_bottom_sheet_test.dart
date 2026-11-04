@@ -18,8 +18,8 @@ import 'package:fluxer_app/features/chat/providers/messages/message_translation_
 import 'package:fluxer_app/features/chat/providers/messages/saved_message_provider.dart';
 import 'package:fluxer_app/features/chat/providers/pickers/favorite_media_provider.dart';
 import 'package:fluxer_app/features/settings/domain/search_provider_engine.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/features/voice/tts/fluxer_tts_provider.dart';
@@ -571,6 +571,99 @@ void main() {
       expect(find.text(testL10n.chatMessageCopyEmbedText), findsNothing);
       await releaseTestWidgetTree(tester);
     });
+  });
+
+  testWidgets('omits Add reaction row when quick reactions are shown', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: baseOverrides(
+          message.id,
+          extra: [
+            appearancePreferencesProvider.overrideWithValue(
+              const AppearancePreferencesState(),
+            ),
+          ],
+        ),
+        child: buildTestApp(
+          onOpen: (context) => showMessageBottomSheet(
+            context,
+            message: message,
+            isOwnMessage: true,
+            isDmChannel: false,
+            canDelete: true,
+            canReport: false,
+            canAddReactions: true,
+            canPinMessage: false,
+            canManageMessages: false,
+            canSendMessages: true,
+            developerMode: false,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(testL10n.chatMessageAddReaction), findsNothing);
+    await releaseTestWidgetTree(tester);
+  });
+
+  testWidgets('own message lists Edit before Reply and Forward', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: baseOverrides(
+          message.id,
+          extra: [
+            appearancePreferencesProvider.overrideWithValue(
+              const AppearancePreferencesState(),
+            ),
+          ],
+        ),
+        child: buildTestApp(
+          onOpen: (context) => showMessageBottomSheet(
+            context,
+            message: message,
+            isOwnMessage: true,
+            isDmChannel: false,
+            canDelete: true,
+            canReport: false,
+            canAddReactions: false,
+            canPinMessage: false,
+            canManageMessages: false,
+            canSendMessages: true,
+            developerMode: false,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    final List<String> labels = tester
+        .widgetList<FluxerBottomSheetMenuItem>(
+          find.byType(FluxerBottomSheetMenuItem),
+        )
+        .map((FluxerBottomSheetMenuItem item) => item.label)
+        .toList();
+    expect(
+      labels.indexOf(testL10n.chatMessageEdit),
+      lessThan(labels.indexOf(testL10n.chatMessageReply)),
+    );
+    expect(
+      labels.indexOf(testL10n.chatMessageReply),
+      lessThan(labels.indexOf(testL10n.chatMessageForward)),
+    );
+    expect(
+      labels.indexOf(testL10n.chatMessageCopyText),
+      lessThan(labels.indexOf(testL10n.chatMessageMarkAsUnread)),
+    );
+    await releaseTestWidgetTree(tester);
   });
 
   group('dispatchMessageAction', () {

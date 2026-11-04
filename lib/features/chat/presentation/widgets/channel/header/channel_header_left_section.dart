@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/presentation/widgets/channel_icon.dart';
@@ -21,7 +22,7 @@ import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
-import 'package:fluxer_app/features/voice/utils/voice_e2ee_display.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/e2ee_display.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
@@ -224,11 +225,13 @@ class _ChannelHeaderLeftSectionState
     final Channel? channel = widget.channel;
     if (channel != null) {
       final int? effectivePermissionBits = ref.watch(
-        channelPermissionCacheProvider.select((m) => m[channel.id]),
+        channelPermissionCacheProvider(
+          watchAccountUserId(ref),
+        ).select((m) => m[channel.id]),
       );
       final VoiceSessionState voice = ref.watch(voiceSessionProvider);
       final Map<String, VoiceState> voiceStates = ref.watch(
-        voiceStatesMapProvider,
+        voiceStatesMapProvider(readAccountUserId(ref)),
       );
       final bool isVoiceChannel = channel.type == ChannelType.guildVoice;
       final Guild? guild = ref

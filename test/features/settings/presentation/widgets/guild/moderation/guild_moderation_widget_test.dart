@@ -1,18 +1,24 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
+import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
+import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
+import 'package:fluxer_app/core/theme/fluxer_theme.dart';
+import 'package:fluxer_app/core/theme/themes/dark.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/settings/domain/guild/guild_settings_details.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/guild/moderation/guild_moderation_widget.dart';
 import 'package:fluxer_app/features/settings/providers/guild/guild_settings_tab_providers.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/ui/radio_group/fluxer_radio_group.dart';
 import 'package:fluxer_app/features/ui/settings/fluxer_save_bar.dart';
 import 'package:fluxer_app/features/ui/switch_group/fluxer_switch_group.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_dart/export.dart';
 
+import '../../../../../../helpers/core_test_provider_overrides.dart';
 import '../../../../../../helpers/pump_fluxer_app.dart';
 import '../../../../../../helpers/test_l10n.dart';
 
@@ -70,18 +76,30 @@ Future<List<GuildUpdateRequest>> _pump(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    pumpFluxerApp(
-      overrides: [
-        currentUserIdProvider.overrideWithValue('member-1'),
-        userSettingsViewModelProvider.overrideWith(_FixedUserSettings.new),
-        guildSettingsModerationActionsProvider(
-          _guildId,
-        ).overrideWith(() => _RecordingModerationActions(requests)),
-      ],
-      child: Scaffold(
-        body: GuildModerationWidget(
-          guildId: _guildId,
-          details: _details(verificationLevel: verificationLevel),
+    ProviderScope(
+      overrides: coreTestProviderOverrides(
+        extra: [
+          currentUserIdProvider.overrideWithValue('member-1'),
+          userSettingsViewModelProvider.overrideWith(_FixedUserSettings.new),
+          guildSettingsModerationActionsProvider(
+            _guildId,
+          ).overrideWith(() => _RecordingModerationActions(requests)),
+        ],
+      ),
+      child: MaterialApp(
+        locale: kTestLocale,
+        localizationsDelegates: fluxerLocalizationsDelegates,
+        supportedLocales: FluxerLocalizations.supportedLocales,
+        theme: buildFluxerTheme(
+          colorTheme: buildDarkColorTheme(),
+          textTheme: FluxerTextTheme.fromColors(buildDarkColorTheme()),
+          layoutTheme: FluxerLayoutTheme.scaled(),
+        ),
+        home: Scaffold(
+          body: GuildModerationWidget(
+            guildId: _guildId,
+            details: _details(verificationLevel: verificationLevel),
+          ),
         ),
       ),
     ),

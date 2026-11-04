@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/api/dio_error_message.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/notifications/data/unread_inbox_view.dart';
 import 'package:fluxer_app/features/notifications/domain/unread_inbox_entry.dart';
@@ -9,6 +10,7 @@ import 'package:fluxer_app/features/notifications/presentation/widgets/notificat
 import 'package:fluxer_app/features/notifications/presentation/widgets/notifications_list_states.dart';
 import 'package:fluxer_app/features/notifications/presentation/widgets/unread_channel_inbox_card.dart';
 import 'package:fluxer_app/features/notifications/providers/notifications_providers.dart';
+import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/features/ui/refresh/fluxer_refresh_scroll_view.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -106,7 +108,7 @@ class _NotificationsUnreadsBodyState
 
   Future<void> _refresh() async {
     final UnreadInboxView view = _view;
-    ref.read(unreadInboxCardCacheProvider).clear();
+    ref.read(unreadInboxCardCacheProvider(readAccountUserId(ref))).clear();
     ref.invalidate(unreadInboxChannelListProvider);
     final List<UnreadInboxEntry> live;
     try {
@@ -157,7 +159,11 @@ class _NotificationsUnreadsBodyState
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.only(
+                bottom: FluxerBottomSheet.isInSheet(context)
+                    ? FluxerBottomSheet.scrollBottomPaddingOf(context)
+                    : 12,
+              ),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext _, int i) {

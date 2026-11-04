@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
-import 'package:fluxer_app/core/providers/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/features/channels/data/ack_batcher.dart';
 import 'package:fluxer_app/features/channels/data/read_state_repository.dart';
 import 'package:fluxer_dart/export.dart';
@@ -15,10 +15,18 @@ part 'ack_batcher_provider.g.dart';
 AckBatcher ackBatcher(Ref ref) {
   final FluxerClient client = ref.watch(fluxerClientProvider);
   final db = ref.watch(fluxerDatabaseProvider);
-  final AckBatcher batcher = AckBatcher(
+  late final AckBatcher batcher;
+  batcher = AckBatcher(
     client: client,
-    onResponse: (response) =>
-        ReadStateRepository(client, db).applyAckResponse(response),
+    onResponse: (response) async {
+      for (final readState in response.readStates) {
+        final String? messageId = readState.lastMessageId;
+        if (messageId != null) {
+          batcher.cancelIfCovered(readState.id, messageId);
+        }
+      }
+      await ReadStateRepository(client, db).applyAckResponse(response);
+    },
   );
 
   ref

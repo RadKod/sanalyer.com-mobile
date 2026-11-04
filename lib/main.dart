@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/app.dart';
+import 'package:fluxer_app/core/api/retry_interceptor.dart';
 import 'package:fluxer_app/core/audio/app_media_audio_session.dart';
 import 'package:fluxer_app/core/audio/chat_attachment/chat_attachment_audio_entrypoint.dart';
 import 'package:fluxer_app/core/bootstrap/flutter_error_ui.dart';
@@ -14,14 +15,15 @@ import 'package:fluxer_app/core/build/push_provider_guard.dart';
 import 'package:fluxer_app/core/database/drift_stream_utils.dart';
 import 'package:fluxer_app/core/observability/fluxer_measure_root.dart';
 import 'package:fluxer_app/core/observability/fluxer_observability.dart';
+import 'package:fluxer_app/core/observability/measure_log_redaction.dart';
 import 'package:fluxer_app/core/observability/observability_reporting_provider.dart';
 import 'package:fluxer_app/core/observability/reporting_consent/app_foreground_session_watchdog.dart';
 import 'package:fluxer_app/core/observability/reporting_consent/observability_reporting_prompt_coordinator.dart';
 import 'package:fluxer_app/core/platform/bundled_root_certificates.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
-import 'package:fluxer_app/core/providers/active_instance_provider.dart';
-import 'package:fluxer_app/core/providers/app_startup_provider.dart';
+import 'package:fluxer_app/core/providers/app/app_startup_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
+import 'package:fluxer_app/core/providers/instance/active_instance_provider.dart';
 import 'package:fluxer_app/core/push/fcm/fcm_entrypoint.dart';
 import 'package:fluxer_app/core/push/relay_consent/push_relay_consent_provider.dart';
 import 'package:fluxer_app/core/push/services/apple_push_service.dart';
@@ -29,8 +31,8 @@ import 'package:fluxer_app/core/push/services/unified_push_service.dart';
 import 'package:fluxer_app/core/zoom/fluxer_app_zoom.dart';
 import 'package:fluxer_app/features/auth/providers/auth_providers.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/messages/message_sticker_image.dart';
-import 'package:fluxer_app/features/settings/providers/haptics_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/open_communities_to_last_channel_provider.dart';
+import 'package:fluxer_app/features/chat/services/upload_keep_alive.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/local_settings_provider.dart';
 import 'package:fluxer_app/features/ui/input/fluxer_clipboard_scope.dart';
 import 'package:fluxer_app/features/ui/input/text_editing_shortcuts.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -78,6 +80,7 @@ Future<void> _bootstrapFluxer(List<String> args) async {
 
   if (Platform.isAndroid) {
     installImeEditingShortcutHandler();
+    UploadKeepAlive.ensureAndroidResumeSync();
   }
   if (Platform.isIOS) {
     installNativePasteHandler();
@@ -102,8 +105,7 @@ Future<void> _bootstrapFluxer(List<String> args) async {
       await Future.wait<void>([
         container.read(observabilityReportingProvider.notifier).load(),
         container.read(pushRelayConsentProvider.notifier).load(),
-        container.read(hapticsPreferencesProvider.notifier).load(),
-        container.read(openCommunitiesToLastChannelProvider.notifier).load(),
+        container.read(localSettingsProvider.notifier).load(),
         loadMessageStickerAspectRatios(),
       ]);
       await loadObservabilityReportingPrompt(container);
@@ -190,7 +192,8 @@ Future<void> main(List<String> args) async {
       await _bootstrapFluxer(args);
     },
     (Object error, StackTrace stack) {
-      if (isDriftCancellation(error)) {
+      if (isDriftCancellation(error) ||
+          isTransientNetworkError(unwrapMeasureSanitizedError(error))) {
         return;
       }
       FluxerObservability.instance.reportUncaughtError(

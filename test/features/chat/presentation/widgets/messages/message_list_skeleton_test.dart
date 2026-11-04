@@ -27,12 +27,13 @@ import 'package:fluxer_app/features/dm/domain/dm_conversation.dart';
 import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
 import 'package:fluxer_app/features/friends/domain/friend.dart';
 import 'package:fluxer_app/features/friends/providers/blocked_user_ids_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/chat_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:riverpod/src/framework.dart' show Override;
 
+import '../../../../../helpers/message_list_unread_ack_test_helpers.dart';
 import '../../../../../helpers/open_test_database.dart';
 import '../../../../../helpers/test_l10n.dart';
 
@@ -103,10 +104,10 @@ List<Override> _messageListOverrides({
     ).overrideWith((ref) => ChannelMessagePermissions.all),
     messageListReadStateProvider(
       _channelId,
-    ).overrideWith((ref) => Stream<db.ReadState?>.value(null)),
+    ).overrideWith((ref) => messageListUnreadAckStream()),
     messageListReadStateProvider(
       _otherChannelId,
-    ).overrideWith((ref) => Stream<db.ReadState?>.value(null)),
+    ).overrideWith((ref) => messageListUnreadAckStream()),
     themePreferenceProvider.overrideWithValue(ThemePreferenceState()),
     userSettingsViewModelProvider.overrideWithValue(
       const UserSettingsViewState(

@@ -6,9 +6,11 @@ import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
+import 'package:fluxer_app/features/channels/providers/ack_batcher_provider.dart';
 import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
 import 'package:fluxer_app/features/channels/providers/channel_providers.dart';
 import 'package:fluxer_app/features/channels/providers/read_state_repository_provider.dart';
+import 'package:fluxer_app/features/channels/providers/read_state_write_batcher_provider.dart';
 import 'package:fluxer_app/features/channels/providers/unread_provider.dart';
 import 'package:fluxer_app/features/chat/domain/message.dart';
 import 'package:fluxer_app/features/chat/presentation/modals/pin_message_confirm_modal.dart';
@@ -40,15 +42,15 @@ import 'package:fluxer_app/features/quick_switcher/presentation/sheets/quick_swi
 import 'package:fluxer_app/features/quick_switcher/providers/quick_switcher_provider.dart';
 import 'package:fluxer_app/features/quick_switcher/providers/quick_switcher_providers.dart';
 import 'package:fluxer_app/features/settings/presentation/user_settings_modal.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/voice/providers/local_voice_state_provider.dart';
 import 'package:fluxer_app/features/voice/providers/pending_incoming_voice_calls_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_priority_speaker_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/tts/fluxer_tts_provider.dart';
 import 'package:fluxer_app/features/voice/tts/tts_locale_utils.dart';
-import 'package:fluxer_app/features/voice/utils/incoming_voice_call_actions.dart';
-import 'package:fluxer_app/features/voice/utils/voice_push_to_talk_utils.dart';
+import 'package:fluxer_app/features/voice/utils/audio/push_to_talk_utils.dart';
+import 'package:fluxer_app/features/voice/utils/callkit/incoming_call_actions.dart';
 import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/utils/clipboard_utils.dart';
@@ -314,8 +316,21 @@ void registerKeybindHandlers({
       if (messageId == null) {
         return false;
       }
-      await repo.applyLocalAckUpTo(channelId, messageId);
-      unawaited(repo.sendAckHttp(channelId, messageId));
+      ref.read(readStateWriteBatcherProvider)
+        ..setCursorManual(channelId, manual: false, clearSticky: true)
+        ..enqueueAck(
+          channelId: channelId,
+          messageId: messageId,
+          clearSticky: true,
+        );
+      ref
+          .read(ackBatcherProvider)
+          .queue(
+            channelId: channelId,
+            messageId: messageId,
+            immediate: true,
+            hadMentions: false,
+          );
       return true;
     })
     ..register(KeybindAction.chatToggleInbox, () async {

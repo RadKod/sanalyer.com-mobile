@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:fluxer_app/core/permissions/channel_effective_permissions.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_ready_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_session_recovery_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_session_recovery_provider.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,7 +19,7 @@ void routeWarmupListener(Ref ref) {
     }
     unawaited(
       ref
-          .read(channelPermissionCacheProvider.notifier)
+          .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
           .rebuildChannel(channelId),
     );
   }
@@ -28,7 +29,7 @@ void routeWarmupListener(Ref ref) {
     final String? channelId = ref.read(activeChannelIdProvider);
     unawaited(
       ref
-          .read(channelPermissionCacheProvider.notifier)
+          .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
           .rebuildAfterReady(
             priorityGuildId: guildId,
             priorityChannelId: channelId,
@@ -39,14 +40,20 @@ void routeWarmupListener(Ref ref) {
       ..invalidate(channelLocalGuildChannelPermissionBitsProvider);
   }
 
+  void scheduleEnsureChannelsLoaded(String guildId) {
+    scheduleMicrotask(() {
+      ref
+          .read(channelListViewModelProvider.notifier)
+          .ensureChannelsLoaded(guildId);
+    });
+  }
+
   void syncActiveGuildChannels() {
     final String? guildId = ref.read(contextualGuildIdProvider);
     if (guildId == null || guildId.isEmpty) {
       return;
     }
-    ref
-        .read(channelListViewModelProvider.notifier)
-        .ensureChannelsLoaded(guildId);
+    scheduleEnsureChannelsLoaded(guildId);
   }
 
   ref.listen<int>(gatewayFullRecoveryProvider, (int? previous, int next) {
@@ -69,7 +76,7 @@ void routeWarmupListener(Ref ref) {
     if (next == null || next.isEmpty || previous == next) {
       return;
     }
-    ref.read(channelListViewModelProvider.notifier).ensureChannelsLoaded(next);
+    scheduleEnsureChannelsLoaded(next);
     warmActiveChannelBits(ref.read(activeChannelIdProvider));
   });
 

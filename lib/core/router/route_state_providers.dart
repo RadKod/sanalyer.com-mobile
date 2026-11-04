@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_kind.dart';
 import 'package:fluxer_app/core/router/shell_location_resolver.dart';
@@ -73,11 +74,35 @@ class RouteStateNotifier extends _$RouteStateNotifier {
   @override
   RouteState build() {
     final GoRouter router = ref.watch(fluxerRouterProvider);
+    bool scheduled = false;
+
+    void apply() {
+      if (!ref.mounted) {
+        return;
+      }
+      final RouteState next = RouteState.fromRouter(router);
+      if (next == state) {
+        return;
+      }
+      state = next;
+    }
+
     void listener() {
       if (!ref.mounted) {
         return;
       }
-      state = RouteState.fromRouter(router);
+      if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
+        apply();
+        return;
+      }
+      if (scheduled) {
+        return;
+      }
+      scheduled = true;
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        scheduled = false;
+        apply();
+      });
     }
 
     router.routerDelegate.addListener(listener);

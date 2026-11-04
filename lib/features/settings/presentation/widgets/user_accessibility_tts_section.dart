@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/input/fluxer_clipboard_scope.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
@@ -312,19 +312,16 @@ class _TtsRateComboboxState extends State<_TtsRateCombobox> {
       ).accessibilityTtsSpeechPlaybackSpeedLabel,
       maxHeight: 0.5,
       builder: (BuildContext sheetContext, VoidCallback close) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: sheetContext.layout.s4),
-          child: FluxerBottomSheetSection(
-            child: FluxerMenuGroup(
-              children: [
-                for (final double option in kTtsRateOptions)
-                  FluxerBottomSheetMenuItem(
-                    label: formatTtsRateLabel(option),
-                    isSelected: option == nearestTtsRate(widget.rate),
-                    onTap: () => Navigator.of(sheetContext).pop(option),
-                  ),
-              ],
-            ),
+        return FluxerBottomSheetSection(
+          child: FluxerMenuGroup(
+            children: [
+              for (final double option in kTtsRateOptions)
+                FluxerBottomSheetMenuItem(
+                  label: formatTtsRateLabel(option),
+                  isSelected: option == nearestTtsRate(widget.rate),
+                  onTap: () => Navigator.of(sheetContext).pop(option),
+                ),
+            ],
           ),
         );
       },

@@ -2,21 +2,28 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/premium/current_user_entitlements_provider.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
+import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/settings/domain/user_settings_section.dart';
-import 'package:fluxer_app/features/settings/presentation/widgets/plutonium/premium_feature_comparison_table.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/plutonium/premium_pricing_card.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/plutonium/premium_purchase_disclaimer.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_board.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_hero_art.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_hero_band.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_hero_highlights.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_marketing.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_style.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_content_layout.dart';
-import 'package:fluxer_app/features/settings/providers/premium_settings_state_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/commerce/premium_settings_state_provider.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/settings/services/premium_checkout_service.dart';
-import 'package:fluxer_app/features/settings/utils/open_user_billing_settings.dart';
-import 'package:fluxer_app/features/settings/utils/premium_formatting.dart';
-import 'package:fluxer_app/features/settings/utils/premium_subscription_manage.dart';
-import 'package:fluxer_app/features/settings/utils/premium_subscription_status.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/open_user_billing_settings.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_formatting.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_subscription_manage.dart';
+import 'package:fluxer_app/features/settings/utils/commerce/premium_subscription_status.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
-import 'package:fluxer_app/features/shell/providers/current_user_private_provider.dart';
+import 'package:fluxer_app/features/shell/providers/user/current_user_private_provider.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_confirm_sheet.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
@@ -71,7 +78,9 @@ class _UserPlutoniumSettingsState extends ConsumerState<UserPlutoniumSettings> {
     final UserSettingsViewState settings = ref.watch(
       userSettingsViewModelProvider,
     );
-    final UserPrivateResponse? user = ref.watch(currentUserPrivateReadProvider);
+    final UserPrivateResponse? user = ref.watch(
+      currentUserPrivateReadProvider(watchAccountUserId(ref)),
+    );
     final bool purchaseDisabled =
         settings.isKnownUnclaimed || !(user?.verified ?? false);
     final String? purchaseDisabledMessage = settings.isKnownUnclaimed
@@ -83,7 +92,7 @@ class _UserPlutoniumSettingsState extends ConsumerState<UserPlutoniumSettings> {
     final PremiumSubscriptionStatus status = computePremiumSubscriptionStatus(
       premiumState: premiumState,
       effectiveIsPremium: ref
-          .watch(currentUserEntitlementsProvider)
+          .watch(currentUserEntitlementsProvider(readAccountUserId(ref)))
           .isEffectivelyPremium,
       userPrivate: user,
     );
@@ -128,180 +137,180 @@ class _UserPlutoniumSettingsState extends ConsumerState<UserPlutoniumSettings> {
       openManage = () => unawaited(_openManage(context, action));
     }
 
-    return SingleChildScrollView(
-      controller: widget.scrollController,
-      padding: settingsScrollPadding(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (user?.hasUnreadGiftInventory ?? false) ...[
-            _GiftInventoryBanner(
-              count: user?.unreadGiftInventoryCount ?? 1,
-              onViewGifts:
-                  widget.onOpenGifts ??
-                  () => openUserBillingSettings(
-                    context,
-                    UserSettingsSection.giftsAndCodes,
-                  ),
-            ),
-            SizedBox(height: layout.s6),
-          ],
-          Text(
-            l10n.userSettingsNavFluxerPlutonium,
-            textAlign: TextAlign.center,
-            style: textStyles.heading.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: colors.textPrimary,
-            ),
-          ),
-          SizedBox(height: layout.s2),
-          Text(
-            l10n.premiumPlutoniumTagline,
-            textAlign: TextAlign.center,
-            style: textStyles.bodySmall.copyWith(
-              fontSize: 14,
-              height: 1.375,
-              color: colors.textPrimaryMuted,
-            ),
-          ),
-          SizedBox(height: layout.s6),
-          if (status.shouldShowPremiumCard)
-            _SubscriptionSummary(
-              status: status,
-              l10n: l10n,
-              portalLoading: _portalLoading,
-              cancelLoading: _cancelLoading,
-              reactivateLoading: _reactivateLoading,
-              onManage: openManage,
-              onCancel: () => unawaited(_confirmCancel(context, l10n)),
-              onReactivate: () => unawaited(_reactivate(context)),
-              onRedeemGift: widget.onOpenGifts,
-            ),
-          if (status.hasEverPurchased &&
-              premiumState != null &&
-              status.allowsStripeBilling) ...[
-            SizedBox(height: layout.s6),
-            _PurchaseHistorySection(
-              onManagePayment: () => unawaited(
-                _openManage(context, const PremiumManageAction.portal()),
+    final bool selfHosted = ref.watch(
+      instanceRuntimeConfigProvider.select((config) => config.selfHosted),
+    );
+    final String heroAsset = premiumStoreHeroArtAsset(selfHosted: selfHosted);
+    final PremiumStoreStyle storeStyle = PremiumStoreStyle.of(context);
+    final String? heroLead = status.shouldShowPremiumCard
+        ? null
+        : l10n.premiumPlutoniumTagline;
+
+    return ColoredBox(
+      color: storeStyle.page,
+      child: SingleChildScrollView(
+        controller: widget.scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (user?.hasUnreadGiftInventory ?? false) ...[
+              Padding(
+                padding: settingsScrollPadding(context),
+                child: _GiftInventoryBanner(
+                  count: user?.unreadGiftInventoryCount ?? 1,
+                  onViewGifts:
+                      widget.onOpenGifts ??
+                      () => openUserBillingSettings(
+                        context,
+                        UserSettingsSection.giftsAndCodes,
+                      ),
+                ),
               ),
-              portalLoading: _portalLoading,
-            ),
-            if (premiumState.billing.refundEligibility.eligible) ...[
               SizedBox(height: layout.s4),
-              FluxerButton.secondary(
-                label: l10n.premiumSelfServeRefundButton,
-                onPressedAsync: () => _confirmRefund(context, l10n),
-              ),
             ],
-          ],
-          if (showPurchaseGrid) ...[
-            if (status.shouldShowPremiumCard) SizedBox(height: layout.s6),
-            _PurchaseModeToggle(
-              isGiftMode: _isGiftMode,
-              onChanged: (bool value) => setState(() => _isGiftMode = value),
+            PremiumStoreHeroBand(
+              heroArtAsset: heroAsset,
+              title: l10n.userSettingsNavFluxerPlutonium,
+              lead: heroLead,
+              scrollController: widget.scrollController,
+              highlights: const PremiumStoreHeroHighlights(),
             ),
-            SizedBox(height: layout.s6),
-            _PremiumPricingGrid(
-              children: _isGiftMode
-                  ? _giftPricingCards(
-                      l10n: l10n,
-                      priceIds: priceIds,
-                      giftMonthlyPrice: giftMonthlyPrice,
-                      giftYearlyPrice: giftYearlyPrice,
-                      purchaseDisabled: purchaseDisabled,
-                    )
-                  : _subscriptionPricingCards(
-                      l10n: l10n,
-                      priceIds: priceIds,
-                      monthlyPrice: monthlyPrice,
-                      yearlyPrice: yearlyPrice,
-                      purchaseDisabled: purchaseDisabled,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (status.shouldShowPremiumCard) ...[
+                    Text(
+                      l10n.storePlutoniumManageHeading,
+                      textAlign: TextAlign.center,
+                      style: textStyles.heading.copyWith(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: storeStyle.ink,
+                      ),
                     ),
+                    SizedBox(height: layout.s4),
+                    PremiumStoreBoard(
+                      padding: EdgeInsets.all(layout.s4),
+                      child: _SubscriptionSummary(
+                        status: status,
+                        l10n: l10n,
+                        portalLoading: _portalLoading,
+                        cancelLoading: _cancelLoading,
+                        reactivateLoading: _reactivateLoading,
+                        onManage: openManage,
+                        onCancel: () =>
+                            unawaited(_confirmCancel(context, l10n)),
+                        onReactivate: () => unawaited(_reactivate(context)),
+                        onRedeemGift: widget.onOpenGifts,
+                      ),
+                    ),
+                  ],
+                  if (status.hasEverPurchased &&
+                      premiumState != null &&
+                      status.allowsStripeBilling) ...[
+                    SizedBox(height: layout.s6),
+                    _PurchaseHistorySection(
+                      onManagePayment: () => unawaited(
+                        _openManage(
+                          context,
+                          const PremiumManageAction.portal(),
+                        ),
+                      ),
+                      portalLoading: _portalLoading,
+                    ),
+                    if (premiumState.billing.refundEligibility.eligible) ...[
+                      SizedBox(height: layout.s4),
+                      FluxerButton.secondary(
+                        label: l10n.premiumSelfServeRefundButton,
+                        onPressedAsync: () => _confirmRefund(context, l10n),
+                      ),
+                    ],
+                  ],
+                  if (showPurchaseGrid) ...[
+                    if (status.shouldShowPremiumCard)
+                      SizedBox(height: layout.s6),
+                    _PurchaseModeToggle(
+                      isGiftMode: _isGiftMode,
+                      onChanged: (bool value) =>
+                          setState(() => _isGiftMode = value),
+                    ),
+                    SizedBox(height: layout.s6),
+                    _PremiumPricingGrid(
+                      children: _isGiftMode
+                          ? _giftPricingCards(
+                              l10n: l10n,
+                              priceIds: priceIds,
+                              giftMonthlyPrice: giftMonthlyPrice,
+                              giftYearlyPrice: giftYearlyPrice,
+                              purchaseDisabled: purchaseDisabled,
+                            )
+                          : _subscriptionPricingCards(
+                              l10n: l10n,
+                              priceIds: priceIds,
+                              monthlyPrice: monthlyPrice,
+                              yearlyPrice: yearlyPrice,
+                              purchaseDisabled: purchaseDisabled,
+                            ),
+                    ),
+                    if (status.isGiftSubscription && !_isGiftMode) ...[
+                      SizedBox(height: layout.s2),
+                      Text(
+                        l10n.premiumGiftTimeAddedAfterSubscription,
+                        textAlign: TextAlign.center,
+                        style: textStyles.bodySmall.copyWith(
+                          color: colors.textPrimaryMuted,
+                        ),
+                      ),
+                    ],
+                    if (purchaseDisabled &&
+                        purchaseDisabledMessage != null) ...[
+                      SizedBox(height: layout.s2),
+                      Text(
+                        purchaseDisabledMessage,
+                        textAlign: TextAlign.center,
+                        style: textStyles.bodySmall.copyWith(
+                          color: colors.textPrimaryMuted,
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: layout.s4),
+                    PremiumPurchaseDisclaimer(isPremium: status.isPremium),
+                  ],
+                  if (!showPurchaseGrid) ...[
+                    SizedBox(height: layout.s6),
+                    Text(
+                      l10n.premiumGiftSectionTitle,
+                      style: textStyles.heading.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: storeStyle.ink,
+                      ),
+                    ),
+                    SizedBox(height: layout.s2),
+                    Text(
+                      l10n.premiumGiftSectionDescription,
+                      style: textStyles.bodySmall.copyWith(
+                        color: storeStyle.inkMuted,
+                      ),
+                    ),
+                    SizedBox(height: layout.s4),
+                    _PremiumPricingGrid(
+                      children: _giftPricingCards(
+                        l10n: l10n,
+                        priceIds: priceIds,
+                        giftMonthlyPrice: giftMonthlyPrice,
+                        giftYearlyPrice: giftYearlyPrice,
+                        purchaseDisabled: purchaseDisabled,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
-            if (status.isGiftSubscription && !_isGiftMode) ...[
-              SizedBox(height: layout.s2),
-              Text(
-                l10n.premiumGiftTimeAddedAfterSubscription,
-                textAlign: TextAlign.center,
-                style: textStyles.bodySmall.copyWith(
-                  color: colors.textPrimaryMuted,
-                ),
-              ),
-            ],
-            if (purchaseDisabled && purchaseDisabledMessage != null) ...[
-              SizedBox(height: layout.s2),
-              Text(
-                purchaseDisabledMessage,
-                textAlign: TextAlign.center,
-                style: textStyles.bodySmall.copyWith(
-                  color: colors.textPrimaryMuted,
-                ),
-              ),
-            ],
-            SizedBox(height: layout.s4),
-            PremiumPurchaseDisclaimer(isPremium: status.isPremium),
-            SizedBox(height: layout.s4),
-            Text(
-              l10n.premiumScrollPrompt,
-              textAlign: TextAlign.center,
-              style: textStyles.bodySmall.copyWith(
-                color: colors.textPrimaryMuted,
-              ),
-            ),
-            Center(
-              child: PhosphorIcon(
-                PhosphorIconsBold.arrowDown,
-                size: 20,
-                color: colors.textPrimaryMuted,
-              ),
-            ),
+            const PremiumStoreMarketingSections(),
           ],
-          if (!showPurchaseGrid) ...[
-            SizedBox(height: layout.s6),
-            Text(
-              l10n.premiumGiftSectionTitle,
-              style: textStyles.heading.copyWith(fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: layout.s2),
-            Text(
-              l10n.premiumGiftSectionDescription,
-              style: textStyles.bodySmall.copyWith(
-                color: colors.textPrimaryMuted,
-              ),
-            ),
-            SizedBox(height: layout.s4),
-            _PremiumPricingGrid(
-              children: _giftPricingCards(
-                l10n: l10n,
-                priceIds: priceIds,
-                giftMonthlyPrice: giftMonthlyPrice,
-                giftYearlyPrice: giftYearlyPrice,
-                purchaseDisabled: purchaseDisabled,
-              ),
-            ),
-          ],
-          SizedBox(height: layout.s6),
-          Text(
-            l10n.premiumFreeVsPlutonium,
-            style: textStyles.heading.copyWith(fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: layout.s4),
-          const PremiumFeatureComparisonTable(),
-          if (showPurchaseGrid) ...[
-            SizedBox(height: layout.s8),
-            Text(
-              _isGiftMode
-                  ? l10n.premiumReadyToBuyGift
-                  : l10n.premiumReadyToUpgrade,
-              textAlign: TextAlign.center,
-              style: textStyles.heading.copyWith(fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: layout.s4),
-            const PremiumPurchaseDisclaimer(),
-          ],
-        ],
+        ),
       ),
     );
   }

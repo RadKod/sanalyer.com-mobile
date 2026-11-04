@@ -16,6 +16,7 @@ import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_effective_permissions.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/router/navigate_to_content.dart';
 import 'package:fluxer_app/core/router/route_kind.dart';
@@ -54,7 +55,7 @@ import 'package:fluxer_app/features/channels/providers/guild_sidebar_entries_pro
 import 'package:fluxer_app/features/channels/providers/guild_sidebar_scroll_store_provider.dart';
 import 'package:fluxer_app/features/channels/providers/unread_provider.dart';
 import 'package:fluxer_app/features/channels/utils/channel_scroll_indicator_severity.dart';
-import 'package:fluxer_app/features/channels/utils/navigate_to_channel_content.dart';
+import 'package:fluxer_app/features/channels/utils/navigation/navigate_to_channel_content.dart';
 import 'package:fluxer_app/features/channels/utils/show_channel_debug_sheet.dart';
 import 'package:fluxer_app/features/chat/utils/messages/delete_my_messages_in_channel_action.dart';
 import 'package:fluxer_app/features/chat/utils/messages/message_link.dart';
@@ -72,11 +73,11 @@ import 'package:fluxer_app/features/mature_content/providers/mature_content_agre
 import 'package:fluxer_app/features/mature_content/providers/sensitive_content_provider.dart';
 import 'package:fluxer_app/features/members/utils/guild_members_page_permissions.dart';
 import 'package:fluxer_app/features/settings/domain/guild/guild_settings_tab.dart';
-import 'package:fluxer_app/features/settings/providers/advanced_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/appearance_preferences_provider.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
-import 'package:fluxer_app/features/shell/providers/shell_sidebar_width_provider.dart';
+import 'package:fluxer_app/features/shell/providers/layout/shell_sidebar_width_provider.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_sidebar_tile.dart';
 import 'package:fluxer_app/features/ui/action_menu/context_menu_widgets.dart';
 import 'package:fluxer_app/features/ui/scroller/fluxer_smooth_scrollbar.dart';
@@ -88,9 +89,9 @@ import 'package:fluxer_app/features/voice/providers/voice_channel_participants_p
 import 'package:fluxer_app/features/voice/providers/voice_p2p_mode_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
-import 'package:fluxer_app/features/voice/utils/voice_connection_actions.dart';
-import 'package:fluxer_app/features/voice/utils/voice_e2ee_display.dart';
-import 'package:fluxer_app/features/voice/utils/voice_p2p_mode.dart';
+import 'package:fluxer_app/features/voice/utils/connection/connection_actions.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/e2ee_display.dart';
+import 'package:fluxer_app/features/voice/utils/e2ee/p2p_mode.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/external_links/external_link_handler.dart';
@@ -126,13 +127,15 @@ class _GuildSidebarState extends ConsumerState<GuildSidebar> {
     }
 
     await ref
-        .read(guildPermissionsProvider.notifier)
+        .read(guildPermissionsProvider(readAccountUserId(ref)).notifier)
         .refreshPermissions(guild.id);
     if (!context.mounted) {
       return;
     }
 
-    final int permissions = ref.read(guildPermissionsProvider)[guild.id] ?? 0;
+    final int permissions =
+        ref.read(guildPermissionsProvider(readAccountUserId(ref)))[guild.id] ??
+        0;
     if (canOpenGuildSettingsForRef(
       ref: ref,
       permissions: permissions,
@@ -180,6 +183,13 @@ class _GuildSidebarState extends ConsumerState<GuildSidebar> {
       ref,
       context,
     );
+    final double savedScrollOffset =
+        guildId != null &&
+            guildReady &&
+            !guildOutageUnavailable &&
+            !hasReceivedInitialChannelList
+        ? ref.read(guildSidebarScrollStoreProvider).offsetFor(guildId) ?? 0
+        : 0;
 
     return Container(
       width: channelSidebarHasFixedWidth(context) ? channelSidebarWidth : null,
@@ -195,6 +205,7 @@ class _GuildSidebarState extends ConsumerState<GuildSidebar> {
               guild: guild,
               outageUnavailable: guildOutageUnavailable,
               channelSidebarWidth: channelSidebarWidth,
+              scrollOffset: savedScrollOffset,
               onTap: guildOutageUnavailable || guild == null
                   ? null
                   : () => unawaited(_handleServerHeaderTap(context, guild)),

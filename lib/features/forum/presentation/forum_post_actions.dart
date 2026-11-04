@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/permissions/thread_permissions.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
@@ -23,7 +24,7 @@ import 'package:fluxer_dart/export.dart' hide ChannelType;
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 Future<void> openForumPost(BuildContext context, WidgetRef ref, Channel post) =>
-    openThread(context, ref, post);
+    openThread(context, ref, post, fromParent: true);
 
 Future<void> toggleForumDefaultReaction(
   BuildContext context,
@@ -56,7 +57,7 @@ Future<void> toggleForumDefaultReaction(
     storedName: storedName,
   );
   final ForumFirstMessages firstMessages = ref.read(
-    forumFirstMessagesProvider.notifier,
+    forumFirstMessagesProvider(readAccountUserId(ref)).notifier,
   );
   void apply({required bool value}) => firstMessages.applyOwnReaction(
     postId: data.post.id,
@@ -189,12 +190,7 @@ class _ForumPostActions extends ConsumerWidget {
       shrinkWrap: true,
       padding: FluxerBottomSheet.scrollViewPadding(
         context,
-        padding: EdgeInsets.fromLTRB(
-          context.layout.s4,
-          0,
-          context.layout.s4,
-          FluxerBottomSheet.bottomGapOf(context),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: context.layout.s4),
       ),
       children: <Widget>[
         FluxerBottomSheetGroupColumn(
@@ -366,7 +362,6 @@ class _ForumPostTagsEditorState extends ConsumerState<_ForumPostTagsEditor> {
             isLoading: _saving,
             label: l10n.forumSaveTags,
           ),
-          SizedBox(height: context.layout.s4),
         ],
       ),
     );

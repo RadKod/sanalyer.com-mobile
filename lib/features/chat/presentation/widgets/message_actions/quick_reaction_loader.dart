@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/limits/instance_limit_provider.dart';
 import 'package:fluxer_app/core/limits/limit_key.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/talker.dart';
@@ -12,7 +13,7 @@ import 'package:fluxer_app/features/chat/providers/pickers/emoji_picker_provider
 import 'package:fluxer_app/features/chat/providers/pickers/expression_usage_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
-import 'package:fluxer_app/shared/utils/emoji_registry.dart';
+import 'package:fluxer_app/shared/utils/emoji/emoji_registry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'quick_reaction_loader.g.dart';
@@ -36,7 +37,7 @@ typedef ResolvedQuickReactions = ({
 @Riverpod(keepAlive: true)
 class LastResolvedQuickReactions extends _$LastResolvedQuickReactions {
   @override
-  ResolvedQuickReactions? build() => null;
+  ResolvedQuickReactions? build(String accountUserId) => null;
 
   void remember({
     required String? userId,
@@ -220,7 +221,7 @@ class _MessageQuickReactionRowState
 
   Future<void> _load(String? guildId) async {
     final LastResolvedQuickReactions cache = ref.read(
-      lastResolvedQuickReactionsProvider.notifier,
+      lastResolvedQuickReactionsProvider(readAccountUserId(ref)).notifier,
     );
     final String? userId = ref.read(currentUserIdProvider);
     final String channelId = widget.channelId;
@@ -254,7 +255,7 @@ class _MessageQuickReactionRowState
     }
     return QuickReactionRow(
       items: quickReactionItemsFor(
-        ref.watch(lastResolvedQuickReactionsProvider),
+        ref.watch(lastResolvedQuickReactionsProvider(watchAccountUserId(ref))),
         userId: ref.watch(currentUserIdProvider),
         channelId: widget.channelId,
         guildId: guildId,

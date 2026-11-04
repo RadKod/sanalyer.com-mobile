@@ -6,7 +6,7 @@ import 'package:fluxer_app/core/permissions/permission_resolver.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/features/members/domain/member.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'guild_permissions_provider.g.dart';
@@ -14,7 +14,7 @@ part 'guild_permissions_provider.g.dart';
 @Riverpod(keepAlive: true)
 class GuildPermissions extends _$GuildPermissions {
   @override
-  Map<String, int> build() {
+  Map<String, int> build(String accountUserId) {
     ref.watch(currentUserIdProvider);
     return {};
   }

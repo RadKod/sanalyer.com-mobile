@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/well_known_provider.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
@@ -10,8 +10,8 @@ import 'package:fluxer_app/core/theme/themes/dark.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/channel/channel_chat_content.dart';
 import 'package:fluxer_app/features/chat/providers/core/chat_read_viewport_provider.dart';
 import 'package:fluxer_app/features/chat/providers/core/chat_view_model.dart';
-import 'package:fluxer_app/features/shell/providers/reveal_side_provider.dart';
-import 'package:fluxer_app/features/shell/providers/shell_popup_overlay_provider.dart';
+import 'package:fluxer_app/features/shell/providers/drawer/reveal_side_provider.dart';
+import 'package:fluxer_app/features/shell/providers/layout/shell_popup_overlay_provider.dart';
 import 'package:fluxer_app/l10n/fluxer_localizations_delegates.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
@@ -135,9 +135,7 @@ class _FakeWellKnown extends WellKnown {
         gift: '',
         webapp: '',
       ),
-      captcha: InstanceCaptchaSchema(
-        provider: InstanceCaptchaProviderSchema.none,
-      ),
+      captcha: InstanceCaptchaSchema(provider: CaptchaProviderSchema.none),
       features: InstanceFeaturesSchema(
         voiceEnabled: false,
         stripeEnabled: false,
@@ -158,7 +156,9 @@ class _FakeWellKnown extends WellKnown {
       sso: InstanceSsoSchema(
         enabled: false,
         enforced: false,
+        usernameFromProvider: false,
         displayName: null,
+        buttonLabel: null,
         redirectUri: '',
       ),
       registration: InstanceRegistrationSchema(
@@ -193,9 +193,15 @@ class _FakeWellKnown extends WellKnown {
           faviconUrl: null,
           themeColor: null,
           statusPageUrl: null,
+          statusPageInstatus: false,
           statusPageIncidentHistoryUrl: null,
           premiumProductName: 'Plutonium',
           premiumInfoUrl: null,
+          faviconDarkUrl: null,
+          signInBackdropUrl: null,
+          customCss: null,
+          uploadLimitMessage: null,
+          trustedDomains: <String>[],
         ),
         setup: InstanceSetupSchema(configured: true, adminUrl: null),
         legal: InstanceAppPublicSchemaLegal(
@@ -207,6 +213,7 @@ class _FakeWellKnown extends WellKnown {
           collectDateOfBirth: false,
         ),
       ),
+      agePolicy: InstanceAgePolicySchema(geos: []),
     );
   }
 }

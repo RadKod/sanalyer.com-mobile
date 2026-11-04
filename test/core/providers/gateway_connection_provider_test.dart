@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/api/fluxer_client_properties.dart';
 import 'package:fluxer_app/core/gateway/gateway_identify_client_properties.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/gateway_connection_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
 import 'package:fluxer_app/core/router/app_location_persistence.dart';
 import 'package:fluxer_dart/gateway.dart';
 
@@ -24,6 +24,8 @@ void main() {
       clientVersion: '1.2.3',
       releaseChannel: 'beta',
       browserVersion: '1.2.3',
+      buildNumber: 412,
+      betaNumber: 14,
     );
 
     final GatewayIdentifyProperties gateway = buildGatewayIdentifyProperties(
@@ -37,6 +39,11 @@ void main() {
     );
     expect(gateway.toJson(), containsPair('browser', 'fluxer'));
     expect(gateway.toJson(), containsPair('device', 'mobile'));
+    expect(gateway.toJson(), containsPair('build_number', 412));
+    expect(gateway.toJson(), containsPair('beta_number', 14));
+    final Map<String, dynamic> wire = toClientPropertiesWireMap(properties);
+    expect(wire, containsPair('build_number', 412));
+    expect(wire, containsPair('beta_number', 14));
   });
 
   test('gateway identify properties serialises mobile', () {

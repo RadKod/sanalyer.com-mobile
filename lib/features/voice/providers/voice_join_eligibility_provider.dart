@@ -4,8 +4,9 @@ import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
 import 'package:fluxer_app/core/permissions/channel_effective_permissions.dart';
 import 'package:fluxer_app/core/permissions/channel_permission_cache_provider.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
-import 'package:fluxer_app/core/providers/instance_runtime_config_provider.dart';
+import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
 import 'package:fluxer_app/features/dm/domain/dm_channel_types.dart';
@@ -14,7 +15,7 @@ import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/members/providers/member_providers.dart';
-import 'package:fluxer_app/features/settings/providers/user_settings_view_model.dart';
+import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:fluxer_dart/gateway.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -226,10 +227,10 @@ VoiceJoinEligibility readCachedVoiceJoinEligibility(
     }
   }
   final int? connectPermissionBits = ref
-      .read(channelPermissionCacheProvider.notifier)
+      .read(channelPermissionCacheProvider(readAccountUserId(ref)).notifier)
       .getChannelBits(channelId);
   final Map<String, VoiceState> voiceStatesMap = ref.read(
-    voiceStatesMapProvider,
+    voiceStatesMapProvider(readAccountUserId(ref)),
   );
   final List<VoiceState> voiceStates = <VoiceState>[
     for (final VoiceState vs in voiceStatesMap.values)
@@ -274,7 +275,7 @@ Future<VoiceJoinEligibility> voiceJoinEligibility(
   );
   final String userId = settings.userId;
   ref
-    ..watch(channelPermissionCacheProvider)
+    ..watch(channelPermissionCacheProvider(readAccountUserId(ref)))
     ..watch(guildListViewModelProvider)
     ..watch(currentUserMemberIdentityProvider(guildId))
     ..watch(guildRolePermissionsIdentityProvider(guildId))
@@ -339,7 +340,7 @@ Future<VoiceJoinEligibility> readVoiceJoinEligibility(
     }
   }
   final Map<String, VoiceState> voiceStatesMap = ref.read(
-    voiceStatesMapProvider,
+    voiceStatesMapProvider(readAccountUserId(ref)),
   );
   final List<VoiceState> voiceStates = <VoiceState>[
     for (final VoiceState vs in voiceStatesMap.values)

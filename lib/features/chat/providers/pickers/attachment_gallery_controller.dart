@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/features/chat/data/attachment_gallery_source.dart';
 import 'package:fluxer_app/features/chat/domain/pending_attachment.dart';
 import 'package:fluxer_app/features/chat/providers/upload/cloud_upload_controller.dart';
@@ -10,7 +11,7 @@ import 'package:fluxer_app/features/chat/utils/attachments/file_upload_constants
 import 'package:fluxer_app/features/chat/utils/attachments/file_upload_validator.dart';
 import 'package:fluxer_app/features/chat/utils/attachments/gallery_attachment_selection.dart';
 import 'package:fluxer_app/features/chat/utils/composer/composer_upload_file.dart';
-import 'package:fluxer_app/features/settings/providers/chat_input_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/message_ui_preferences_providers.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -75,6 +76,8 @@ class AttachmentGalleryController extends _$AttachmentGalleryController {
     return const AttachmentGalleryState();
   }
 
+  // Wired from the panel when scroll dependencies are available
+  // ignore: use_setters_to_change_properties
   void attachScrollController(ScrollController scrollController) {
     _scrollController = scrollController;
   }
@@ -246,10 +249,10 @@ class AttachmentGalleryController extends _$AttachmentGalleryController {
       return null;
     }
     final CloudUploadController uploads = ref.read(
-      cloudUploadControllerProvider(channelId).notifier,
+      cloudUploadControllerProvider(readAccountUserId(ref), channelId).notifier,
     );
     final List<PendingAttachment> attachments = ref
-        .read(cloudUploadControllerProvider(channelId))
+        .read(cloudUploadControllerProvider(readAccountUserId(ref), channelId))
         .items;
     final PendingAttachment? existing = pendingAttachmentForGalleryAsset(
       attachments: attachments,
@@ -281,7 +284,12 @@ class AttachmentGalleryController extends _$AttachmentGalleryController {
         return null;
       }
       validation = await ref
-          .read(cloudUploadControllerProvider(channelId).notifier)
+          .read(
+            cloudUploadControllerProvider(
+              readAccountUserId(ref),
+              channelId,
+            ).notifier,
+          )
           .addFiles(<ComposerUploadFile>[
             composerUploadFile(
               picked.file,
@@ -309,7 +317,12 @@ class AttachmentGalleryController extends _$AttachmentGalleryController {
       return null;
     }
     return ref
-        .read(cloudUploadControllerProvider(channelId).notifier)
+        .read(
+          cloudUploadControllerProvider(
+            readAccountUserId(ref),
+            channelId,
+          ).notifier,
+        )
         .addFiles(files);
   }
 
@@ -350,10 +363,19 @@ class AttachmentGalleryController extends _$AttachmentGalleryController {
       );
     }
     final GallerySelectionChange change = await pickNativeGallerySelection(
-      attachments: ref.read(cloudUploadControllerProvider(channelId)).items,
+      attachments: ref
+          .read(
+            cloudUploadControllerProvider(readAccountUserId(ref), channelId),
+          )
+          .items,
     );
     return ref
-        .read(cloudUploadControllerProvider(channelId).notifier)
+        .read(
+          cloudUploadControllerProvider(
+            readAccountUserId(ref),
+            channelId,
+          ).notifier,
+        )
         .applyGallerySelection(change);
   }
 
