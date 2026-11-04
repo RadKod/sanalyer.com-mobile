@@ -5,8 +5,8 @@ Uygulama açılışta doğrudan https://sanalyer.com'a bağlanır, adı, ikonu v
 
 Repo: https://github.com/RadKod/sanalyer.com-mobile (eski adı RadKod/flutter_client, GitHub
 eski adresi yönlendiriyor). Upstream: https://github.com/fluxerapp/flutter_client, branch
-`canary`. Son senkron: upstream `e881d2808` (2026-10-22); fork'un `canary` branch'i bu commit'te,
-`sanalyer` branch'ine merge edildi.
+`canary`. Son senkron: 2026-11-04, upstream'den 141 commit (merge `fad49b284`); fork'un `canary` branch'i
+upstream'le aynı yerde, `sanalyer` branch'ine merge edildi.
 
 ## Ne değişti
 
@@ -163,6 +163,9 @@ PATH'te Anaconda varsa önce çıkarılır (`export PATH=$(echo "$PATH" | tr ':'
 Anaconda'nın eski `ld`'si native asset hook'larının derlediği kütüphaneleri (webcrypto gibi) link'lerse
 Apple yüklemeyi 90125 hatasıyla reddeder ("not built with Apple's linker"). Hook cache'i
 `.dart_tool/hooks_runner/` altındadır; bozuk bir derleme olduysa ilgili klasör silinir.
+Upstream iOS paketlerini Swift Package Manager'a taşıdığından beri `xcodebuild -showBuildSettings` bu Mac'te
+bir buçuk dakika sürüyor; fastlane'in varsayılan süresi yetmiyor. Lane'i
+`FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=300 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=2` ile çalıştır.
 Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_NUMBER` (varsayılan
 `YYYYMMDD.HHMM`). CocoaPods 1.17 ve fastlane, Homebrew Ruby 3.4 ile `gem install --user-install` kuruldu.
 
