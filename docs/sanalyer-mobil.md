@@ -33,8 +33,8 @@ upstream'le aynı yerde, `sanalyer` branch'ine merge edildi.
   `sanalyer.com/docs`. Fluxer durum sayfası sorgusu, Fluxer Labs ve geri bildirim girişleri kapalı.
   Uygulama linkleri (Android intent filter, iOS associated domains) `sanalyer.com` yollarını dinliyor.
 - **Push.** Relay adresi `push.sanalyer.com`. Fluxer'ın relay'i bizim bundle id'mize bildirim
-  teslim edemez, üstelik cihaz token'larını üçüncü bir tarafa taşırdı. Relay kurulana kadar push
-  gelmez.
+  teslim edemez, üstelik cihaz token'larını üçüncü bir tarafa taşırdı. Relay iOS için APNs'e,
+  Android için FCM'e iletir.
 
 ## Nasıl derlenir
 
@@ -97,14 +97,9 @@ Android için `aarch64-linux-android armv7-linux-androideabi x86_64-linux-androi
 
 ## Mağazaya çıkmak için eksikler
 
-1. **Android imzası.** `android/key.properties` yok; yoksa release build debug anahtarıyla
-   imzalanır ve Play kabul etmez. Yeni bir upload keystore üretilip `key.properties`
-   (storeFile, storePassword, keyAlias, keyPassword) yazılmalı, keystore repoya girmemeli.
-   Play Console'da `com.sanalyer.mobile` uygulaması açılmalı.
-2. **Android push.** FCM flavor'ı için `com.sanalyer.mobile` paketli bir Firebase projesi ve
-   `google-services.json` gerekiyor (`tool/write_firebase_options.dart` CI'da yazıyor).
-   Firebase istemiyorsak yalnız `unifiedpush` flavor'ı dağıtılır, kullanıcı ntfy gibi bir
-   dağıtıcı kurar.
+1. **Android imzası.** Tamam (12 Kasım 2026), aşağıda "Android" bölümü.
+2. **Android push.** Tamam: Firebase projesi `sanalyer-fecda`, relay'de FCM açık. Gerçek cihazda
+   bildirim henüz denenmedi.
 3. **iOS hesabı.** 9XYJ4H8U3Y takımında dört App ID (`com.sanalyer.mobile` ve üç eklenti),
    `group.com.sanalyer.mobile` app group'u, Push Notifications, Associated Domains ve
    Communication Notifications yetenekleri açılmalı; bunlara göre provisioning profilleri
@@ -202,6 +197,38 @@ NotificationService eklentisi çözer. APNs anahtarı `K88329YUQ7`: yalnız prod
 `com.sanalyer.mobile` konusu (takımda team-scoped anahtar sınırı dolu). Debug build'ler development APNs
 kullandığı için bildirim almaz; VoIP (`.voip` konusu) bu anahtarla çalışmayabilir, doğrulanmadı.
 İlk push'lu build 20261016.1752.
+
+## Android (2026-11-12)
+
+İlk build: `com.sanalyer.mobile` 1.0.0 (26111201), flavor `stableFcm`. Play Console'da (RadKod hesabı)
+uygulama `sanalyer` açıldı, varsayılan dil Türkçe. APK'lar bu repoda GitHub release olarak duruyor
+(`android-1.0.0-26111201`); `sanalyer.com/indir` Android sekmesi `releases/latest/download/` altındaki
+`sanalyer-android-arm64.apk` ve `sanalyer-android-arm32.apk` adlarına bakıyor, yeni release'te dosya
+adları aynı kalmalı.
+
+Yerel dosyalar, hiçbiri bu repoda değil (`~/.config/sanalyer/android/`):
+
+- `upload-keystore.jks` ve `key.properties`: Play upload anahtarı, alias `upload`. Yedeği private
+  RadKod/sanalyer.com reposunda `secrets/android/`.
+  SHA-256 `CC:A4:36:B4:49:FA:26:84:02:89:75:BC:E6:E8:3B:B2:C7:E3:2C:5E:6D:82:F6:D9:16:20:41:97:BE:39:22:BF`.
+- `google-services.json`: Firebase projesi `sanalyer-fecda` (Analytics ve Gemini kapalı).
+- `fcm-service-account.json`: relay'in FCM'e bağlandığı anahtar; sunucuda
+  `/opt/fluxer/secrets/fcm/service-account.json`.
+
+Ortam: Java 17 (Zulu), Android SDK `/opt/homebrew/share/android-commandlinetools`
+(`brew install --cask android-commandlinetools`; platform 36, build-tools 36.0.0, NDK 28.2.13676358,
+gerisini Gradle kendisi indiriyor), Rust target'ları `aarch64-linux-android armv7-linux-androideabi
+x86_64-linux-android`. Platform 37 `platforms/android-37.0` adıyla iniyor, Gradle `android-37` arıyor:
+`ln -sfn android-37.0 platforms/android-37`.
+
+```sh
+SANALYER_BUILD_NUMBER=26111202 tool/sanalyer_android_build.sh
+```
+
+Script keystore ve Firebase dosyalarını yerine koyar, `android-fcm` profiliyle AAB ve ABI başına APK
+üretir, sonunda `configure_build`'in değiştirdiği dosyaları geri alır. Build numarası `YYAAGGNN`
+(versionCode, her yüklemede artmalı). AAB Play Console'a elle yüklenir (internal testing); API ile
+yükleme için Play service account'u henüz yok, `fastlane android` lane'leri hâlâ `com.fluxer` bekliyor.
 
 ## Bilerek bırakılanlar
 

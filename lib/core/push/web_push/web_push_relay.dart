@@ -1,6 +1,7 @@
 // sanalyer: our own relay (fluxer-push --mode relay) with the APNs key for
 // com.sanalyer.mobile. Fluxer's relay could not deliver to our bundle id and
-// would ship device tokens to a third party. FCM is not configured there yet.
+// would ship device tokens to a third party. FCM goes through the same relay
+// (Firebase project sanalyer-fecda).
 const String kPushRelayOrigin = 'https://push.sanalyer.com';
 
 // sanalyer: no push-relay notice page of our own; the privacy page covers it.
