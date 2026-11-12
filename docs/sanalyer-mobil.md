@@ -109,9 +109,9 @@ Android için `aarch64-linux-android armv7-linux-androideabi x86_64-linux-androi
 4. **Push relay.** iOS bildirimleri ve FCM bildirimleri sunucudan doğrudan değil, Fluxer'ın
    relay servisi üzerinden gidiyor. `push.sanalyer.com` üzerinde bu relay'in bizim APNs
    anahtarımız ve FCM hesabımızla kurulması gerekiyor. Kurulmadan push gelmez.
-5. **Uygulama linkleri.** `https://sanalyer.com/invite/...` gibi linklerin uygulamada açılması için
-   sanalyer.com'da `/.well-known/assetlinks.json` (yeni keystore'un SHA-256 parmak izi) ve
-   `/.well-known/apple-app-site-association` (9XYJ4H8U3Y.com.sanalyer.mobile) yayınlanmalı.
+5. **Uygulama linkleri.** Tamam (12 Kasım 2026): sanalyer.com `/.well-known/assetlinks.json` (Play imza
+   anahtarı ve upload anahtarı) ve `apple-app-site-association` (9XYJ4H8U3Y.com.sanalyer.mobile) yayınlıyor;
+   dosyalar RadKod/sanalyer.com `landing/.well-known/`. Telefonda davet linkiyle denenmedi.
 6. **Mağaza metinleri ve görseller.** Store açıklaması, ekran görüntüleri ve gizlilik formu bu
    repoda yok; Play Console ve App Store Connect'te elle girilecek.
 
