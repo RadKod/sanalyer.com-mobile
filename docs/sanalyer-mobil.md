@@ -169,14 +169,15 @@ bir buçuk dakika sürüyor; fastlane'in varsayılan süresi yetmiyor. Lane'i
 Sürüm `SANALYER_VERSION` (varsayılan 1.0.0), build numarası `SANALYER_BUILD_NUMBER` (varsayılan
 `YYYYMMDD.HHMM`). CocoaPods 1.17 ve fastlane, Homebrew Ruby 3.4 ile `gem install --user-install` kuruldu.
 
-### 12 Kasım senkronundan sonra açık kalan
+### 12 Kasım senkronu notları
 
 Upstream Runner.entitlements'a iki yetenek ekledi: Declared Age Range
 (`com.apple.developer.declared-age-range`) ve App Attest (`com.apple.developer.devicecheck.*`).
 `com.sanalyer.mobile` App ID'sinde bu yetenekler açık olmadığı için App Store profili onları
 kapsamıyor ve archive "Provisioning profile ... doesn't include the ... entitlements" hatasıyla
 düşüyor. Developer hesabında App ID'ye iki yetenek eklendikten sonra lane bir kez
-`SANALYER_REFRESH_PROFILES=1` ile çalıştırılır.
+`SANALYER_REFRESH_PROFILES=1` ile çalıştırılır. 12 Kasım'da App Attest, App Attest Opt-In ve
+Declared Age Range açıldı, profiller yenilendi, build 20261112.1326 TestFlight'a çıktı.
 
 Upstream iOS metinlerini String Catalog'lara taşıdı (`ios/Runner/Localizable.xcstrings`,
 `InfoPlist.xcstrings`, `ShareExtension/InfoPlist.xcstrings`, `BroadcastExtension/InfoPlist.xcstrings`).
