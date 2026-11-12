@@ -380,7 +380,25 @@ final List<_UserSettingsSearchOption> _userSettingsSearchOptions = [
     section: UserSettingsSection.securityLogin,
     fieldId: 'danger_zone',
     label: _l((l10n) => l10n.dangerZoneSectionTitle),
+    keywords: [
+      _l((l10n) => l10n.dangerZoneDeleteTitle),
+      _l((l10n) => l10n.dangerZoneDisableTitle),
+    ],
     description: _l((l10n) => l10n.dangerZoneSectionDescription),
+  ),
+  _UserSettingsSearchOption(
+    id: 'security:delete-account',
+    section: UserSettingsSection.securityLogin,
+    fieldId: 'danger_zone',
+    label: _l((l10n) => l10n.dangerZoneDeleteTitle),
+    description: _l((l10n) => l10n.dangerZoneDeleteEntryDescription),
+  ),
+  _UserSettingsSearchOption(
+    id: 'security:disable-account',
+    section: UserSettingsSection.securityLogin,
+    fieldId: 'danger_zone',
+    label: _l((l10n) => l10n.dangerZoneDisableTitle),
+    description: _l((l10n) => l10n.dangerZoneDisableDescription),
   ),
   _UserSettingsSearchOption(
     id: 'chat:inline-embeds',
@@ -539,6 +557,15 @@ final List<_UserSettingsSearchOption> _userSettingsSearchOptions = [
     label: _l((l10n) => l10n.accessibilityScreenReaderAnnounceNewMessagesLabel),
     description: _l(
       (l10n) => l10n.accessibilityScreenReaderAnnounceNewMessagesDescription,
+    ),
+  ),
+  _UserSettingsSearchOption(
+    id: 'accessibility:screen-reader-call-joins',
+    section: UserSettingsSection.accessibility,
+    fieldId: 'screen-reader',
+    label: _l((l10n) => l10n.accessibilityAnnounceCallJoinsAndLeavesLabel),
+    description: _l(
+      (l10n) => l10n.accessibilityAnnounceCallJoinsAndLeavesDescription,
     ),
   ),
   _UserSettingsSearchOption(

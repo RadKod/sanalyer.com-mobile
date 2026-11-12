@@ -37,13 +37,15 @@ import 'package:fluxer_app/features/dm/presentation/dm_layout.dart';
 import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
 import 'package:fluxer_app/features/friends/domain/friend.dart';
 import 'package:fluxer_app/features/friends/providers/blocked_user_ids_provider.dart';
+import 'package:fluxer_app/features/mature_content/domain/mature_content_types.dart';
+import 'package:fluxer_app/features/mature_content/providers/sensitive_content_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/message_ui_preferences_providers.dart';
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/providers/drawer/reveal_side_provider.dart';
 import 'package:fluxer_app/features/shell/providers/layout/shell_popup_overlay_provider.dart';
-import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/material_ui.dart' hide SensitiveContent;
 import 'package:fluxer_dart/export.dart' hide ChannelType;
 import 'package:riverpod/src/framework.dart' show Override;
 
@@ -1157,7 +1159,14 @@ List<Override> _dmDrawerOverrides({
     swipeRightToLeftActionPreferencesProvider.overrideWith(
       _ChannelDetailsSwipePreference.new,
     ),
+    sensitiveContentProvider.overrideWith(_AdultSensitive.new),
   ];
+}
+
+class _AdultSensitive extends SensitiveContent {
+  @override
+  SensitiveContentState build() =>
+      const SensitiveContentState(access: MatureAccess.allowed);
 }
 
 class _MutableDmViewModel extends DmViewModel {
@@ -1793,6 +1802,7 @@ class _FakeWellKnown extends WellKnown {
         guildCreateAccess: true,
       ),
       services: InstanceServicesSchema(
+        connectionProviders: <InstanceConnectionProviderSchema>[],
         gifEnabled: false,
         youtubeEnabled: false,
         blueskyEnabled: false,
@@ -1820,6 +1830,11 @@ class _FakeWellKnown extends WellKnown {
           premiumInfoUrl: null,
           faviconDarkUrl: null,
           signInBackdropUrl: null,
+          premiumPageColor: null,
+          premiumShowcaseExpressionsUrl: null,
+          premiumShowcaseProfileUrl: null,
+          premiumShowcaseStreamUrl: null,
+          premiumShowcaseUploadUrl: null,
           customCss: null,
           uploadLimitMessage: null,
           trustedDomains: <String>[],

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/media/fluxer_media_url.dart';
-import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/dm/domain/dm_channel_types.dart';
 import 'package:fluxer_app/features/dm/domain/dm_conversation.dart';
 import 'package:fluxer_app/features/dm/presentation/widgets/group_dm_avatar.dart';
@@ -14,8 +13,8 @@ import 'package:fluxer_app/features/voice/presentation/widgets/voice_join_empty_
 import 'package:fluxer_app/features/voice/utils/connection/connection_actions.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class VoiceCallJoinEmptyState extends ConsumerWidget {
   const VoiceCallJoinEmptyState({
@@ -34,7 +33,9 @@ class VoiceCallJoinEmptyState extends ConsumerWidget {
       dmViewModelProvider.select((s) => s.conversations),
     );
     final DmConversation? dm = findDmById(conversations, channelId);
-    final String headline = dm?.displayName ?? l10n.dmVoiceFullscreenTitle;
+    final String headline = dm == null
+        ? l10n.dmVoiceFullscreenTitle
+        : dmConversationDisplayName(l10n, dm);
     final bool canJoinVoice = dm != null && canStartDmCall(dm);
 
     return VoiceJoinEmptyState(
@@ -85,7 +86,7 @@ class VoiceCallJoinEmptyState extends ConsumerWidget {
       return PhosphorIcon(
         PhosphorIconsFill.phone,
         size: iconSize,
-        color: context.colors.textPrimary,
+        color: voiceJoinEmptyMarkForeground(context),
       );
     }
     if (dm.isGroup) {

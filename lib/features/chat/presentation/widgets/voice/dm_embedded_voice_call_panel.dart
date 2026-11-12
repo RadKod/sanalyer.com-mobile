@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/router/route_names.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/wallpaper/chat_wallpaper_text_theme.dart';
+import 'package:fluxer_app/features/dm/domain/dm_conversation.dart';
 import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/features/ui/voice/local_camera_orientation_sync.dart';
@@ -14,9 +15,9 @@ import 'package:fluxer_app/features/voice/providers/voice_session_state.dart';
 import 'package:fluxer_app/features/voice/utils/pip/pip_visibility.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kDmEmbeddedVoiceMinHeight = 160;
 const double _kDmEmbeddedVoiceMaxHeight = 520;
@@ -48,8 +49,7 @@ class _DmEmbeddedVoiceCallPanelState
     );
     final dm = findDmById(conversations, widget.channelId);
     final String title =
-        dm?.displayName ??
-        dm?.recipientName ??
+        (dm == null ? null : dmConversationDisplayName(l10n, dm)) ??
         l10n.dmVoiceEmbeddedFallbackTitle;
     return ChatSurfaceTheme(
       builder: (BuildContext context) {
@@ -77,7 +77,7 @@ class _DmEmbeddedVoiceCallPanelState
                       child: Row(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsetsDirectional.only(start: 8),
                             child: Icon(
                               PhosphorIconsBold.dotsNine,
                               size: 20,

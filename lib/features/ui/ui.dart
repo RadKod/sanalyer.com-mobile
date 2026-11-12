@@ -8,6 +8,7 @@ export 'package:fluxer_app/features/ui/avatar/fluxer_guild_icon_avatar.dart';
 export 'package:fluxer_app/features/ui/background/starfield_background.dart';
 export 'package:fluxer_app/features/ui/badge/fluxer_badge.dart';
 export 'package:fluxer_app/features/ui/badge/fluxer_guild_badge.dart';
+export 'package:fluxer_app/features/ui/badge/fluxer_settings_status_badge.dart';
 export 'package:fluxer_app/features/ui/badge/fluxer_user_tag.dart';
 export 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 export 'package:fluxer_app/features/ui/bottom_sheet/fluxer_sheet_identity_header.dart';
@@ -20,6 +21,8 @@ export 'package:fluxer_app/features/ui/card_alignment_controls/fluxer_card_align
 export 'package:fluxer_app/features/ui/character_counter/fluxer_character_counter.dart';
 export 'package:fluxer_app/features/ui/checkbox/fluxer_checkbox.dart';
 export 'package:fluxer_app/features/ui/color_picker/fluxer_color_picker_field.dart';
+export 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_overhang.dart';
+export 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_surface.dart';
 export 'package:fluxer_app/features/ui/emoji_picker/fluxer_emoji_picker_popout.dart';
 export 'package:fluxer_app/features/ui/emoji_picker/fluxer_emoji_picker_sheet.dart';
 export 'package:fluxer_app/features/ui/emoji_picker/fluxer_selected_emoji.dart';

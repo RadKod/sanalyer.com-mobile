@@ -11,6 +11,7 @@ import 'package:fluxer_app/features/auth/presentation/widgets/instance_domain_ic
 import 'package:fluxer_app/features/auth/providers/account_manager_provider.dart';
 import 'package:fluxer_app/features/ui/avatar/fluxer_avatar.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
+import 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_surface.dart';
 import 'package:fluxer_app/features/ui/modal/fluxer_modal.dart';
 import 'package:fluxer_app/features/ui/selected_check/fluxer_selected_check.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_tappable.dart';
@@ -18,7 +19,7 @@ import 'package:fluxer_app/features/ui/toast/fluxer_toast.dart';
 import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class AccountSwitcherSheet {
   AccountSwitcherSheet._();
@@ -29,6 +30,9 @@ class AccountSwitcherSheet {
       title: FluxerLocalizations.of(context).profileTabMenuSwitchAccounts,
       variant: FluxerBottomSheetVariant.menu,
       useRootNavigator: true,
+      desktop: const FluxerDesktopPresentation(
+        surface: FluxerDesktopSurface.modal,
+      ),
       builder: (sheetContext, close) {
         return FluxerBottomSheetContent(
           child: AccountSwitcherSheetBody(onClose: close),
@@ -123,6 +127,35 @@ class AccountSwitcherSheetBody extends ConsumerWidget {
     final String? currentUserId = ref.watch(currentUserIdProvider);
     final FluxerLocalizations l10n = FluxerLocalizations.of(context);
 
+    if (FluxerDesktopSurfaceScope.isMenu(context)) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (final StoredAccount account in accounts)
+            _DesktopAccountMenuItem(
+              account: account,
+              isCurrent: account.userId == currentUserId,
+              onTap: () => unawaited(_handleSelectAccount(ref, account, l10n)),
+            ),
+          const SizedBox(height: 8),
+          Container(height: 1, color: context.colors.backgroundModifierAccent),
+          const SizedBox(height: 8),
+          FluxerDesktopMenuRow(
+            label: l10n.accountManageTitle,
+            leading: const PhosphorIcon(PhosphorIconsBold.gear, size: 16),
+            onTap: () {
+              final BuildContext? rootContext = rootNavigatorKey.currentContext;
+              onClose();
+              if (rootContext != null && rootContext.mounted) {
+                unawaited(AccountSwitcherSheet.show(rootContext));
+              }
+            },
+          ),
+        ],
+      );
+    }
+
     return FluxerBottomSheetGroupColumn(
       children: [
         FluxerMenuGroup(
@@ -177,13 +210,13 @@ class _AccountSwitcherRow extends StatelessWidget {
     return FluxerTappable(
       onTap: onTap,
       selected: isCurrent,
-      semanticLabel: '${account.displayName}, ${account.instanceDomain}',
+      semanticLabel: '${account.identifier}, ${account.instanceDomain}',
       builder: (BuildContext context, Set<WidgetState> states) {
         final bool isPressed = states.contains(WidgetState.pressed);
         return ColoredBox(
           color: isPressed ? colors.listItemPressedBg : Colors.transparent,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 6, 10),
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 6, 10),
             child: Row(
               children: [
                 FluxerAvatar.user(
@@ -199,7 +232,7 @@ class _AccountSwitcherRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        account.displayName,
+                        account.identifier,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: textStyles.username.copyWith(
@@ -296,6 +329,99 @@ class _AddAccountRow extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DesktopAccountMenuItem extends StatelessWidget {
+  const _DesktopAccountMenuItem({
+    required this.account,
+    required this.isCurrent,
+    required this.onTap,
+  });
+
+  final StoredAccount account;
+  final bool isCurrent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+    final String? meta = !account.isValid
+        ? l10n.accountExpired
+        : isCurrent
+        ? l10n.accountActive
+        : null;
+    return FluxerTappable(
+      onTap: onTap,
+      selected: isCurrent,
+      semanticLabel: meta == null
+          ? account.identifier
+          : '${account.identifier}. $meta',
+      excludeChildSemantics: true,
+      builder: (BuildContext context, Set<WidgetState> states) {
+        final bool highlighted =
+            states.contains(WidgetState.hovered) ||
+            states.contains(WidgetState.focused);
+        return Container(
+          constraints: const BoxConstraints(
+            minHeight: kFluxerDesktopMenuRowMinHeight,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+          decoration: BoxDecoration(
+            color: highlighted
+                ? colors.surfaceInteractiveHoverBg
+                : Colors.transparent,
+            borderRadius: context.layout.radiusMd,
+          ),
+          child: Row(
+            children: <Widget>[
+              FluxerAvatar.user(
+                imageUrl: account.avatarUrl(),
+                fallbackText: account.displayName,
+                userId: account.userId,
+                size: 24,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 2,
+                  children: <Widget>[
+                    Text(
+                      account.identifier,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: fluxerDesktopMenuLabelStyle(
+                        context,
+                      ).copyWith(color: colors.textPrimary, height: 16 / 13),
+                    ),
+                    if (meta != null)
+                      Text(
+                        meta,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.timestamp.copyWith(
+                          color: account.isValid
+                              ? colors.statusOnline
+                              : colors.statusDanger,
+                          fontSize: 11,
+                          height: 14 / 11,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (isCurrent) ...<Widget>[
+                const SizedBox(width: 10),
+                const FluxerSelectedCheck(size: 20),
+              ],
+            ],
           ),
         );
       },

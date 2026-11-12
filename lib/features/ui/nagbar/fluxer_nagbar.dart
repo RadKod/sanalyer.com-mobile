@@ -2,7 +2,7 @@ import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/ui/focus_ring/fluxer_focus_ring.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class FluxerNagbar extends StatelessWidget {
   const FluxerNagbar({
@@ -53,8 +53,8 @@ class FluxerNagbar extends StatelessWidget {
                   child: IconTheme(
                     data: IconThemeData(color: textColor, size: 16),
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        right: showDismissButton ? 32 : 0,
+                      padding: EdgeInsetsDirectional.only(
+                        end: showDismissButton ? 32 : 0,
                       ),
                       child: child,
                     ),
@@ -62,21 +62,31 @@ class FluxerNagbar extends StatelessWidget {
                 ),
               ),
               if (showDismissButton)
-                Positioned(
-                  right: 0,
+                PositionedDirectional(
+                  end: 0,
                   child: FluxerFocusRing(
                     focused: false,
-                    child: IconButton(
-                      onPressed: onDismiss,
-                      icon: Icon(PhosphorIconsBold.x, color: textColor),
-                      tooltip: MaterialLocalizations.of(
+                    child: Semantics(
+                      button: true,
+                      label: MaterialLocalizations.of(
                         context,
                       ).closeButtonTooltip,
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.all(layout.s1),
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
+                      onTap: onDismiss,
+                      excludeSemantics: true,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: onDismiss,
+                          child: Padding(
+                            padding: EdgeInsets.all(layout.s1),
+                            child: Icon(
+                              PhosphorIconsBold.x,
+                              color: textColor,
+                              size: 20,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

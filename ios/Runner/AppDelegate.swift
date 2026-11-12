@@ -13,13 +13,26 @@ import flutter_callkit_incoming
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    excludeDatabaseFromBackup()
     VoipRegistry.shared.start()
     let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
     UNUserNotificationCenter.current().delegate = self
     ApplePushBridge.shared.registerReplyCategory()
-    AssistantAppShortcuts.updateAppShortcutParameters()
+    AssistantBridge.shared.refreshAppShortcutsInBackground()
     startMeasureIfEnabled()
     return result
+  }
+
+  private func excludeDatabaseFromBackup() {
+    let fileManager = FileManager.default
+    guard let support = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+      return
+    }
+    var directory = support.appendingPathComponent("database", isDirectory: true)
+    var values = URLResourceValues()
+    values.isExcludedFromBackup = true
+    try? fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+    try? directory.setResourceValues(values)
   }
 
   private static let measureReportingEnabledKey = "flutter.observability_reporting_enabled"
@@ -147,6 +160,10 @@ import flutter_callkit_incoming
     )
   }
 
+  override func accessibilityPerformMagicTap() -> Bool {
+    VoiceMagicTapBridge.shared.performMagicTap()
+  }
+
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     VoipRegistry.shared.register(messenger: engineBridge.applicationRegistrar.messenger())
@@ -155,9 +172,15 @@ import flutter_callkit_incoming
     AssistantBridge.shared.register(engineBridge: engineBridge)
     PhysicalKeyboardBridge.shared.register(engineBridge: engineBridge)
     NativePasteBridge.shared.register(engineBridge: engineBridge)
-    VoiceSpeakerRouteBridge.shared.register(
+    VoiceActiveRouteBridge.shared.register(
       messenger: engineBridge.applicationRegistrar.messenger()
     )
+    if let routePicker = engineBridge.pluginRegistry.registrar(forPlugin: "VoiceRoutePicker") {
+      routePicker.register(
+        VoiceRoutePickerViewFactory(messenger: routePicker.messenger()),
+        withId: "fluxer_app/voice_route_picker"
+      )
+    }
     UploadKeepAliveBridge.shared.register(
       messenger: engineBridge.applicationRegistrar.messenger()
     )
@@ -167,7 +190,14 @@ import flutter_callkit_incoming
     AppStoreDistributionBridge.shared.register(
       messenger: engineBridge.applicationRegistrar.messenger()
     )
+    DeclaredAgeRangeBridge.shared.register(
+      messenger: engineBridge.applicationRegistrar.messenger()
+    )
+    AppAttestBridge.shared.register(
+      messenger: engineBridge.applicationRegistrar.messenger()
+    )
     registerMeasureReporting(messenger: engineBridge.applicationRegistrar.messenger())
+    VoiceMagicTapBridge.shared.register(messenger: engineBridge.applicationRegistrar.messenger())
   }
 
   func onAccept(_ call: Call, _ action: CXAnswerCallAction) {
@@ -240,5 +270,40 @@ final class UploadKeepAliveBridge {
     }
     UIApplication.shared.endBackgroundTask(task)
     task = .invalid
+  }
+}
+
+final class VoiceMagicTapBridge {
+  static let shared = VoiceMagicTapBridge()
+
+  private var channel: FlutterMethodChannel?
+  private var isInCall = false
+
+  func register(messenger: FlutterBinaryMessenger) {
+    if channel != nil {
+      return
+    }
+    let channel = FlutterMethodChannel(
+      name: "fluxer_app/voice_magic_tap",
+      binaryMessenger: messenger
+    )
+    channel.setMethodCallHandler { [weak self] call, result in
+      switch call.method {
+      case "setInCall":
+        self?.isInCall = (call.arguments as? Bool) ?? false
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+    self.channel = channel
+  }
+
+  func performMagicTap() -> Bool {
+    guard isInCall, let channel else {
+      return false
+    }
+    channel.invokeMethod("magicTap", arguments: nil)
+    return true
   }
 }

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
+import 'package:fluxer_app/features/auth/data/browser_sign_in_service.dart';
 import 'package:fluxer_app/features/auth/domain/mfa_challenge.dart';
 import 'package:fluxer_app/features/auth/presentation/widgets/auth_form_error_text.dart';
+import 'package:fluxer_app/features/auth/providers/auth_instance_snapshot_provider.dart';
 import 'package:fluxer_app/features/auth/providers/login_error_l10n.dart';
 import 'package:fluxer_app/features/auth/providers/mfa_view_model.dart';
 import 'package:fluxer_app/features/ui/button/fluxer_button.dart';
@@ -11,8 +13,8 @@ import 'package:fluxer_app/features/ui/input/fluxer_input.dart';
 import 'package:fluxer_app/features/ui/text_link/fluxer_text_link.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/keyboard_focus_restore.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MfaScreen extends ConsumerWidget {
   final MfaChallenge challenge;
@@ -36,6 +38,14 @@ class MfaScreen extends ConsumerWidget {
     final errorText = vm.errorType != null
         ? vm.errorType!.resolve(l10n)
         : vm.error;
+    final bool offerWebauthn =
+        challenge.webauthn && ref.watch(authInstanceSupportsPasskeysProvider);
+    final bool passkeyUnavailable = challenge.webauthn && !offerWebauthn;
+    final bool passkeyOnlyUnavailable = passkeyUnavailable && !challenge.totp;
+    final bool offerBrowserSignIn =
+        passkeyUnavailable &&
+        ref.watch(authInstanceOffersBrowserSignInProvider);
+    final bool busy = vm.isSubmitting || vm.browserSignInLoading;
 
     ref.listen(
       mfaViewModelProvider(challenge).select((s) => s.completedSession),
@@ -52,9 +62,28 @@ class MfaScreen extends ConsumerWidget {
       children: [
         Center(child: Text(l10n.mfaTitle, style: textStyles.heading)),
         SizedBox(height: layout.s4),
-        if (vm.selectedMethod == null)
+        if (passkeyOnlyUnavailable) ...[
+          Text(
+            l10n.mfaPasskeyUnavailable,
+            style: textStyles.bodySmall.copyWith(
+              color: context.colors.textPrimaryMuted,
+            ),
+          ),
+          if (offerBrowserSignIn) ...[
+            SizedBox(height: layout.s4),
+            FluxerButton.primary(
+              onPressed: vm.browserSignInLoading
+                  ? null
+                  : () => unawaited(notifier.signInWithBrowser()),
+              label: l10n.signInWithBrowser,
+              icon: PhosphorIconsFill.globe,
+              isLoading: vm.browserSignInLoading,
+            ),
+          ],
+        ] else if (vm.selectedMethod == null)
           _MethodSelector(
             challenge: challenge,
+            offerWebauthn: offerWebauthn,
             onSelect: notifier.selectMethod,
             onWebauthn: notifier.startWebauthn,
             webauthnLoading: vm.webauthnLoading,
@@ -69,8 +98,15 @@ class MfaScreen extends ConsumerWidget {
           AuthFormErrorText(errorText),
         ],
         SizedBox(height: layout.s6),
-        if (vm.selectedMethod != null && challenge.hasMultipleMethods) ...[
-          if (challenge.webauthn && vm.selectedMethod != MfaMethod.webauthn)
+        if (offerBrowserSignIn && !passkeyOnlyUnavailable) ...[
+          FluxerTextLink(
+            text: l10n.signInWithBrowser,
+            onTap: busy ? null : () => unawaited(notifier.signInWithBrowser()),
+          ),
+          SizedBox(height: layout.s2),
+        ],
+        if (vm.selectedMethod != null && challenge.totp && offerWebauthn) ...[
+          if (vm.selectedMethod != MfaMethod.webauthn)
             Padding(
               padding: EdgeInsets.only(bottom: layout.s2),
               child: FluxerTextLink(
@@ -84,7 +120,7 @@ class MfaScreen extends ConsumerWidget {
           ),
           SizedBox(height: layout.s2),
         ],
-        FluxerTextLink(text: l10n.back, onTap: vm.isSubmitting ? null : onBack),
+        FluxerTextLink(text: l10n.back, onTap: busy ? null : onBack),
       ],
     );
   }
@@ -92,6 +128,7 @@ class MfaScreen extends ConsumerWidget {
 
 class _MethodSelector extends StatelessWidget {
   final MfaChallenge challenge;
+  final bool offerWebauthn;
   final void Function(MfaMethod) onSelect;
   final VoidCallback onWebauthn;
   final bool webauthnLoading;
@@ -99,6 +136,7 @@ class _MethodSelector extends StatelessWidget {
 
   const _MethodSelector({
     required this.challenge,
+    required this.offerWebauthn,
     required this.onSelect,
     required this.onWebauthn,
     required this.webauthnLoading,
@@ -133,7 +171,7 @@ class _MethodSelector extends StatelessWidget {
               icon: PhosphorIconsFill.shieldCheck,
             ),
           ),
-        if (challenge.webauthn)
+        if (offerWebauthn)
           FluxerButton.secondary(
             onPressed: webauthnLoading ? null : onWebauthn,
             label: l10n.mfaMethodWebauthn,
@@ -190,6 +228,7 @@ class _CodeEntryState extends ConsumerState<_CodeEntry>
   late final TextEditingController _codeController;
   final _codeFocusNode = FocusNode();
   late final KeyboardFocusRestoreHandle _keyboardRestore;
+  bool _backupCode = false;
 
   @override
   void initState() {
@@ -219,6 +258,16 @@ class _CodeEntryState extends ConsumerState<_CodeEntry>
     ref
         .read(mfaViewModelProvider(widget.challenge).notifier)
         .updateCode(_codeController.text);
+  }
+
+  void _toggleBackupCode() {
+    _codeFocusNode.unfocus();
+    setState(() => _backupCode = !_backupCode);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _codeFocusNode.requestFocus();
+      }
+    });
   }
 
   @override
@@ -274,16 +323,27 @@ class _CodeEntryState extends ConsumerState<_CodeEntry>
             focusNode: _codeFocusNode,
             autofocus: true,
             maxLength: 10,
-            keyboardType: TextInputType.number,
+            keyboardType: _backupCode
+                ? TextInputType.visiblePassword
+                : TextInputType.number,
             autocorrect: false,
             enableSuggestions: false,
             textInputAction: TextInputAction.go,
-            autofillHints: const [AutofillHints.oneTimeCode],
+            autofillHints: _backupCode
+                ? null
+                : const [AutofillHints.oneTimeCode],
             onSubmitted: (_) {
               if (vm.canSubmitCode) {
                 unawaited(notifier.submitCode());
               }
             },
+          ),
+          SizedBox(height: layout.s2),
+          FluxerTextLink(
+            text: _backupCode
+                ? widget.l10n.mfaUseAuthenticatorCode
+                : widget.l10n.mfaUseBackupCode,
+            onTap: vm.isSubmitting ? null : _toggleBackupCode,
           ),
           SizedBox(height: layout.s4),
           FluxerButton.primary(

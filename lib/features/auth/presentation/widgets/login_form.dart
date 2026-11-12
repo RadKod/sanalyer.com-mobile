@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/instance/instance_legal_links.dart';
+import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
+import 'package:fluxer_app/features/auth/data/browser_sign_in_service.dart';
 import 'package:fluxer_app/features/auth/domain/login_error.dart';
 import 'package:fluxer_app/features/auth/presentation/sheets/instance_selector_sheet.dart';
 import 'package:fluxer_app/features/auth/presentation/widgets/auth_form_error_text.dart';
@@ -20,15 +23,14 @@ import 'package:fluxer_app/features/ui/input/fluxer_input.dart';
 import 'package:fluxer_app/features/ui/text_link/fluxer_text_link.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/keyboard_focus_restore.dart';
 import 'package:fluxer_dart/export.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm({this.heading, this.subheading, super.key});
+  const LoginForm({this.heading, super.key});
 
   final String? heading;
-  final String? subheading;
 
   @override
   ConsumerState<LoginForm> createState() => _LoginFormState();
@@ -63,6 +65,9 @@ class _LoginFormState extends ConsumerState<LoginForm>
     _emailFocusNode.addListener(_trackEmailFocus);
     _passwordFocusNode.addListener(_trackPasswordFocus);
     WidgetsBinding.instance.addObserver(this);
+    final LoginViewState vm = ref.read(loginViewModelProvider);
+    _emailController.text = vm.email;
+    _passwordController.text = vm.password;
     _emailController.addListener(_syncEmailToViewModel);
     _passwordController.addListener(_syncPasswordToViewModel);
   }
@@ -81,7 +86,7 @@ class _LoginFormState extends ConsumerState<LoginForm>
 
   bool _isInteractionBlocked() {
     final vm = ref.read(loginViewModelProvider);
-    return vm.isLoggingIn || vm.isStartingSso;
+    return vm.signInInFlight;
   }
 
   bool _shouldTrackKeyboardRestore(FocusNode node) {
@@ -180,6 +185,12 @@ class _LoginFormState extends ConsumerState<LoginForm>
     );
     final bool canSubmit = vm.canLogin && canAuthenticate;
     final bool isSsoEnabled = ref.watch(isAuthInstanceSsoEnabledProvider);
+    final bool supportsPasskeys = ref.watch(
+      authInstanceSupportsPasskeysProvider,
+    );
+    final bool offersBrowserSignIn = ref.watch(
+      authInstanceOffersBrowserSignInProvider,
+    );
     final InstanceSsoSchema? ssoConfig = ref
         .watch(authInstanceSnapshotProvider)
         .ssoConfig;
@@ -194,6 +205,9 @@ class _LoginFormState extends ConsumerState<LoginForm>
       ),
     );
     final String ssoProviderName = ssoConfig?.displayName ?? 'Single Sign-On';
+    final String productName = ref.watch(
+      authInstanceRuntimeConfigProvider.select((config) => config.productName),
+    );
 
     ref
       ..listen(loginViewModelProvider.select((state) => state.email), (
@@ -210,7 +224,7 @@ class _LoginFormState extends ConsumerState<LoginForm>
       });
 
     return AnimatedOpacity(
-      opacity: vm.isLoggingIn || vm.isStartingSso ? 0.6 : 1.0,
+      opacity: vm.signInInFlight ? 0.6 : 1.0,
       duration: context.motion.fast,
       child: AutofillGroup(
         child: Column(
@@ -219,15 +233,15 @@ class _LoginFormState extends ConsumerState<LoginForm>
           children: [
             Center(
               child: Text(
-                widget.heading ?? strings.welcomeBack,
+                widget.heading ?? strings.loginHeading(productName),
                 style: context.textStyles.heading,
               ),
             ),
-            if (widget.subheading case final String subheading) ...[
+            if (vm.expiredAccountName case final String accountName) ...[
               SizedBox(height: layout.s2),
               Center(
                 child: Text(
-                  subheading,
+                  strings.accountSessionExpiredNotice(accountName),
                   style: context.textStyles.bodyMedium.copyWith(
                     color: context.colors.textSecondary,
                   ),
@@ -240,7 +254,7 @@ class _LoginFormState extends ConsumerState<LoginForm>
               controller: _emailController,
               label: usernameSignIn ? strings.usernameLabel : strings.email,
               focusNode: _emailFocusNode,
-              autofocus: true,
+              autofocus: !isFluxerNativeMobileOs,
               autofillHints: usernameSignIn
                   ? const [AutofillHints.username]
                   : const [AutofillHints.email],
@@ -313,16 +327,36 @@ class _LoginFormState extends ConsumerState<LoginForm>
               label: strings.logIn,
               isLoading: vm.isLoggingIn,
             ),
-            SizedBox(height: layout.s6),
-            _buildOrDivider(context, strings),
-            SizedBox(height: layout.s6),
-            FluxerButton.secondary(
-              onPressed: vm.isLoggingIn || !canAuthenticate
-                  ? null
-                  : () => unawaited(notifier.loginWithPasskey()),
-              icon: PhosphorIconsFill.key,
-              label: strings.logInWithPasskey,
-            ),
+            if (supportsPasskeys) ...[
+              SizedBox(height: layout.s6),
+              _buildOrDivider(context, strings),
+              SizedBox(height: layout.s6),
+              FluxerButton.secondary(
+                onPressed: vm.isLoggingIn || !canAuthenticate
+                    ? null
+                    : () => unawaited(notifier.loginWithPasskey()),
+                icon: PhosphorIconsFill.key,
+                label: strings.logInWithPasskey,
+              ),
+            ] else if (offersBrowserSignIn) ...[
+              SizedBox(height: layout.s6),
+              _buildOrDivider(context, strings),
+              SizedBox(height: layout.s6),
+              FluxerButton.secondary(
+                onPressed: vm.signInInFlight || !canAuthenticate
+                    ? null
+                    : () => unawaited(notifier.signInWithBrowser()),
+                icon: PhosphorIconsFill.globe,
+                label: strings.signInWithBrowser,
+              ),
+              SizedBox(height: layout.s2),
+              Text(
+                strings.signInWithBrowserPasskeyHint,
+                style: context.textStyles.bodySmall.copyWith(
+                  color: context.colors.textTertiary,
+                ),
+              ),
+            ],
             if (isSsoEnabled) ...[
               SizedBox(height: context.layout.s6),
               _buildOrDivider(context, strings),
@@ -337,14 +371,14 @@ class _LoginFormState extends ConsumerState<LoginForm>
               children: [
                 Flexible(
                   child: Text(
-                    strings.needAccountPrompt,
+                    strings.loginNewAccountPrompt(productName),
                     style: context.textStyles.bodySmall.copyWith(
                       color: context.colors.textTertiary,
                     ),
                   ),
                 ),
                 FluxerTextLink(
-                  text: strings.register,
+                  text: strings.loginCreateAccountLink,
                   onTap: notifier.showRegisterScreen,
                   style: context.textStyles.bodySmall,
                 ),
@@ -354,6 +388,12 @@ class _LoginFormState extends ConsumerState<LoginForm>
             InstanceSelectorLoginEntry(
               enabled: !vm.isLoggingIn,
               onOpenSheet: () => unawaited(showInstanceSelectorSheet(context)),
+            ),
+            InstanceLegalAgreementText(
+              message: strings.loginLegalAgreement,
+              textAlign: TextAlign.start,
+              forSignIn: true,
+              padding: EdgeInsets.only(top: layout.s4),
             ),
           ],
         ),

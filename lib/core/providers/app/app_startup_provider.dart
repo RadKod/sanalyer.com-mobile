@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
+import 'package:fluxer_app/core/api/retry_interceptor.dart';
 import 'package:fluxer_app/core/api/service_unavailable.dart';
 import 'package:fluxer_app/core/build/push_provider_guard.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/deep_links/deep_link_handler.dart';
+import 'package:fluxer_app/core/desktop/notifications/desktop_message_notification_binding.dart';
 import 'package:fluxer_app/core/experiments/experiments_provider.dart';
 import 'package:fluxer_app/core/gateway/gateway_presence_coordinator.dart';
 import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
@@ -17,6 +19,8 @@ import 'package:fluxer_app/core/premium/current_user_entitlements_provider.dart'
 import 'package:fluxer_app/core/premium/premium_state_sync_provider.dart';
 import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/app/fluxer_sfx_provider.dart';
+import 'package:fluxer_app/core/providers/app/shell_cache.dart';
+import 'package:fluxer_app/core/providers/app/startup_gateway_fallback_provider.dart';
 import 'package:fluxer_app/core/providers/app_runtime_info_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/providers/gateway/gateway_provider.dart';
@@ -47,7 +51,6 @@ import 'package:fluxer_app/features/chat/providers/slowmode/slowmode_tracker.dar
 import 'package:fluxer_app/features/guilds/providers/guild_availability_provider.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_sync_provider.dart';
 import 'package:fluxer_app/features/mature_content/providers/mature_content_agreements_provider.dart';
-import 'package:fluxer_app/features/mature_content/providers/sensitive_content_provider.dart';
 import 'package:fluxer_app/features/profile/providers/status_expiry_scheduler.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
@@ -57,14 +60,19 @@ import 'package:fluxer_app/features/settings/providers/preferences/voice_setting
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/providers/service_status/service_status_maintenance_provider.dart';
 import 'package:fluxer_app/features/shell/providers/user/current_user_private_provider.dart';
+import 'package:fluxer_app/features/ui/toast/fluxer_toast.dart';
+import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_p2p_consent_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_session_provider.dart';
 import 'package:fluxer_app/features/voice/services/voice_callkit_coordinator.dart';
 import 'package:fluxer_app/features/voice/services/voice_wakelock_coordinator.dart';
 import 'package:fluxer_app/features/voice/tts/fluxer_tts_provider.dart';
+import 'package:fluxer_app/l10n/app_locale_provider.dart';
+import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/shared/utils/emoji/emoji_registry.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
 import 'package:fluxer_dart/export.dart';
+import 'package:riverpod/riverpod.dart' show ProviderSubscription;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_startup_provider.g.dart';
@@ -87,6 +95,7 @@ void authenticatedSessionBindings(Ref ref) {
     ..read(pushTrayBackgroundListenerProvider)
     ..read(fluxerSfxIncomingRingBindingProvider)
     ..read(fluxerMessageSfxBindingProvider)
+    ..read(desktopMessageNotificationBindingProvider)
     ..read(fluxerTtsBindingProvider)
     ..read(voiceCallKitCoordinatorProvider)
     ..read(voiceWakelockCoordinatorProvider)
@@ -97,10 +106,18 @@ void authenticatedSessionBindings(Ref ref) {
     ..read(premiumStateSyncBindingProvider);
 }
 
+bool _isApiUnreachable(DioException error) =>
+    isHttpServiceUnavailable(error) ||
+    isTransientConnectionError(error) ||
+    error.type == DioExceptionType.receiveTimeout;
+
 @Riverpod(keepAlive: true)
 class AppStartup extends _$AppStartup {
+  ProviderSubscription<bool>? _sessionCheckRetry;
+
   @override
   Future<void> build() async {
+    _sessionCheckRetry = null;
     if (PushProviderGuard.isFirebaseMessaging && Platform.isAndroid) {
       ref.read(fcmNotificationTapBindingProvider);
     }
@@ -113,6 +130,8 @@ class AppStartup extends _$AppStartup {
   }
 
   Future<void> retry() async {
+    _sessionCheckRetry?.close();
+    _sessionCheckRetry = null;
     _invalidateGatewayBindings();
     state = const AsyncLoading<void>();
     state = await AsyncValue.guard<void>(_restoreOrThrow);
@@ -138,7 +157,9 @@ class AppStartup extends _$AppStartup {
       ..invalidate(gatewayStateListenerProvider)
       ..invalidate(gatewayForegroundListenerProvider)
       ..invalidate(gatewayReconnectBannerListenerProvider)
-      ..invalidate(gatewayConnectionProvider);
+      ..invalidate(gatewayReconnectBannerProvider)
+      ..invalidate(gatewayConnectionProvider)
+      ..invalidate(startupGatewayFallbackProvider);
   }
 
   Future<void> _leaveBoundAccount(FluxerDatabase database) async {
@@ -173,6 +194,168 @@ class AppStartup extends _$AppStartup {
   Future<void> _flushLaunchNavigation() async {
     ref.read(deepLinkHandlerProvider.notifier).processPendingDeepLink();
     ref.read(pendingHomeQuickActionProvider.notifier).flushIfReady();
+  }
+
+  Future<UserPrivateResponse> _fetchCurrentUser({required bool retry}) async {
+    final Response<Map<String, Object?>> response = await ref
+        .read(fluxerDioProvider)
+        .get<Map<String, Object?>>(
+          '/users/@me',
+          options: Options(extra: <String, Object>{kNoRetryKey: !retry}),
+        );
+    return UserPrivateResponse.fromJson(response.data!);
+  }
+
+  Future<UserPrivateResponse?> _currentUserUnlessCachedShell({
+    required bool hasCache,
+  }) async {
+    final Completer<UserPrivateResponse?> cachedShell =
+        Completer<UserPrivateResponse?>();
+    final ProviderSubscription<StartupGatewayFallback> subscription = ref
+        .listen<StartupGatewayFallback>(startupGatewayFallbackProvider, (
+          StartupGatewayFallback? previous,
+          StartupGatewayFallback next,
+        ) {
+          if (next == StartupGatewayFallback.cachedShell &&
+              !cachedShell.isCompleted) {
+            cachedShell.complete(null);
+          }
+        });
+    try {
+      return await Future.any<UserPrivateResponse?>(
+        <Future<UserPrivateResponse?>>[
+          _fetchCurrentUser(retry: !hasCache),
+          cachedShell.future,
+        ],
+      );
+    } finally {
+      subscription.close();
+    }
+  }
+
+  Future<bool> _persistValidatedUser(
+    FluxerDatabase database,
+    String userId,
+    UserPrivateResponse user,
+  ) async {
+    final active = await database.authSessionDao.getActiveSession();
+    if (!ref.mounted || active?.userId != userId) {
+      return false;
+    }
+    await database.authSessionDao.updateUserData(
+      userId: userId,
+      username: user.username,
+      discriminator: user.discriminator,
+      avatar: user.avatar,
+      email: user.email,
+    );
+    if (!ref.mounted) {
+      return false;
+    }
+    ref
+        .read(currentUserEntitlementsProvider(readAccountUserId(ref)).notifier)
+        .applyUserProfile(user);
+    ref
+        .read(currentUserPremiumTypeProvider(readAccountUserId(ref)).notifier)
+        .set(user.premiumType?.json ?? 0);
+    unawaited(refreshPremiumState(ref));
+    return true;
+  }
+
+  void _applyValidatedProfile(UserPrivateResponse user) {
+    ref.read(userSettingsViewModelProvider.notifier).applyStartupProfile(user);
+    ref
+        .read(currentUserPrivateReadProvider(readAccountUserId(ref)).notifier)
+        .apply(user);
+  }
+
+  bool _isCurrentAccount(String userId) =>
+      ref.mounted && ref.read(currentUserIdProvider) == userId;
+
+  Future<void> _validateSessionInBackground(
+    FluxerDatabase database,
+    String userId, {
+    bool retryWhenLive = true,
+  }) async {
+    try {
+      final UserPrivateResponse user = await _fetchCurrentUser(retry: true);
+      if (!_isCurrentAccount(userId) ||
+          !await _persistValidatedUser(database, userId, user) ||
+          !_isCurrentAccount(userId)) {
+        return;
+      }
+      _applyValidatedProfile(user);
+    } on DioException catch (e) {
+      if (!_isCurrentAccount(userId)) {
+        return;
+      }
+      if (e.response?.statusCode == 401) {
+        await _expireCachedSession(userId, e);
+        return;
+      }
+      talker.warning('[AppStartup] Background session check failed', e);
+      if (_isApiUnreachable(e)) {
+        ref.read(startupGatewayFallbackProvider.notifier).apiUnreachable();
+      }
+      if (retryWhenLive) {
+        _retrySessionCheckWhenLive(database, userId);
+      }
+    } on Object catch (e, st) {
+      if (!_isCurrentAccount(userId)) {
+        return;
+      }
+      talker.error('[AppStartup] Background session check failed', e, st);
+      if (retryWhenLive) {
+        _retrySessionCheckWhenLive(database, userId);
+      }
+    }
+  }
+
+  void _retrySessionCheckWhenLive(FluxerDatabase database, String userId) {
+    _sessionCheckRetry?.close();
+    _sessionCheckRetry = null;
+    if (ref.read(gatewayReadyProvider)) {
+      unawaited(
+        _validateSessionInBackground(database, userId, retryWhenLive: false),
+      );
+      return;
+    }
+    _sessionCheckRetry = ref.listen<bool>(gatewayReadyProvider, (
+      bool? previous,
+      bool ready,
+    ) {
+      if (!ready) {
+        return;
+      }
+      _sessionCheckRetry?.close();
+      _sessionCheckRetry = null;
+      unawaited(
+        _validateSessionInBackground(database, userId, retryWhenLive: false),
+      );
+    });
+  }
+
+  Future<void> _expireCachedSession(String userId, DioException error) async {
+    final stored = await ref
+        .read(authRepositoryProvider)
+        .resolveInstanceSnapshotForUser(userId);
+    final bool expire = startupShouldExpireSession(
+      mounted: _isCurrentAccount(userId) && ref.read(authStateProvider),
+      requestBaseUrl: error.requestOptions.baseUrl,
+      storedApiBaseUrl: stored.apiBaseUrl,
+    );
+    if (!expire) {
+      return;
+    }
+    final FluxerLocalizations l10n = ref.read(appLocalizationsProvider);
+    await ref.read(accountManagerProvider.notifier).expireCurrentSession();
+    if (!ref.mounted) {
+      return;
+    }
+    talker.warning('[AppStartup] Cached session expired, signing out');
+    ref
+        .read(toastProvider.notifier)
+        .show(FluxerToast(message: l10n.sessionExpiredToast));
   }
 
   Future<void> _validateAndRestore() async {
@@ -240,6 +423,7 @@ class AppStartup extends _$AppStartup {
     }
 
     UserPrivateResponse? validatedUser;
+    var openedFromCache = false;
     var gatewayBound = false;
     Future<void>? launchPluginWarm;
     while (session != null) {
@@ -266,42 +450,39 @@ class AppStartup extends _$AppStartup {
         _invalidateGatewayBindings();
       }
       _attachAuthenticatedBindings();
+      ref.read(startupGatewayFallbackProvider.notifier).arm();
       gatewayBound = true;
 
-      try {
-        final UserPrivateResponse user = await ref
-            .read(fluxerClientProvider)
-            .users
-            .getCurrentUser();
+      if (await isShellCacheTrusted(database, session.userId)) {
         if (!ref.mounted) {
           return;
         }
-        validatedUser = user;
+        debugPrint('[AppStartup] Opening shell from cache');
+        ref.read(startupGatewayFallbackProvider.notifier).openFromCache();
+        openedFromCache = true;
+        break;
+      }
 
-        final active = await database.authSessionDao.getActiveSession();
-        if (!ref.mounted || active?.userId != session.userId) {
-          return;
-        }
-        await database.authSessionDao.updateUserData(
-          userId: session.userId,
-          username: user.username,
-          discriminator: user.discriminator,
-          avatar: user.avatar,
+      final bool hasCache = await hasCachedShellData(database, session.userId);
+      if (!ref.mounted) {
+        return;
+      }
+
+      try {
+        final UserPrivateResponse? user = await _currentUserUnlessCachedShell(
+          hasCache: hasCache,
         );
         if (!ref.mounted) {
           return;
         }
-        ref
-            .read(
-              currentUserEntitlementsProvider(readAccountUserId(ref)).notifier,
-            )
-            .applyUserProfile(user);
-        ref
-            .read(
-              currentUserPremiumTypeProvider(readAccountUserId(ref)).notifier,
-            )
-            .set(user.premiumType?.json ?? 0);
-        unawaited(refreshPremiumState(ref));
+        if (user == null) {
+          debugPrint('[AppStartup] API unreachable, opening cached data');
+          break;
+        }
+        validatedUser = user;
+        if (!await _persistValidatedUser(database, session.userId, user)) {
+          return;
+        }
         break;
       } on DioException catch (e) {
         if (e.response?.statusCode == 401) {
@@ -333,11 +514,13 @@ class AppStartup extends _$AppStartup {
           session = await authRepository.getActiveSession();
           continue;
         }
+        if (hasCache && _isApiUnreachable(e)) {
+          debugPrint('[AppStartup] API unreachable, using cache: $e');
+          ref.read(startupGatewayFallbackProvider.notifier).apiUnreachable();
+          break;
+        }
         if (isHttpServiceUnavailable(e)) {
           debugPrint('[AppStartup] Service unavailable: $e');
-          if (!ref.mounted) {
-            return;
-          }
           ref.read(authStateProvider.notifier).setAuthenticated(value: true);
           throw ServiceUnavailableException(statusCode: e.response?.statusCode);
         }
@@ -360,17 +543,9 @@ class AppStartup extends _$AppStartup {
     ref.read(authStateProvider.notifier).setAuthenticated(value: true);
     ref.read(currentUserIdProvider.notifier).set(session.userId);
     if (validatedUser != null) {
-      ref
-          .read(userSettingsViewModelProvider.notifier)
-          .applyStartupProfile(validatedUser);
-      ref
-          .read(currentUserPrivateReadProvider(readAccountUserId(ref)).notifier)
-          .apply(validatedUser);
-      unawaited(
-        ref
-            .read(sensitiveContentProvider.notifier)
-            .hydrateFromLocal(validatedUser: validatedUser),
-      );
+      _applyValidatedProfile(validatedUser);
+    } else if (openedFromCache) {
+      unawaited(_validateSessionInBackground(database, session.userId));
     } else {
       unawaited(ref.read(userSettingsViewModelProvider.notifier).loadProfile());
       unawaited(
@@ -380,7 +555,6 @@ class AppStartup extends _$AppStartup {
             )
             .refresh(),
       );
-      unawaited(ref.read(sensitiveContentProvider.notifier).hydrateFromLocal());
     }
     unawaited(ref.read(accountManagerProvider.notifier).loadAccounts());
     final String? token = ref.read(fluxerAuthTokenProvider);
@@ -413,7 +587,10 @@ class AppStartup extends _$AppStartup {
       ref.read(serviceStatusMaintenanceReadProvider.notifier).refresh(),
     );
 
-    await (launchPluginWarm ?? _warmLaunchNavigationPlugins());
+    await FluxerObservability.instance.traceAsync(
+      'startup.launch_plugins',
+      () => launchPluginWarm ?? _warmLaunchNavigationPlugins(),
+    );
     if (!ref.mounted) {
       return;
     }

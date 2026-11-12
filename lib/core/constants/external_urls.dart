@@ -8,4 +8,6 @@ abstract final class ExternalUrls {
   static const bool patchNotesEnabled = false;
   static const String fluxerPatchNotes = '$fluxerMarketing/patch-notes';
   static const String fluxerDownload = 'https://sanalyer.com/indir';
+  // sanalyer is not public on the App Store; point to the download page.
+  static const String fluxerAppStore = 'https://sanalyer.com/indir';
 }

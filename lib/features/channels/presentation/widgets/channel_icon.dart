@@ -1,10 +1,12 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxer_app/core/permissions/permission.dart';
+import 'package:fluxer_app/core/providers/app/splash_exit_allowed_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/domain/channel_access_icon_flags.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 const String _kAssetText = 'assets/images/icons/channels/text.svg';
 const String _kAssetTextLocked = 'assets/images/icons/channels/text_locked.svg';
@@ -204,11 +206,14 @@ const List<String> _kSidebarChannelAssets = <String>[
   _kAssetAnnouncementNsfw,
 ];
 
-class ChannelIconPrewarm extends StatelessWidget {
+class ChannelIconPrewarm extends ConsumerWidget {
   const ChannelIconPrewarm({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(splashRevealCompleteProvider)) {
+      return const SizedBox.shrink();
+    }
     final Color highlight = context.colors.textPrimary;
     final Color idle = context.colors.textTertiaryMuted;
     final List<Color> colors = <Color>[

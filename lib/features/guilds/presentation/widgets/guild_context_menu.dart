@@ -10,16 +10,15 @@ import 'package:fluxer_app/features/settings/domain/guild/guild_settings_tab.dar
 import 'package:fluxer_app/features/settings/providers/preferences/time_format_providers.dart';
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
+import 'package:fluxer_app/features/ui/action_menu/context_menu_placement.dart';
 import 'package:fluxer_app/features/ui/action_menu/context_menu_widgets.dart';
-import 'package:fluxer_app/features/ui/toast/fluxer_toast.dart';
-import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/clipboard_utils.dart';
 import 'package:go_router/go_router.dart';
 
-const _kSubmenuGap = 4.0;
+const _kSubmenuGap = 3.0;
 
 Future<GuildAction?> showGuildContextMenu(
   BuildContext context, {
@@ -67,6 +66,8 @@ Future<GuildAction?> showGuildContextMenu(
 
   final result = await Navigator.of(context).push<GuildAction>(
     _GuildContextMenuRoute(
+      animate: !usesDesktopPointerUi(context),
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       position: local,
       overlaySize: overlay.size,
       groups: groups,
@@ -88,14 +89,19 @@ class _GuildContextMenuRoute extends PopupRoute<GuildAction> {
   final String guildId;
 
   _GuildContextMenuRoute({
+    required this.animate,
+    required this.barrierLabel,
     required this.position,
     required this.overlaySize,
     required this.groups,
     required this.guildId,
   });
 
+  final bool animate;
+
   @override
-  Duration get transitionDuration => kContextMenuEntranceDuration;
+  Duration get transitionDuration =>
+      animate ? kContextMenuEntranceDuration : Duration.zero;
 
   @override
   bool get barrierDismissible => true;
@@ -104,7 +110,7 @@ class _GuildContextMenuRoute extends PopupRoute<GuildAction> {
   Color? get barrierColor => Colors.transparent;
 
   @override
-  String? get barrierLabel => 'Dismiss';
+  final String barrierLabel;
 
   @override
   Widget buildPage(
@@ -188,8 +194,12 @@ class _ContextMenuPageState extends State<_ContextMenuPage> {
     final items = _buildItems(context);
     final mainHeight = estimateContextMenuHeight(items);
 
-    final opensLeft =
-        widget.position.dx + kContextMenuWidth > widget.overlaySize.width - 8;
+    final opensLeft = contextMenuOpensLeft(
+      context,
+      anchorX: widget.position.dx,
+      menuWidth: kContextMenuWidth,
+      overlayWidth: widget.overlaySize.width,
+    );
     final opensUp =
         widget.position.dy + mainHeight > widget.overlaySize.height - 8;
 
@@ -219,8 +229,13 @@ class _ContextMenuPageState extends State<_ContextMenuPage> {
 
           final rightX = mainLeft + kContextMenuWidth + _kSubmenuGap;
           final leftX = mainLeft - kContextMenuWidth - _kSubmenuGap;
-          final fitsRight =
-              rightX + kContextMenuWidth < widget.overlaySize.width - 8;
+          final fitsRight = contextSubmenuOpensRight(
+            context,
+            rightX: rightX,
+            leftX: leftX,
+            menuWidth: kContextMenuWidth,
+            overlayWidth: widget.overlaySize.width,
+          );
 
           final subLeft = fitsRight ? rightX : leftX;
           final subTop = itemPos.dy.clamp(
@@ -293,19 +308,11 @@ class _ContextMenuPageState extends State<_ContextMenuPage> {
     String guildId,
     BuildContext context,
   ) {
-    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
     return [
       for (final entry in entries)
         if (entry is GuildMenuAction)
           GuildContextMenuItem(
             entry: entry,
-            isDisabled: isGuildSettingsActionComingSoon(entry.action),
-            onDisabledTap: () {
-              Navigator.of(context).pop();
-              ProviderScope.containerOf(context)
-                  .read(toastProvider.notifier)
-                  .show(FluxerToast(message: l10n.comingSoon));
-            },
             onTap: () {
               Navigator.of(context).pop();
               _navigateToSettingsPage(context, entry.action, guildId);
@@ -322,9 +329,6 @@ class _ContextMenuPageState extends State<_ContextMenuPage> {
     if (isWideLayout(context)) {
       final GuildSettingsTab? tab = guildSettingsTabForAction(action);
       if (tab == null) {
-        return;
-      }
-      if (isGuildSettingsTabComingSoon(tab)) {
         return;
       }
       unawaited(

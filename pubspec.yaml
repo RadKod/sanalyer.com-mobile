@@ -2,7 +2,7 @@ name: fluxer_app
 description: "Official Fluxer Mobile client built on the Flutter framework"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 2026.11.100+1
+version: 2026.11.300+1
 
 environment:
   sdk: ^3.12.0
@@ -17,7 +17,7 @@ dependencies:
   audioplayers: ^6.8.1
   cached_network_image_ce: ^4.13.2
   clock: ^1.1.3
-  code_assets: ^1.0.0
+  code_assets: ^2.2.0
   connectivity_plus: ^7.3.1
   country_flags: ^4.1.2
   crop_your_image: ^2.0.0
@@ -29,6 +29,7 @@ dependencies:
   dio: ^5.11.1
   drift: ^2.35.0
   dynamic_app_icon_flutter_plus: ^2.2.1
+  dynamic_color: ^2.1.0
   ffi: ^2.2.0
   file_picker: ^12.2.0
   fixnum: ^1.1.1
@@ -53,29 +54,35 @@ dependencies:
     path: packages/fluxer_android_host
   fluxer_android_notifications:
     path: packages/fluxer_android_notifications
+  # BEGIN optional modules
+  fluxer_billing:
+    path: packages/fluxer_billing
+  # END optional modules
   fluxer_dart:
     path: dart_sdk
   fluxer_markdown:
     path: packages/fluxer_markdown
   fluxer_markdown_native:
     path: packages/fluxer_markdown_native
+  fluxer_voice:
+    path: packages/fluxer_voice
   foldable: ^1.0.5
   gaimon: ^1.5.0
   gal: ^2.3.3
   go_router: ^18.0.1
   highlight: ^0.7.0
-  hooks: ^1.0.3
+  hooks: ^2.2.0
   http: ^1.5.0
   image: ^4.8.0
   image_picker: ^1.2.3
   image_picker_android: ^0.8.13+19
   image_picker_platform_interface: ^2.11.1
-  in_app_purchase: ^3.3.1
-  in_app_purchase_android: ^0.5.3
   intl: ^0.20.2
   livekit_client: ^2.13.2
+  local_auth: ^3.0.2
   local_translation: ^0.1.1
   markdown: ^7.3.1
+  material_color_utilities: ^0.13.0
   material_ui: ^1.5.0
   # Temp: fluxerapp/media-kit fork (revert to pub.dev versions in the future).
   measure_flutter: ^0.9.1
@@ -91,7 +98,7 @@ dependencies:
     git:
       url: https://github.com/fluxerapp/media-kit
       path: media_kit_video
-  native_toolchain_c: ^0.17.6
+  native_toolchain_c: ^0.19.6
   package_info_plus: ^10.2.1
   passkeys: ^2.23.1
   path: ^1.9.1
@@ -109,20 +116,23 @@ dependencies:
   record: ^7.1.1
   riverpod: ^3.4.3
   riverpod_annotation: ^4.0.7
+  screen_retriever: ^0.2.2
   sensors_plus: ^7.1.0
   shared_preferences: ^2.5.5
   skeletonizer: ^3.0.0
   smart_keyboard_insets: ^0.3.0
-  sqlite3: ^3.5.2
+  sqlite3: ^3.9.0
   super_clipboard: ^0.9.1
   talker: ^5.1.20
   talker_dio_logger: ^5.1.20
   talker_flutter: ^5.1.20
   timezone: ^0.11.1
+  tray_manager: ^0.5.3
   unifiedpush: ^6.2.0
   unifiedpush_ui: ^0.2.0
   url_launcher: ^6.3.2
   uuid: ^4.5.1
+  velopack_flutter: ^0.3.3
   visibility_detector: ^0.4.0+2
   wakelock_plus: ^1.8.0
   web_socket_channel: ^3.0.3
@@ -131,6 +141,7 @@ dependency_overrides:
   # mockito >=5.6.5 requires analyzer ^13, incompatible with the overrides below.
   analyzer: ^14.4.0
   analyzer_plugin: ^0.14.0
+  code_assets: ^2.2.0
   dart_style: 3.1.13
   device_info_plus: ^13.2.0
   # Xcode 26.4+ rejects the ASWebAuthenticationPresentationContextProviding
@@ -150,6 +161,7 @@ dependency_overrides:
   flutter_webrtc:
     git:
       url: https://github.com/fluxerapp/flutter-webrtc
+  hooks: ^2.2.0
   # Temp: fluxerapp/media-kit fork (revert with the dependencies above).
   media_kit:
     git:
@@ -176,13 +188,14 @@ dependency_overrides:
       url: https://github.com/fluxerapp/media-kit
       path: libs/windows/media_kit_libs_windows_video
   mockito: 5.8.1
+  native_toolchain_cmake: ^0.3.2
   # Fork pins wakelock_plus ^1.8.1 (dbus ^0.8); keep 1.8.0 for desktop_drop.
   wakelock_plus: 1.8.0
 
 dev_dependencies:
   accessibility_radar: ^0.3.0
   build_runner: ^2.15.0
-  drift_dev: 2.35.0
+  drift_dev: 2.35.2
   fake_async: ^1.3.3
   file: ^7.0.1
   flutter_driver:
@@ -202,6 +215,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/flags/
     - assets/images/
     - assets/images/plutonium/
     - assets/sounds/
@@ -209,12 +223,14 @@ flutter:
     - assets/images/icons/
     - assets/images/icons/channels/
     - assets/images/connections/
-    - assets/images/browsers/
     - assets/images/app_icon_previews/ios/
     - assets/images/app_icon_previews/android/
+    - assets/images/tray/canary/
+    - assets/images/tray/stable/
     - assets/emojis.json
     - assets/emoji-sprites/
     - assets/certificates/
+    - assets/licenses/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

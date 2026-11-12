@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
@@ -12,6 +14,7 @@ import 'package:fluxer_app/core/theme/custom_theme_css.dart';
 import 'package:fluxer_app/core/theme/fluxer_color_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_mode.dart';
+import 'package:fluxer_app/core/theme/system_dynamic_colors.dart';
 import 'package:fluxer_app/core/theme/theme_color_editor.dart';
 import 'package:fluxer_app/core/theme/theme_variable_mapping.dart';
 import 'package:fluxer_app/core/theme/themes/coal.dart';
@@ -43,21 +46,63 @@ class _BuiltColorThemes {
   final FluxerColorTheme coal;
 }
 
+final Map<
+  FluxerThemeMode,
+  ({
+    double saturationFactor,
+    String? customThemeCss,
+    SystemDynamicPalette? dynamicPalette,
+    FluxerColorTheme theme,
+  })
+>
+_lastColorThemeByMode =
+    <
+      FluxerThemeMode,
+      ({
+        double saturationFactor,
+        String? customThemeCss,
+        SystemDynamicPalette? dynamicPalette,
+        FluxerColorTheme theme,
+      })
+    >{};
+
 FluxerColorTheme _themedColor(
   FluxerThemeMode mode,
   FluxerColorTheme Function({double saturationFactor}) builder, {
   required double saturationFactor,
   required String? customThemeCss,
-}) => applyCustomThemeCss(
-  builder(saturationFactor: saturationFactor),
-  css: customThemeCss,
-  saturationFactor: saturationFactor,
-  mode: mode,
-);
+  required SystemDynamicPalette? dynamicPalette,
+}) {
+  final last = _lastColorThemeByMode[mode];
+  if (last != null &&
+      last.saturationFactor == saturationFactor &&
+      last.customThemeCss == customThemeCss &&
+      last.dynamicPalette == dynamicPalette) {
+    return last.theme;
+  }
+  final FluxerColorTheme theme = applyCustomThemeCss(
+    applySystemDynamicColors(
+      builder(saturationFactor: saturationFactor),
+      palette: dynamicPalette,
+      saturationFactor: saturationFactor,
+    ),
+    css: customThemeCss,
+    saturationFactor: saturationFactor,
+    mode: mode,
+  );
+  _lastColorThemeByMode[mode] = (
+    saturationFactor: saturationFactor,
+    customThemeCss: customThemeCss,
+    dynamicPalette: dynamicPalette,
+    theme: theme,
+  );
+  return theme;
+}
 
 _BuiltColorThemes _buildColorThemes({
   required double saturationFactor,
   required String? customThemeCss,
+  required SystemDynamicPalette? dynamicPalette,
 }) {
   return _BuiltColorThemes(
     dark: _themedColor(
@@ -65,24 +110,28 @@ _BuiltColorThemes _buildColorThemes({
       buildDarkColorTheme,
       saturationFactor: saturationFactor,
       customThemeCss: customThemeCss,
+      dynamicPalette: dynamicPalette,
     ),
     darkLegacy: _themedColor(
       FluxerThemeMode.darkLegacy,
       buildDarkLegacyColorTheme,
       saturationFactor: saturationFactor,
       customThemeCss: customThemeCss,
+      dynamicPalette: dynamicPalette,
     ),
     light: _themedColor(
       FluxerThemeMode.light,
       buildLightColorTheme,
       saturationFactor: saturationFactor,
       customThemeCss: customThemeCss,
+      dynamicPalette: dynamicPalette,
     ),
     coal: _themedColor(
       FluxerThemeMode.coal,
       buildCoalColorTheme,
       saturationFactor: saturationFactor,
       customThemeCss: customThemeCss,
+      dynamicPalette: dynamicPalette,
     ),
   );
 }
@@ -91,6 +140,7 @@ _BuiltColorThemes _buildActiveColorThemes({
   required FluxerThemeMode mode,
   required double saturationFactor,
   required String? customThemeCss,
+  required SystemDynamicPalette? dynamicPalette,
   required FluxerColorTheme dark,
   required FluxerColorTheme darkLegacy,
   required FluxerColorTheme light,
@@ -104,6 +154,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildDarkColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
         darkLegacy: darkLegacy,
         light: light,
@@ -117,6 +168,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildDarkLegacyColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
         light: light,
         coal: coal,
@@ -130,6 +182,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildLightColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
         coal: coal,
       );
@@ -143,6 +196,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildCoalColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
       );
     case FluxerThemeMode.system:
@@ -152,6 +206,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildDarkColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
         darkLegacy: darkLegacy,
         light: _themedColor(
@@ -159,6 +214,7 @@ _BuiltColorThemes _buildActiveColorThemes({
           buildLightColorTheme,
           saturationFactor: saturationFactor,
           customThemeCss: customThemeCss,
+          dynamicPalette: dynamicPalette,
         ),
         coal: coal,
       );
@@ -167,9 +223,10 @@ _BuiltColorThemes _buildActiveColorThemes({
 
 class ThemePreferenceState {
   static const Object unspecifiedCustomThemeCss = Object();
+  static const Object unspecifiedSystemDynamicPalette = Object();
 
   factory ThemePreferenceState({
-    FluxerThemeMode mode = FluxerThemeMode.dark,
+    FluxerThemeMode mode = FluxerThemeMode.system,
     double scaleFactor = 1.0,
     int chatFontSize = 16,
     bool syncAcrossDevices = true,
@@ -178,11 +235,14 @@ class ThemePreferenceState {
     bool syncThemeColorsFromThemeStudio = true,
     bool syncThemeColorsToThemeStudio = true,
     bool customThemeCssEditedLocally = false,
+    bool useSystemDynamicColors = false,
+    SystemDynamicPalette? systemDynamicPalette,
     FluxerThemeMode? inflightTheme,
   }) {
     final _BuiltColorThemes themes = _buildColorThemes(
       saturationFactor: clampSaturationFactor(saturationFactor),
       customThemeCss: normalizeCustomThemeCss(customThemeCss),
+      dynamicPalette: useSystemDynamicColors ? systemDynamicPalette : null,
     );
     return ThemePreferenceState._(
       mode: mode,
@@ -194,6 +254,8 @@ class ThemePreferenceState {
       syncThemeColorsFromThemeStudio: syncThemeColorsFromThemeStudio,
       syncThemeColorsToThemeStudio: syncThemeColorsToThemeStudio,
       customThemeCssEditedLocally: customThemeCssEditedLocally,
+      useSystemDynamicColors: useSystemDynamicColors,
+      systemDynamicPalette: systemDynamicPalette,
       inflightTheme: inflightTheme,
       darkColorTheme: themes.dark,
       darkLegacyColorTheme: themes.darkLegacy,
@@ -212,6 +274,8 @@ class ThemePreferenceState {
     required this.syncThemeColorsFromThemeStudio,
     required this.syncThemeColorsToThemeStudio,
     required this.customThemeCssEditedLocally,
+    required this.useSystemDynamicColors,
+    required this.systemDynamicPalette,
     required this.inflightTheme,
     required this.darkColorTheme,
     required this.darkLegacyColorTheme,
@@ -228,6 +292,8 @@ class ThemePreferenceState {
   final bool syncThemeColorsFromThemeStudio;
   final bool syncThemeColorsToThemeStudio;
   final bool customThemeCssEditedLocally;
+  final bool useSystemDynamicColors;
+  final SystemDynamicPalette? systemDynamicPalette;
 
   final FluxerThemeMode? inflightTheme;
 
@@ -237,6 +303,11 @@ class ThemePreferenceState {
   final FluxerColorTheme coalColorTheme;
 
   bool get isSyncing => inflightTheme != null;
+
+  bool get systemDynamicColorsAvailable => systemDynamicPalette != null;
+
+  SystemDynamicPalette? get activeDynamicPalette =>
+      useSystemDynamicColors ? systemDynamicPalette : null;
 
   FluxerColorTheme get colorTheme => colorThemeForMode(mode);
 
@@ -250,13 +321,11 @@ class ThemePreferenceState {
     };
   }
 
-  late final FluxerTextTheme textTheme = FluxerTextTheme.fromColors(colorTheme);
-  late final FluxerTextTheme darkTextTheme = FluxerTextTheme.fromColors(
-    darkColorTheme,
-  );
-  late final FluxerTextTheme lightTextTheme = FluxerTextTheme.fromColors(
-    lightColorTheme,
-  );
+  FluxerTextTheme get textTheme => FluxerTextTheme.forColors(colorTheme);
+  FluxerTextTheme get darkTextTheme =>
+      FluxerTextTheme.forColors(darkColorTheme);
+  FluxerTextTheme get lightTextTheme =>
+      FluxerTextTheme.forColors(lightColorTheme);
 
   ThemePreferenceState copyWith({
     FluxerThemeMode? mode,
@@ -268,6 +337,8 @@ class ThemePreferenceState {
     bool? syncThemeColorsFromThemeStudio,
     bool? syncThemeColorsToThemeStudio,
     bool? customThemeCssEditedLocally,
+    bool? useSystemDynamicColors,
+    Object? systemDynamicPalette = unspecifiedSystemDynamicPalette,
     bool clearCustomThemeCss = false,
     Object? inflightTheme = _kInflightSentinel,
     bool rebuildAllColorThemes = true,
@@ -288,13 +359,22 @@ class ThemePreferenceState {
                 : this.customThemeCss,
           );
     final double nextScaleFactor = scaleFactor ?? this.scaleFactor;
+    final bool nextUseSystemDynamicColors =
+        useSystemDynamicColors ?? this.useSystemDynamicColors;
+    final SystemDynamicPalette? nextSystemDynamicPalette =
+        identical(systemDynamicPalette, unspecifiedSystemDynamicPalette)
+        ? this.systemDynamicPalette
+        : systemDynamicPalette as SystemDynamicPalette?;
+    final SystemDynamicPalette? nextActiveDynamicPalette =
+        nextUseSystemDynamicColors ? nextSystemDynamicPalette : null;
     final String? normalizedCurrentCss = normalizeCustomThemeCss(
       this.customThemeCss,
     );
     final bool themesChanged =
         nextSaturationFactor != this.saturationFactor ||
         ((customThemeCssArgumentProvided || clearCustomThemeCss) &&
-            nextCustomThemeCss != normalizedCurrentCss);
+            nextCustomThemeCss != normalizedCurrentCss) ||
+        nextActiveDynamicPalette != activeDynamicPalette;
     final _BuiltColorThemes themes;
     if (!themesChanged) {
       themes = _BuiltColorThemes(
@@ -307,12 +387,14 @@ class ThemePreferenceState {
       themes = _buildColorThemes(
         saturationFactor: nextSaturationFactor,
         customThemeCss: nextCustomThemeCss,
+        dynamicPalette: nextActiveDynamicPalette,
       );
     } else {
       themes = _buildActiveColorThemes(
         mode: nextMode,
         saturationFactor: nextSaturationFactor,
         customThemeCss: nextCustomThemeCss,
+        dynamicPalette: nextActiveDynamicPalette,
         dark: darkColorTheme,
         darkLegacy: darkLegacyColorTheme,
         light: lightColorTheme,
@@ -332,6 +414,8 @@ class ThemePreferenceState {
           syncThemeColorsToThemeStudio ?? this.syncThemeColorsToThemeStudio,
       customThemeCssEditedLocally:
           customThemeCssEditedLocally ?? this.customThemeCssEditedLocally,
+      useSystemDynamicColors: nextUseSystemDynamicColors,
+      systemDynamicPalette: nextSystemDynamicPalette,
       inflightTheme: identical(inflightTheme, _kInflightSentinel)
           ? this.inflightTheme
           : inflightTheme as FluxerThemeMode?,
@@ -348,15 +432,26 @@ const Duration _kThemeColorPersistDebounce = Duration(milliseconds: 1500);
 @Riverpod(keepAlive: true)
 class ThemePreference extends _$ThemePreference {
   String? _userId;
+  String? _loadingUserId;
+  bool _systemThemeChosenLocally = false;
   bool _isApplyingRemote = false;
   Timer? _themeColorPersistTimer;
+  AppLifecycleListener? _lifecycleListener;
 
   @override
   ThemePreferenceState build() {
     ref.onDispose(() {
       _themeColorPersistTimer?.cancel();
       _themeColorPersistTimer = null;
+      _lifecycleListener?.dispose();
+      _lifecycleListener = null;
     });
+    if (Platform.isAndroid) {
+      _lifecycleListener = AppLifecycleListener(
+        onResume: () => unawaited(_refreshSystemDynamicPalette()),
+      );
+      unawaited(_refreshSystemDynamicPalette());
+    }
     ref.listen<AsyncValue<UserSettingsResponse?>>(
       userSettingsStatusStreamProvider,
       (
@@ -375,7 +470,8 @@ class ThemePreference extends _$ThemePreference {
   }
 
   Future<void> load(String userId) async {
-    _userId = userId;
+    _loadingUserId = userId;
+    _userId = null;
     final int accountGeneration = ref
         .read(syncedPreferencesStoreProvider)
         .accountGeneration;
@@ -384,9 +480,10 @@ class ThemePreference extends _$ThemePreference {
     if (!_isCurrentLoad(userId, accountGeneration)) {
       return;
     }
+    _systemThemeChosenLocally = prefs?.systemThemeChosenLocally ?? false;
     if (prefs != null) {
       final mode =
-          FluxerThemeMode.fromApiValue(prefs.theme) ?? FluxerThemeMode.dark;
+          FluxerThemeMode.fromApiValue(prefs.theme) ?? FluxerThemeMode.system;
       state = ThemePreferenceState(
         mode: mode,
         scaleFactor: prefs.scaleFactor,
@@ -398,10 +495,15 @@ class ThemePreference extends _$ThemePreference {
             : prefs.customThemeCss,
         syncThemeColorsFromThemeStudio: prefs.syncThemeColorsFromThemeStudio,
         syncThemeColorsToThemeStudio: prefs.syncThemeColorsToThemeStudio,
+        useSystemDynamicColors: prefs.useSystemDynamicColors,
+        systemDynamicPalette: state.systemDynamicPalette,
       );
     } else {
-      state = ThemePreferenceState();
+      state = ThemePreferenceState(
+        systemDynamicPalette: state.systemDynamicPalette,
+      );
     }
+    _userId = userId;
     final bool hadCachedSettings = await _applyCachedUserSettings(
       userId,
       accountGeneration,
@@ -413,7 +515,7 @@ class ThemePreference extends _$ThemePreference {
 
   bool _isCurrentLoad(String userId, int accountGeneration) =>
       ref.mounted &&
-      _userId == userId &&
+      _loadingUserId == userId &&
       ref.read(syncedPreferencesStoreProvider).accountGeneration ==
           accountGeneration;
 
@@ -484,7 +586,7 @@ class ThemePreference extends _$ThemePreference {
     if (!_isCurrentLoad(userId, accountGeneration)) {
       return;
     }
-    if (state.syncAcrossDevices && state.mode != FluxerThemeMode.system) {
+    if (_followsServerTheme) {
       await applyServerSettings(settings);
     }
   }
@@ -496,6 +598,7 @@ class ThemePreference extends _$ThemePreference {
     if (state.mode == mode) {
       return;
     }
+    _systemThemeChosenLocally = mode == FluxerThemeMode.system;
 
     final wantsServerPush =
         state.syncAcrossDevices && mode != FluxerThemeMode.system;
@@ -554,6 +657,8 @@ class ThemePreference extends _$ThemePreference {
       syncThemeColorsFromThemeStudio: current.syncThemeColorsFromThemeStudio,
       syncThemeColorsToThemeStudio: current.syncThemeColorsToThemeStudio,
       customThemeCssEditedLocally: current.customThemeCssEditedLocally,
+      useSystemDynamicColors: current.useSystemDynamicColors,
+      systemDynamicPalette: current.systemDynamicPalette,
       inflightTheme: current.inflightTheme,
     );
     await _persist();
@@ -639,7 +744,7 @@ class ThemePreference extends _$ThemePreference {
       );
       return;
     }
-    if (!state.syncAcrossDevices || state.mode == FluxerThemeMode.system) {
+    if (!_followsServerTheme) {
       return;
     }
     if (state.inflightTheme != null) {
@@ -650,6 +755,34 @@ class ThemePreference extends _$ThemePreference {
       return;
     }
     state = state.copyWith(mode: serverMode);
+    await _persist();
+  }
+
+  Future<void> _refreshSystemDynamicPalette() async {
+    final SystemDynamicPalette? palette;
+    try {
+      final corePalette = await DynamicColorPlugin.getCorePalette();
+      palette = corePalette == null
+          ? null
+          : SystemDynamicPalette.fromPalettes(
+              accent: corePalette.primary,
+              neutral: corePalette.neutral,
+            );
+    } on Object catch (e, st) {
+      talker.warning('[ThemePreference] Dynamic color fetch failed', e, st);
+      return;
+    }
+    if (!ref.mounted || palette == state.systemDynamicPalette) {
+      return;
+    }
+    state = state.copyWith(systemDynamicPalette: palette);
+  }
+
+  Future<void> setUseSystemDynamicColors({required bool value}) async {
+    if (state.useSystemDynamicColors == value) {
+      return;
+    }
+    state = state.copyWith(useSystemDynamicColors: value);
     await _persist();
   }
 
@@ -750,6 +883,8 @@ class ThemePreference extends _$ThemePreference {
       syncThemeColorsFromThemeStudio: current.syncThemeColorsFromThemeStudio,
       syncThemeColorsToThemeStudio: current.syncThemeColorsToThemeStudio,
       customThemeCssEditedLocally: true,
+      useSystemDynamicColors: current.useSystemDynamicColors,
+      systemDynamicPalette: current.systemDynamicPalette,
       inflightTheme: current.inflightTheme,
     );
   }
@@ -787,6 +922,10 @@ class ThemePreference extends _$ThemePreference {
         .markDirty(SyncedPreferenceField.accessibility);
   }
 
+  bool get _followsServerTheme =>
+      state.syncAcrossDevices &&
+      (state.mode != FluxerThemeMode.system || !_systemThemeChosenLocally);
+
   Future<void> _persist() async {
     final userId = _userId;
     if (userId == null) {
@@ -798,6 +937,7 @@ class ThemePreference extends _$ThemePreference {
         UserPreferencesTableCompanion(
           userId: Value(userId),
           theme: Value(state.mode.apiValue),
+          systemThemeChosenLocally: Value(_systemThemeChosenLocally),
           scaleFactor: Value(state.scaleFactor),
           chatFontSize: Value(state.chatFontSize),
           syncAcrossDevices: Value(state.syncAcrossDevices),
@@ -809,6 +949,7 @@ class ThemePreference extends _$ThemePreference {
           syncThemeColorsToThemeStudio: Value(
             state.syncThemeColorsToThemeStudio,
           ),
+          useSystemDynamicColors: Value(state.useSystemDynamicColors),
         ),
       );
     } on Object catch (e, st) {

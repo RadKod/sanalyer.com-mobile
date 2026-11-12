@@ -3,12 +3,13 @@ import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/utils/channel_invite_capability.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
+import 'package:fluxer_app/features/mature_content/domain/mature_content_types.dart';
 import 'package:fluxer_app/features/mature_content/utils/content_warning_utils.dart';
 import 'package:fluxer_app/features/ui/action_menu/fluxer_action_menu.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 enum ChannelMenuAction {
   openChat,
@@ -120,7 +121,7 @@ ChannelMenuState resolveChannelMenuState({
   required bool isFavorite,
   required bool isMuted,
   required bool developerMode,
-  required bool nsfwAllowed,
+  required MatureAccess matureAccess,
   required bool hasAgreedToMatureContent,
   required bool voiceChannelJoinRequiresDoubleClick,
   String? vanityUrlCode,
@@ -146,7 +147,8 @@ ChannelMenuState resolveChannelMenuState({
         guild: guild,
         parentCategory: parentCategory,
       );
-  final bool nsfwBlockedForMinor = channelIsNsfw && !nsfwAllowed;
+  final bool nsfwBlockedForMinor =
+      channelIsNsfw && matureAccess != MatureAccess.allowed;
   final ChannelInviteCapability inviteCapability =
       resolveChannelInviteCapability(
         permissionBits: permissionBits,

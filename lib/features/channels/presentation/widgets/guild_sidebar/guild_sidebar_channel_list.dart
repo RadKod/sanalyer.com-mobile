@@ -445,9 +445,11 @@ class _GuildSidebarChannelListState
         !isMobileLayout(context) &&
         hasMembersPagePermission(
           ref.watch(
-                guildPermissionsProvider(watchAccountUserId(ref)),
-              )[widget.guildId] ??
-              0,
+            guildPermissionsProvider(watchAccountUserId(ref)).select(
+              (Map<String, int> permissions) =>
+                  permissions[widget.guildId] ?? 0,
+            ),
+          ),
         );
     final bool isMembersSelected = ref.watch(
       routeStateProvider.select(
@@ -457,6 +459,7 @@ class _GuildSidebarChannelListState
       ),
     );
     final int membersOffset = showMembersEntry ? 2 : 0;
+    final bool desktopPointer = usesDesktopPointerUi(context);
     final Size viewport = MediaQuery.sizeOf(context);
     final Widget channelListView = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -480,7 +483,7 @@ class _GuildSidebarChannelListState
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: EdgeInsets.only(top: desktopPointer ? 10 : 12),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((
                   BuildContext context,
@@ -495,6 +498,20 @@ class _GuildSidebarChannelListState
                       return _MembersSidebarTile(
                         guildId: widget.guildId,
                         isSelected: isMembersSelected,
+                      );
+                    }
+                    if (index == 1 && desktopPointer) {
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          12,
+                          6,
+                          20,
+                          6,
+                        ),
+                        child: Container(
+                          height: 1,
+                          color: context.colors.backgroundModifierHover,
+                        ),
                       );
                     }
                     if (index == 1) {

@@ -112,6 +112,25 @@ bool isFluxerOAuthDeepLinkUri(Uri uri, {String? instanceWebAppBase}) {
   ).contains(uri.host.toLowerCase());
 }
 
+bool isOfficialLinkForOtherInstance(
+  Uri uri, {
+  required String instanceWebAppBase,
+}) {
+  if (uri.scheme != 'http' && uri.scheme != 'https') {
+    return false;
+  }
+  final Set<String> officialHosts = <String>{
+    ...kOfficialAppLinkHosts,
+    ...kOfficialChannelJumpHosts,
+    ...kInviteShortLinkHosts,
+  };
+  if (!officialHosts.contains(uri.host.toLowerCase())) {
+    return false;
+  }
+  final String? instanceHost = channelJumpHostFromBaseUrl(instanceWebAppBase);
+  return instanceHost != null && !officialHosts.contains(instanceHost);
+}
+
 bool isAllowedDeepLinkPath(Uri uri) {
   if (isFluxerOAuthDeepLinkUri(uri)) {
     return false;

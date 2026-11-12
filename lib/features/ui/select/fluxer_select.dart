@@ -1,14 +1,18 @@
+import 'dart:math' as math;
+
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/pickers/picker_search_input.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart'
     show isMobileLayout;
 import 'package:fluxer_app/features/shell/utils/shell_popup_presentation.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
+import 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_surface.dart';
 import 'package:fluxer_app/features/ui/preview/fluxer_widget_preview.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_tappable.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 class FluxerSelectItem<T> {
   const FluxerSelectItem({
@@ -106,6 +110,10 @@ class _FluxerSelectState<T> extends State<FluxerSelect<T>> {
     );
 
     final String triggerLabel = label ?? hint ?? l10n.uiSelectPlaceholder;
+
+    if (usesDesktopPointerUi(context)) {
+      return _buildDesktop(context, selectedItem, triggerLabel);
+    }
 
     return Column(
       crossAxisAlignment: stretch
@@ -206,32 +214,148 @@ class _FluxerSelectState<T> extends State<FluxerSelect<T>> {
     );
   }
 
+  Widget _buildDesktop(
+    BuildContext context,
+    FluxerSelectItem<T>? selectedItem,
+    String triggerLabel,
+  ) {
+    final colors = context.colors;
+    final textStyles = context.textStyles;
+    final TextStyle textStyle = textStyles.bodySmall.copyWith(
+      fontSize: 14,
+      height: 20 / 14,
+      color: colors.textPrimary,
+    );
+    final Color borderColor = errorText != null
+        ? colors.statusDanger
+        : _isOpen
+        ? colors.backgroundModifierAccentFocus
+        : colors.backgroundModifierAccent;
+
+    Widget trigger = FluxerTappable(
+      enabled: enabled,
+      onTap: () => _showOptions(context),
+      semanticLabel: triggerLabel,
+      expanded: _isOpen,
+      builder: (context, states) {
+        final bool hovered = enabled && states.contains(WidgetState.hovered);
+        return AnimatedContainer(
+          duration: context.motion.normal,
+          curve: Curves.ease,
+          width: stretch ? double.infinity : null,
+          constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsetsDirectional.only(start: 17, end: 7),
+          decoration: BoxDecoration(
+            color: fluxerFormSurfaceBackground(context),
+            borderRadius: context.layout.radiusLg,
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            mainAxisSize: stretch ? MainAxisSize.max : MainAxisSize.min,
+            children: [
+              if (selectedItem?.leading case final leading?) ...[
+                SizedBox(width: 20, height: 20, child: Center(child: leading)),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                fit: stretch ? FlexFit.tight : FlexFit.loose,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  child: Text(
+                    selectedItem?.label ?? hint ?? '',
+                    style: selectedItem != null
+                        ? textStyle
+                        : textStyle.copyWith(color: colors.textTertiary),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: hovered
+                      ? colors.backgroundModifierHover
+                      : Colors.transparent,
+                  borderRadius: context.layout.radiusMd,
+                ),
+                child: AnimatedRotation(
+                  turns: _isOpen ? 0.5 : 0,
+                  duration: context.motion.panel,
+                  curve: Curves.ease,
+                  child: Icon(
+                    PhosphorIconsBold.caretDown,
+                    size: 16,
+                    color: hovered ? colors.textPrimary : colors.textTertiary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (!enabled) {
+      trigger = Opacity(opacity: 0.5, child: trigger);
+    }
+
+    final TextStyle supportStyle = textStyles.bodySmall.copyWith(
+      fontSize: 14,
+      height: 20 / 14,
+    );
+    return Column(
+      crossAxisAlignment: stretch
+          ? CrossAxisAlignment.stretch
+          : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 4,
+      children: [
+        if (label != null)
+          Text(
+            label!,
+            style: textStyles.label.copyWith(
+              color: colors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 20 / 14,
+            ),
+          ),
+        trigger,
+        if (description != null)
+          Text(
+            description!,
+            style: supportStyle.copyWith(color: colors.textPrimaryMuted),
+          ),
+        if (errorText != null)
+          Text(
+            errorText!,
+            style: supportStyle.copyWith(color: colors.statusDanger),
+          ),
+      ],
+    );
+  }
+
   Widget _buildStaticSelectBody(
     BuildContext sheetContext, {
     required ValueChanged<T> onSelected,
   }) {
-    return ListView(
+    return _FluxerSelectList<T>(
+      items: items,
+      value: value,
       shrinkWrap: true,
-      padding: FluxerBottomSheet.scrollViewPadding(sheetContext),
-      children: [
-        FluxerBottomSheetSection(
-          child: FluxerMenuGroup(
-            children: [
-              for (final item in items)
-                FluxerBottomSheetMenuItem(
-                  label: item.label,
-                  hint: item.description,
-                  leading: item.leading,
-                  icon: item.icon,
-                  enabled: item.enabled,
-                  isSelected: item.value == value,
-                  onTap: () => onSelected(item.value),
-                ),
-            ],
-          ),
-        ),
-      ],
+      onSelected: onSelected,
     );
+  }
+
+  double _desktopMenuWidth(BuildContext context) {
+    final RenderObject? box = context.findRenderObject();
+    final double triggerWidth = box is RenderBox && box.hasSize
+        ? box.size.width
+        : kFluxerDesktopMenuDefaultWidth;
+    return math.max(kFluxerDesktopMenuMinWidth, triggerWidth);
   }
 
   Future<void> _showOptions(BuildContext context) async {
@@ -252,8 +376,13 @@ class _FluxerSelectState<T> extends State<FluxerSelect<T>> {
     if (enableSearch || scrollableSheet) {
       sheetFuture = FluxerBottomSheet.showScrollable<T>(
         context,
-        title: sheetTitle,
+        title: usesDesktopPointerUi(context) ? null : sheetTitle,
         useRootNavigator: useRootNavigator,
+        desktop: FluxerDesktopPresentation(
+          surface: FluxerDesktopSurface.menu,
+          width: _desktopMenuWidth(context),
+          anchorContext: context,
+        ),
         initialChildSize: enableSearch
             ? FluxerBottomSheet.scrollableSheetSize
             : FluxerBottomSheet.scrollableSheetHalfSize,
@@ -272,10 +401,14 @@ class _FluxerSelectState<T> extends State<FluxerSelect<T>> {
     } else {
       sheetFuture = FluxerBottomSheet.show<T>(
         context,
-        title: sheetTitle,
+        title: usesDesktopPointerUi(context) ? null : sheetTitle,
         maxHeight: 0.58,
         useRootNavigator: useRootNavigator,
         variant: FluxerBottomSheetVariant.menu,
+        desktop: FluxerDesktopPresentation(
+          width: _desktopMenuWidth(context),
+          anchorContext: context,
+        ),
         builder: (sheetContext, close) => _buildStaticSelectBody(
           sheetContext,
           onSelected: (selected) => handleSelected(sheetContext, selected),
@@ -322,6 +455,15 @@ class _FluxerSelectSheet<T> extends StatefulWidget {
 class _FluxerSelectSheetState<T> extends State<_FluxerSelectSheet<T>> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  late List<List<String>> _searchKeys = _buildSearchKeys(widget.items);
+
+  @override
+  void didUpdateWidget(_FluxerSelectSheet<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.items, widget.items)) {
+      _searchKeys = _buildSearchKeys(widget.items);
+    }
+  }
 
   @override
   void dispose() {
@@ -334,7 +476,7 @@ class _FluxerSelectSheetState<T> extends State<_FluxerSelectSheet<T>> {
     final colors = context.colors;
     final layout = context.layout;
     final FluxerLocalizations l10n = FluxerLocalizations.of(context);
-    final filteredItems = widget.items.where(_matchesQuery).toList();
+    final filteredItems = _filterItems();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -347,7 +489,12 @@ class _FluxerSelectSheetState<T> extends State<_FluxerSelectSheet<T>> {
               onChanged: (value) => setState(() => _query = value),
             ),
           ),
-        if (widget.enableSearch) SizedBox(height: layout.s3),
+        if (widget.enableSearch)
+          SizedBox(
+            height: FluxerDesktopSurfaceScope.isMenu(context)
+                ? kFluxerDesktopMenuPadding
+                : layout.s3,
+          ),
         Expanded(
           child: filteredItems.isEmpty
               ? FluxerBottomSheetContent(
@@ -361,46 +508,228 @@ class _FluxerSelectSheetState<T> extends State<_FluxerSelectSheet<T>> {
                     ),
                   ),
                 )
-              : ListView(
+              : _FluxerSelectList<T>(
+                  items: filteredItems,
+                  value: widget.value,
                   controller: widget.scrollController,
-                  padding: FluxerBottomSheet.scrollViewPadding(context),
-                  children: [
-                    FluxerBottomSheetSection(
-                      child: FluxerMenuGroup(
-                        children: [
-                          for (final item in filteredItems)
-                            FluxerBottomSheetMenuItem(
-                              label: item.label,
-                              hint: item.description,
-                              leading: item.leading,
-                              icon: item.icon,
-                              enabled: item.enabled,
-                              isSelected: item.value == widget.value,
-                              onTap: () => widget._onSelected(item.value),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  onSelected: widget._onSelected,
                 ),
         ),
       ],
     );
   }
 
-  bool _matchesQuery(FluxerSelectItem<T> item) {
+  List<FluxerSelectItem<T>> _filterItems() {
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) {
-      return true;
+      return widget.items;
+    }
+    return [
+      for (var i = 0; i < widget.items.length; i++)
+        if (_searchKeys[i].any((key) => key.contains(query))) widget.items[i],
+    ];
+  }
+
+  List<List<String>> _buildSearchKeys(List<FluxerSelectItem<T>> items) => [
+    for (final item in items)
+      [
+        item.label.toLowerCase(),
+        if (item.description case final description?) description.toLowerCase(),
+        if (item.searchText case final searchText?) searchText.toLowerCase(),
+      ],
+  ];
+}
+
+class _FluxerSelectList<T> extends StatelessWidget {
+  _FluxerSelectList({
+    required this.items,
+    required this.value,
+    required ValueChanged<T> onSelected,
+    this.controller,
+    this.shrinkWrap = false,
+  }) : _onSelected = ((value) => onSelected(value as T));
+
+  final List<FluxerSelectItem<T>> items;
+  final T? value;
+  final ValueChanged<Object?> _onSelected;
+  final ScrollController? controller;
+  final bool shrinkWrap;
+
+  @override
+  Widget build(BuildContext context) {
+    final layout = context.layout;
+    final Color cardColor = FluxerBottomSheet.cardColorOf(context);
+    final Radius radius = layout.radiusXxl.topLeft;
+    final int lastIndex = items.length - 1;
+
+    if (FluxerDesktopSurfaceScope.isMenu(context)) {
+      return ListView.separated(
+        controller: controller,
+        shrinkWrap: shrinkWrap,
+        padding: EdgeInsets.zero,
+        itemCount: items.length,
+        separatorBuilder: (BuildContext context, int index) =>
+            const SizedBox(height: 1),
+        itemBuilder: (BuildContext context, int index) {
+          final FluxerSelectItem<T> item = items[index];
+          return _FluxerSelectDesktopRow(
+            item: item,
+            selected: item.value == value,
+            onTap: () => _onSelected(item.value),
+          );
+        },
+      );
     }
 
-    final haystacks = [
-      item.label,
-      if (item.description != null) item.description!,
-      if (item.searchText != null) item.searchText!,
-    ];
+    return ListView.separated(
+      controller: controller,
+      shrinkWrap: shrinkWrap,
+      padding: FluxerBottomSheet.scrollViewPadding(
+        context,
+        padding: EdgeInsets.symmetric(horizontal: layout.pageGutter),
+      ),
+      itemCount: items.length,
+      separatorBuilder: (context, _) => ColoredBox(
+        color: cardColor,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: layout.groupRowInset),
+          child: Divider(
+            height: 1,
+            thickness: 1,
+            color: context.colors.backgroundModifierAccent,
+          ),
+        ),
+      ),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return Material(
+          color: cardColor,
+          surfaceTintColor: Colors.transparent,
+          borderRadius: BorderRadius.vertical(
+            top: index == 0 ? radius : Radius.zero,
+            bottom: index == lastIndex ? radius : Radius.zero,
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: FluxerBottomSheetMenuItem(
+            label: item.label,
+            hint: item.description,
+            leading: item.leading,
+            icon: item.icon,
+            enabled: item.enabled,
+            isSelected: item.value == value,
+            onTap: () => _onSelected(item.value),
+          ),
+        );
+      },
+    );
+  }
+}
 
-    return haystacks.any((value) => value.toLowerCase().contains(query));
+class _FluxerSelectDesktopRow extends StatelessWidget {
+  const _FluxerSelectDesktopRow({
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final FluxerSelectItem<Object?> item;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final TextStyle baseStyle = context.textStyles.bodySmall.copyWith(
+      fontSize: 14,
+      height: 20 / 14,
+    );
+    return FluxerTappable(
+      enabled: item.enabled,
+      onTap: onTap,
+      selected: selected,
+      semanticLabel: item.description != null
+          ? '${item.label}. ${item.description}'
+          : item.label,
+      excludeChildSemantics: true,
+      builder: (BuildContext context, Set<WidgetState> states) {
+        final bool hovered =
+            item.enabled && states.contains(WidgetState.hovered);
+        final Color foreground = selected
+            ? colors.brandPrimaryFill
+            : colors.textPrimary;
+        final Widget? leading = switch ((item.leading, item.icon)) {
+          (final Widget leadingWidget, _) => IconTheme.merge(
+            data: IconThemeData(color: foreground, size: 16),
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: Center(child: leadingWidget),
+            ),
+          ),
+          (_, final IconData iconData) => PhosphorIcon(
+            iconData,
+            color: foreground,
+            size: 16,
+          ),
+          _ => null,
+        };
+        return Container(
+          constraints: const BoxConstraints(minHeight: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected
+                ? colors.brandPrimary
+                : hovered
+                ? colors.backgroundModifierHover
+                : Colors.transparent,
+            borderRadius: context.layout.radiusMd,
+          ),
+          child: Row(
+            spacing: 8,
+            children: [
+              SizedBox.square(
+                dimension: 16,
+                child: selected
+                    ? PhosphorIcon(
+                        PhosphorIconsBold.check,
+                        color: foreground,
+                        size: 16,
+                      )
+                    : null,
+              ),
+              ?leading,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      item.label,
+                      style: baseStyle.copyWith(color: foreground),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (item.description case final description?)
+                      Text(
+                        description,
+                        style: baseStyle.copyWith(
+                          fontSize: 12,
+                          height: 16 / 12,
+                          color: selected
+                              ? foreground
+                              : colors.textPrimaryMuted,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 

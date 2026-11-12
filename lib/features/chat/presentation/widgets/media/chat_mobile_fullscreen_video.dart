@@ -19,6 +19,7 @@ import 'package:fluxer_app/features/chat/utils/media/chat_video_playback_utils.d
 import 'package:fluxer_app/features/chat/utils/media/favorite_media_utils.dart';
 import 'package:fluxer_app/features/chat/utils/media/media_kit_player_lifecycle.dart';
 import 'package:fluxer_app/features/chat/utils/media/save_message_media_favorite.dart';
+import 'package:fluxer_app/features/mature_content/providers/mature_content_agreements_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/providers/layout/shell_manual_gesture_block_provider.dart';
 import 'package:fluxer_app/features/ui/media_viewer/media_viewer_dismiss.dart';
@@ -27,10 +28,10 @@ import 'package:fluxer_app/features/ui/spinner/fluxer_loading_spinner.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart' as mkv;
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 Future<void> showChatMobileFullscreenVideo(
   BuildContext context, {
@@ -170,7 +171,17 @@ class _ChatMobileFullscreenVideoPageState
       attachment: attachment,
       forMediaViewerToolbar: true,
     );
-    if (target == null || actionScope == null) {
+    if (target == null ||
+        actionScope == null ||
+        watchMatureMediaHidden(
+          ref,
+          channelId: actionScope.message.channelId,
+          isMatureMedia: isMatureMessageMedia(
+            actionScope.message,
+            attachmentId: attachment?.id,
+            embedIndex: widget.launchContext.embedIndex,
+          ),
+        )) {
       return null;
     }
     return SavedMediaFavoriteToolbarButton(
@@ -624,7 +635,17 @@ class _ChatMobileFullscreenYouTubePageState
       attachment: _launchContext.attachment,
       forMediaViewerToolbar: true,
     );
-    if (target == null || actionScope == null) {
+    if (target == null ||
+        actionScope == null ||
+        watchMatureMediaHidden(
+          ref,
+          channelId: actionScope.message.channelId,
+          isMatureMedia: isMatureMessageMedia(
+            actionScope.message,
+            attachmentId: _launchContext.attachment?.id,
+            embedIndex: _launchContext.embedIndex,
+          ),
+        )) {
       return null;
     }
     return SavedMediaFavoriteToolbarButton(

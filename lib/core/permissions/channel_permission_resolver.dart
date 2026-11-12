@@ -101,6 +101,31 @@ int evaluateChannelEffectivePermissionBits({
   required List<MemberRole> memberRoles,
   required bool memberRecordPresent,
   required List<String?> overwriteJsonLayersRootToLeaf,
+  bool guildMfaRestricted = false,
+}) {
+  return evaluateChannelPermissionBitsWithOverwrites(
+    guildOwnerId: guildOwnerId,
+    guildId: guildId,
+    currentUserId: currentUserId,
+    everyonePermissions: everyonePermissions,
+    memberRoles: memberRoles,
+    memberRecordPresent: memberRecordPresent,
+    overwriteLayersRootToLeaf: overwriteJsonLayersRootToLeaf.nonNulls.map(
+      parseChannelPermissionOverwritesJson,
+    ),
+    guildMfaRestricted: guildMfaRestricted,
+  );
+}
+
+int evaluateChannelPermissionBitsWithOverwrites({
+  required String guildOwnerId,
+  required String guildId,
+  required String currentUserId,
+  required int everyonePermissions,
+  required List<MemberRole> memberRoles,
+  required bool memberRecordPresent,
+  required Iterable<List<ChannelOverwriteEntry>> overwriteLayersRootToLeaf,
+  bool guildMfaRestricted = false,
 }) {
   if (currentUserId == guildOwnerId) {
     return allPermissions;
@@ -110,23 +135,27 @@ int evaluateChannelEffectivePermissionBits({
     baseInt |= r.permissions;
   }
   if ((baseInt & Permission.administrator.value) != 0) {
-    return allPermissions;
+    return applyGuildMfaRestriction(
+      allPermissions,
+      restricted: guildMfaRestricted,
+    );
   }
+  final Set<String> memberRoleIds = <String>{
+    for (final MemberRole r in memberRoles) r.id,
+  };
   BigInt mask = BigInt.from(baseInt);
-  for (final String? layerJson in overwriteJsonLayersRootToLeaf) {
-    if (layerJson == null) {
-      continue;
-    }
-    final List<ChannelOverwriteEntry> entries =
-        parseChannelPermissionOverwritesJson(layerJson);
+  for (final List<ChannelOverwriteEntry> entries in overwriteLayersRootToLeaf) {
     mask = applyChannelOverwriteStage(
       mask,
       entries,
       guildId: guildId,
       userId: currentUserId,
-      memberRoleIds: <String>{for (final MemberRole r in memberRoles) r.id},
+      memberRoleIds: memberRoleIds,
       memberRecordPresent: memberRecordPresent,
     );
   }
-  return (mask & _channelPermissionMask).toInt();
+  return applyGuildMfaRestriction(
+    (mask & _channelPermissionMask).toInt(),
+    restricted: guildMfaRestricted,
+  );
 }

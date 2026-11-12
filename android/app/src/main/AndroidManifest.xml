@@ -6,6 +6,7 @@
         android:name="android.hardware.sensor.accelerometer"
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission
@@ -48,6 +49,7 @@
 
     <!-- Without a category, Xiaomi Game Turbo treats the app as a game and caps it at 60 Hz (flutter/flutter#192600). -->
     <application
+        android:supportsRtl="true"
         android:name=".FluxerApplication"
         android:allowBackup="false"
         android:label="${appLabel}"
@@ -75,6 +77,10 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false"
+              />
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -83,9 +89,16 @@
                 <data android:scheme="fluxer" android:host="invite" />
                 <data android:scheme="fluxer" android:host="gift" />
                 <data android:scheme="fluxer" android:host="users" />
-                <data android:scheme="fluxer" android:host="settings" android:pathPrefix="/user" />
                 <data android:scheme="fluxer" android:host="notifications" />
                 <data android:scheme="fluxer" android:host="you" />
+            </intent-filter>
+            <!-- Separate filter: Android merges every data element in a filter,
+                 so this pathPrefix would also apply to the hosts above. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="fluxer" android:host="settings" android:pathPrefix="/user" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />

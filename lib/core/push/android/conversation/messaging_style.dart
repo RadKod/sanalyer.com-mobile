@@ -3,22 +3,19 @@ import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluxer_app/core/push/android/channels.dart';
 import 'package:fluxer_app/core/push/android/conversation/history.dart';
+import 'package:fluxer_app/core/push/notification/localization.dart';
 import 'package:fluxer_app/core/push/notification/payload.dart';
 import 'package:fluxer_app/core/push/notification/sound.dart';
-
-const String kPushLocalUserPersonName = 'Me';
-
-const Person kPushLocalUserPerson = Person(name: kPushLocalUserPersonName);
 
 String resolvePushSenderName(String? title) {
   final String? messageTitle = _nonEmpty(title);
   if (messageTitle == null) {
-    return 'Unknown';
+    return pushNotificationLocalizations().notificationUnknownSender;
   }
-  if (messageTitle.endsWith(' (Group DM)')) {
+  if (isPushGroupDmTitle(messageTitle)) {
     return messageTitle.substring(
       0,
-      messageTitle.length - ' (Group DM)'.length,
+      messageTitle.length - kPushGroupDmTitleSuffix.length,
     );
   }
   final int open = messageTitle.indexOf(' (#');
@@ -78,10 +75,8 @@ bool resolvePushGroupConversation(
   String? title,
 }) {
   final String? messageTitle = _nonEmpty(title) ?? _nonEmpty(payload['title']);
-  if (messageTitle != null && messageTitle.endsWith(' (Group DM)')) {
-    return true;
-  }
-  return !isDmPushPayload(enrichPushPayload(payload));
+  return isPushGroupDmTitle(messageTitle) ||
+      !isDmPushPayload(enrichPushPayload(payload));
 }
 
 String? resolvePushMessagingConversationTitle(
@@ -91,18 +86,16 @@ String? resolvePushMessagingConversationTitle(
   if (!resolvePushGroupConversation(payload, title: title)) {
     return null;
   }
-  final String? fromPayload = resolvePushConversationName(
+  final String? name = resolvePushConversationName(
     payload,
     title: title,
+    groupDmLabel: pushNotificationLocalizations().notificationGroupDmTitle,
   );
-  if (fromPayload != null) {
-    return fromPayload;
+  if (name == null || isDmPushPayload(enrichPushPayload(payload))) {
+    return name;
   }
-  final String? messageTitle = _nonEmpty(title) ?? _nonEmpty(payload['title']);
-  if (messageTitle != null && messageTitle.endsWith(' (Group DM)')) {
-    return 'Group DM';
-  }
-  return null;
+  final String? community = resolvePushCommunityName(payload, title: title);
+  return community == null ? '#$name' : '$community #$name';
 }
 
 String resolvePushNotificationDisplayTitle(
@@ -119,19 +112,21 @@ String resolvePushNotificationDisplayTitle(
   return resolvePushSenderName(title ?? payload['title']);
 }
 
-List<Message> pushConversationMessages(List<PushConversationLine> lines) {
+List<Message> pushConversationMessages(
+  List<PushConversationLine> lines, {
+  Map<String, String> imageUris = const <String, String>{},
+}) {
   return lines
-      .map(
-        (PushConversationLine line) => Message(
+      .map((PushConversationLine line) {
+        final String? imageUri = imageUris[line.imagePath];
+        return Message(
           line.body,
           DateTime.fromMillisecondsSinceEpoch(line.timestampMs),
           _personForLine(line),
-          dataMimeType: line.imagePath == null ? null : 'image/jpeg',
-          dataUri: line.imagePath == null
-              ? null
-              : Uri.file(line.imagePath!).toString(),
-        ),
-      )
+          dataMimeType: imageUri == null ? null : 'image/jpeg',
+          dataUri: imageUri,
+        );
+      })
       .toList(growable: false);
 }
 
@@ -146,15 +141,16 @@ MessagingStyleInformation buildPushMessagingStyle({
   required Map<String, String> payload,
   required List<PushConversationLine> lines,
   String? title,
+  Map<String, String> imageUris = const <String, String>{},
 }) {
   return MessagingStyleInformation(
-    kPushLocalUserPerson,
+    Person(name: pushNotificationLocalizations().notificationLocalUserName),
     conversationTitle: resolvePushMessagingConversationTitle(
       payload,
       title: title,
     ),
     groupConversation: resolvePushGroupConversation(payload, title: title),
-    messages: pushConversationMessages(lines),
+    messages: pushConversationMessages(lines, imageUris: imageUris),
   );
 }
 
@@ -167,34 +163,44 @@ AndroidNotificationDetails buildAndroidConversationNotificationDetails({
   String? title,
   int? badgeCount,
   int? whenMillis,
+  String? shortcutId,
+  String? conversationIconPath,
+  Map<String, String> imageUris = const <String, String>{},
 }) {
   final PushConversationLine? latest = lines.isEmpty ? null : lines.last;
   final AndroidNotificationSound? androidSound = alert && soundEnabled
       ? resolvePushNotificationAndroidSound(payload)
       : null;
-  final FilePathAndroidBitmap? largeIcon = latest?.avatarPath == null
+  final String? largeIconPath =
+      resolvePushGroupConversation(payload, title: title)
+      ? conversationIconPath
+      : latest?.avatarPath;
+  final FilePathAndroidBitmap? largeIcon = largeIconPath == null
       ? null
-      : FilePathAndroidBitmap(latest!.avatarPath!);
+      : FilePathAndroidBitmap(largeIconPath);
   return AndroidNotificationDetails(
     androidPushChannelId(payload, soundEnabled: soundEnabled),
     androidPushChannelName(payload, soundEnabled: soundEnabled),
-    channelDescription: kAndroidPushChannelDescription,
+    channelDescription:
+        pushNotificationLocalizations().notificationChannelDescription,
     importance: Importance.high,
     priority: Priority.high,
     category: AndroidNotificationCategory.message,
     icon: kAndroidPushNotificationIcon,
+    color: kAndroidPushAccentColor,
     largeIcon: largeIcon,
+    shortcutId: shortcutId,
     styleInformation: buildPushMessagingStyle(
       payload: payload,
       lines: lines,
       title: title,
+      imageUris: imageUris,
     ),
     number: badgeCount,
     tag: conversationTag,
     sound: androidSound,
     playSound: androidSound != null,
     enableVibration: alert,
-    silent: !alert,
     onlyAlertOnce: !alert,
     when: whenMillis ?? latest?.timestampMs,
     showWhen: (whenMillis ?? latest?.timestampMs) != null,

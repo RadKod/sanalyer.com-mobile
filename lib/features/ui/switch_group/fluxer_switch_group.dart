@@ -1,11 +1,13 @@
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart'
     show isMobileLayout;
+import 'package:fluxer_app/features/ui/badge/fluxer_settings_status_badge.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/features/ui/preview/fluxer_widget_preview.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_tappable.dart';
 import 'package:fluxer_app/features/ui/toggle_switch/fluxer_switch_control.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
 
 class FluxerSwitchGroup extends StatelessWidget {
@@ -24,6 +26,7 @@ class FluxerSwitchGroupItem extends StatelessWidget {
     required this.onChanged,
     this.description,
     this.enabled = true,
+    this.labelBadge,
     super.key,
   });
 
@@ -32,10 +35,12 @@ class FluxerSwitchGroupItem extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   final bool enabled;
+  final Widget? labelBadge;
 
   @override
   Widget build(BuildContext context) => FluxerBottomSheetMenuItem(
     label: label,
+    labelBadge: labelBadge,
     hint: description,
     enabled: enabled,
     toggled: value,
@@ -72,6 +77,7 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
     required this.onChanged,
     this.description,
     this.enabled = true,
+    this.labelBadge,
     super.key,
   }) : grouped = false;
 
@@ -81,6 +87,7 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
     required this.onChanged,
     this.description,
     this.enabled = true,
+    this.labelBadge,
     super.key,
   }) : grouped = true;
 
@@ -90,6 +97,7 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final bool enabled;
   final bool grouped;
+  final Widget? labelBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +110,17 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
           value: value,
           onChanged: onChanged,
           enabled: enabled,
+          labelBadge: labelBadge,
         ),
       );
     }
     final colors = context.colors;
     final textStyles = context.textStyles;
     final layout = context.layout;
-    final minHeight = grouped
+    final bool desktop = usesDesktopPointerUi(context);
+    final minHeight = desktop
+        ? 44.0
+        : grouped
         ? layout.settingsSwitchGroupedRowMinHeight
         : layout.settingsSwitchRowMinHeight;
 
@@ -128,7 +140,7 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
         return AnimatedContainer(
           duration: context.motion.fast,
           curve: context.motion.curve,
-          color: isPressed
+          color: isPressed && !desktop
               ? colors.backgroundModifierHover.withValues(alpha: 0.45)
               : Colors.transparent,
           constraints: BoxConstraints(minHeight: minHeight),
@@ -140,23 +152,31 @@ class FluxerSettingsSwitchItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      label,
-                      style: textStyles.bodySmall.copyWith(
-                        color: enabled
-                            ? colors.textPrimary
-                            : colors.textTertiary,
-                        fontWeight: FontWeight.w500,
-                        height: 1.4,
+                    FluxerLabelWithBadge(
+                      badge: labelBadge,
+                      label: Text(
+                        label,
+                        style: textStyles.bodySmall.copyWith(
+                          color: enabled || desktop
+                              ? colors.textPrimary
+                              : colors.textTertiary,
+                          fontWeight: FontWeight.w500,
+                          height: desktop ? 20 / 14 : 1.4,
+                        ),
                       ),
                     ),
                     if (description != null) ...[
                       SizedBox(height: layout.s1),
-                      Text(
-                        description!,
-                        style: textStyles.bodySmall.copyWith(
-                          color: colors.textPrimaryMuted,
-                          height: 1.4,
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          end: desktop ? 16 : 0,
+                        ),
+                        child: Text(
+                          description!,
+                          style: textStyles.bodySmall.copyWith(
+                            color: colors.textPrimaryMuted,
+                            height: desktop ? 20 / 14 : 1.4,
+                          ),
                         ),
                       ),
                     ],

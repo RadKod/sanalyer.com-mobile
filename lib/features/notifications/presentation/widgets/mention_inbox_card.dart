@@ -6,16 +6,17 @@ import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/chat/domain/message.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/messages/message_item.dart';
 import 'package:fluxer_app/features/chat/providers/channel/channel_message_permissions_provider.dart';
+import 'package:fluxer_app/features/mature_content/providers/mature_content_agreements_provider.dart';
 import 'package:fluxer_app/features/notifications/domain/mention_header.dart';
 import 'package:fluxer_app/features/notifications/presentation/widgets/notification_row.dart';
 import 'package:fluxer_app/features/ui/avatar/fluxer_avatar.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/utils/guild_user_display.dart';
 import 'package:fluxer_app/shared/utils/relative_time.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const String _kAuthorToken = '';
 const String _kPlaceToken = '';
@@ -158,8 +159,10 @@ class MentionInboxCard extends ConsumerWidget {
       guildId: roleGuildId,
       currentUserId: currentUserId,
     );
+    final bool matureLocked = watchMatureChannelLocked(ref, msg.channelId);
     final ValueChanged<Message>? reply =
-        onReply != null &&
+        !matureLocked &&
+            onReply != null &&
             watchChannelMessagePermissionsForComposer(
               ref,
               msg.channelId,
@@ -221,18 +224,26 @@ class MentionInboxCard extends ConsumerWidget {
                 ],
               ),
               NotificationQuote(
-                child: MessageItem(
-                  message: msg,
-                  currentUserId: currentUserId,
-                  inboxPreviewMode: true,
-                  hideMentionHighlight: true,
-                  previewContentOnly: true,
-                  previewTextStyle: notificationQuoteStyle(
-                    context,
-                    unread: isUnread,
-                  ),
-                  previewRoleGuildId: roleGuildId,
-                ),
+                child: matureLocked
+                    ? Text(
+                        l10n.matureMessageHiddenPreview,
+                        style: notificationQuoteStyle(
+                          context,
+                          unread: false,
+                        ).copyWith(color: context.colors.textSecondary),
+                      )
+                    : MessageItem(
+                        message: msg,
+                        currentUserId: currentUserId,
+                        inboxPreviewMode: true,
+                        hideMentionHighlight: true,
+                        previewContentOnly: true,
+                        previewTextStyle: notificationQuoteStyle(
+                          context,
+                          unread: isUnread,
+                        ),
+                        previewRoleGuildId: roleGuildId,
+                      ),
               ),
               if (reply != null)
                 NotificationRowButton(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -26,8 +27,8 @@ import 'package:fluxer_app/features/ui/stepped_carousel/fluxer_stepped_carousel.
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/api_error_presentation.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 enum _AddGuildModalView { landing, create, join, importUrl, importCreate }
 
@@ -511,7 +512,9 @@ class _AddGuildFlowState extends ConsumerState<_AddGuildFlow> {
       _AddGuildModalView.landing => AddGuildLandingView(
         onCreateTap: () => _push(_AddGuildModalView.create),
         onJoinTap: () => _push(_AddGuildModalView.join),
-        onImportTap: () => _push(_AddGuildModalView.importUrl),
+        onImportTap: Platform.isIOS
+            ? null
+            : () => _push(_AddGuildModalView.importUrl),
       ),
       _AddGuildModalView.create => AddGuildCreateView(
         key: _createViewKey,
@@ -655,6 +658,7 @@ class _AddGuildFlowState extends ConsumerState<_AddGuildFlow> {
                     onPressed: _close,
                     icon: PhosphorIconsBold.x,
                     isSquare: true,
+                    semanticLabel: l10n.uiClose,
                   ),
                 ),
               ),

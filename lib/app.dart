@@ -1,18 +1,18 @@
-import 'dart:async';
-
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoTheme, CupertinoThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluxer_app/core/age/declared_age_range_lock.dart';
 import 'package:fluxer_app/core/assistant/assistant_binding.dart';
+import 'package:fluxer_app/core/desktop/window/desktop_main_window.dart';
 import 'package:fluxer_app/core/instance/account_identity_sync.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
 import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
 import 'package:fluxer_app/core/quick_actions/home_quick_actions_binding.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
-import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
+import 'package:fluxer_app/core/theme/fluxer_color_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_mode.dart';
 import 'package:fluxer_app/core/theme/providers/theme_preference_provider.dart';
@@ -21,6 +21,8 @@ import 'package:fluxer_app/features/accessibility/domain/resolve_reduced_motion.
 import 'package:fluxer_app/features/accessibility/domain/text_scale.dart';
 import 'package:fluxer_app/features/accessibility/presentation/reduced_motion_scope.dart';
 import 'package:fluxer_app/features/accessibility/providers/effective_motion_preferences_provider.dart';
+import 'package:fluxer_app/features/accessibility/providers/screen_reader_active_provider.dart';
+import 'package:fluxer_app/features/app_lock/presentation/app_lock_gate.dart';
 import 'package:fluxer_app/features/recovery_kit/presentation/recovery_kit_gate.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/hosted_ui/iphone_duo_app_background.dart';
@@ -31,11 +33,12 @@ import 'package:fluxer_app/features/ui/input/fluxer_clipboard_scope.dart';
 import 'package:fluxer_app/features/ui/toast/fluxer_toast_overlay.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/incoming_voice_call_layer.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/pip/voice_pip_layer.dart';
-import 'package:fluxer_app/features/voice/providers/voice_media_devices_provider.dart';
+import 'package:fluxer_app/features/voice/presentation/widgets/voice_call_accessibility_layer.dart';
 import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/l10n/fluxer_localizations_delegates.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/widgets/beta_banner.dart';
 import 'package:fluxer_app/shared/widgets/input_modality_listener.dart';
 import 'package:foldable/foldable.dart';
@@ -59,9 +62,6 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
       (double? previous, double next) => FluxerAppZoom.apply(next),
       fireImmediately: true,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(ref.read(voiceMediaDevicesProvider.notifier).refresh());
-    });
   }
 
   @override
@@ -70,7 +70,22 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
       ..watch(homeQuickActionsBindingProvider)
       ..watch(assistantBindingProvider);
     final router = ref.watch(fluxerRouterProvider);
-    final themePref = ref.watch(themePreferenceProvider);
+    final ({
+      FluxerThemeMode mode,
+      FluxerColorTheme active,
+      FluxerColorTheme light,
+      FluxerColorTheme dark,
+    })
+    themePref = ref.watch(
+      themePreferenceProvider.select(
+        (ThemePreferenceState state) => (
+          mode: state.mode,
+          active: state.colorTheme,
+          light: state.lightColorTheme,
+          dark: state.darkColorTheme,
+        ),
+      ),
+    );
     final Locale appLocale = ref.watch(effectiveAppLocaleProvider);
     final ({bool sync, bool override}) reducedMotionPrefs = ref.watch(
       appearancePreferencesProvider.select(
@@ -87,23 +102,15 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
     switch (themePref.mode) {
       case FluxerThemeMode.system:
         themeMode = ThemeMode.system;
-        theme = buildFluxerTheme(
-          colorTheme: themePref.lightColorTheme,
-          textTheme: themePref.lightTextTheme,
-          layoutTheme: FluxerLayoutTheme.scaled(),
+        theme = cachedFluxerTheme(
+          colorTheme: themePref.light,
           brightness: Brightness.light,
         );
-        darkThemeData = buildFluxerTheme(
-          colorTheme: themePref.darkColorTheme,
-          textTheme: themePref.darkTextTheme,
-          layoutTheme: FluxerLayoutTheme.scaled(),
-        );
+        darkThemeData = cachedFluxerTheme(colorTheme: themePref.dark);
       case FluxerThemeMode.light:
         themeMode = ThemeMode.light;
-        theme = buildFluxerTheme(
-          colorTheme: themePref.colorTheme,
-          textTheme: themePref.textTheme,
-          layoutTheme: FluxerLayoutTheme.scaled(),
+        theme = cachedFluxerTheme(
+          colorTheme: themePref.active,
           brightness: Brightness.light,
         );
         darkThemeData = null;
@@ -111,11 +118,7 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
       case FluxerThemeMode.darkLegacy:
       case FluxerThemeMode.coal:
         themeMode = ThemeMode.dark;
-        theme = buildFluxerTheme(
-          colorTheme: themePref.colorTheme,
-          textTheme: themePref.textTheme,
-          layoutTheme: FluxerLayoutTheme.scaled(),
-        );
+        theme = cachedFluxerTheme(colorTheme: themePref.active);
         darkThemeData = theme;
     }
 
@@ -123,7 +126,7 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
       instanceRuntimeConfigProvider.select((config) => config.productName),
     );
     if (isFluxerDesktopOs) {
-      unawaited(windowManager.setTitle(productName));
+      setDesktopMainWindowTitle(productName);
     }
 
     return FluxerAppZoomScope(
@@ -140,12 +143,18 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
           themeAnimationDuration: Duration.zero,
           routerConfig: router,
           builder: (context, child) {
-            final Widget layered = InputModalityListener(
-              child: AppUiLifecycleObserver(
-                child: AccountIdentitySync(
-                  child: RecoveryKitGate(
-                    child: IncomingVoiceCallLayer(
-                      child: VoicePipLayer(child: child!),
+            final Widget layered = ScreenReaderActiveSync(
+              child: InputModalityListener(
+                child: AppUiLifecycleObserver(
+                  child: AccountIdentitySync(
+                    child: RecoveryKitGate(
+                      child: DeclaredAgeRangeLock(
+                        child: IncomingVoiceCallLayer(
+                          child: VoiceCallAccessibilityLayer(
+                            child: VoicePipLayer(child: child!),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -186,7 +195,11 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
             );
             final Widget scaled = ReducedMotionScope(
               enabled: disableAnimations,
-              child: FluxerAppTextScale(child: content),
+              child: FluxerAppTextScale(
+                child: DesktopPointerUiScope(
+                  child: AppLockGate(child: content),
+                ),
+              ),
             );
             final ThemeData materialTheme = Theme.of(context);
             final CupertinoThemeData cupertinoTheme = CupertinoTheme.of(context)

@@ -12,10 +12,12 @@ import 'package:fluxer_app/features/chat/providers/core/chat_view_model.dart';
 import 'package:fluxer_app/features/chat/providers/messages/channel_message_stream_provider.dart';
 import 'package:fluxer_app/features/chat/providers/messages/message_references_provider.dart';
 import 'package:fluxer_app/features/chat/utils/composer/mention_reply_preference_utils.dart';
+import 'package:fluxer_app/features/chat/utils/composer/typing_indicator_text.dart';
 import 'package:fluxer_app/features/chat/utils/messages/channel_message_stream.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/markdown/message_markdown_settings.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/providers/member_role_color.dart';
@@ -23,7 +25,6 @@ import 'package:fluxer_app/shared/utils/guild_user_display.dart'
     show GuildUserDisplay, messagePrefersPersistedAuthorDisplay;
 import 'package:fluxer_dart/models/mention_reply_preferences.dart';
 import 'package:fluxer_markdown/fluxer_markdown.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kReplyPreviewFontSize = 14;
 const double _kReplyPreviewLineHeight = 18 / _kReplyPreviewFontSize;
@@ -320,6 +321,7 @@ class ReplyConnectorPainter extends CustomPainter {
   final double lineBottom;
   final double horizontalEnd;
   final Color color;
+  final TextDirection textDirection;
 
   ReplyConnectorPainter({
     required this.avatarCenterX,
@@ -327,6 +329,7 @@ class ReplyConnectorPainter extends CustomPainter {
     required this.lineBottom,
     required this.horizontalEnd,
     required this.color,
+    this.textDirection = TextDirection.ltr,
   });
 
   @override
@@ -338,6 +341,12 @@ class ReplyConnectorPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     const radius = 6.0;
+
+    if (textDirection == TextDirection.rtl) {
+      canvas
+        ..translate(size.width, 0)
+        ..scale(-1, 1);
+    }
 
     final path = Path()
       ..moveTo(avatarCenterX, lineBottom)
@@ -357,7 +366,8 @@ class ReplyConnectorPainter extends CustomPainter {
       lineTop != oldDelegate.lineTop ||
       lineBottom != oldDelegate.lineBottom ||
       horizontalEnd != oldDelegate.horizontalEnd ||
-      color != oldDelegate.color;
+      color != oldDelegate.color ||
+      textDirection != oldDelegate.textDirection;
 }
 
 class CompactReplyConnectorPainter extends CustomPainter {
@@ -366,6 +376,7 @@ class CompactReplyConnectorPainter extends CustomPainter {
   final double lineBottom;
   final double horizontalEnd;
   final Color color;
+  final TextDirection textDirection;
 
   CompactReplyConnectorPainter({
     required this.spineCenterX,
@@ -373,6 +384,7 @@ class CompactReplyConnectorPainter extends CustomPainter {
     required this.lineBottom,
     required this.horizontalEnd,
     required this.color,
+    this.textDirection = TextDirection.ltr,
   });
 
   @override
@@ -387,6 +399,12 @@ class CompactReplyConnectorPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     const radius = 6.0;
+
+    if (textDirection == TextDirection.rtl) {
+      canvas
+        ..translate(size.width, 0)
+        ..scale(-1, 1);
+    }
 
     final path = Path()
       ..moveTo(spineCenterX, lineBottom)
@@ -406,7 +424,8 @@ class CompactReplyConnectorPainter extends CustomPainter {
       lineTop != oldDelegate.lineTop ||
       lineBottom != oldDelegate.lineBottom ||
       horizontalEnd != oldDelegate.horizontalEnd ||
-      color != oldDelegate.color;
+      color != oldDelegate.color ||
+      textDirection != oldDelegate.textDirection;
 }
 
 class ReplyInputBar extends ConsumerWidget {
@@ -444,25 +463,28 @@ class ReplyInputBar extends ConsumerWidget {
     final bool canMention = guildId.isNotEmpty && !isOwnMessage && !isWebhook;
     final bool shouldMention = shouldReplyMention && canMention;
     final Color activeMentionColor = context.colors.markupMentionText;
-    final Widget title = RichText(
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
+    final TextStyle replyingToStyle = context.textStyles.bodySmall.copyWith(
+      color: context.colors.textPrimaryMuted,
+    );
+    final List<String> replyingToParts = l10n
+        .chatReplyingTo(kTypingIndicatorNamePlaceholder)
+        .split(kTypingIndicatorNamePlaceholder);
+    final Widget title = Text.rich(
+      TextSpan(
         style: context.textStyles.bodySmall,
         children: [
-          TextSpan(
-            text: 'Replying to ',
-            style: context.textStyles.bodySmall.copyWith(
-              color: context.colors.textPrimaryMuted,
-            ),
-          ),
+          TextSpan(text: replyingToParts.first, style: replyingToStyle),
           TextSpan(
             text: replyAuthorDisplay.displayName,
             style: context.textStyles.categoryName.copyWith(
               color: context.colors.textChat,
             ),
           ),
+          if (replyingToParts.length > 1)
+            TextSpan(text: replyingToParts[1], style: replyingToStyle),
         ],
       ),
+      overflow: TextOverflow.ellipsis,
     );
     final Color inactiveMentionColor = wideComposerAction
         ? context.colors.textPrimaryMuted

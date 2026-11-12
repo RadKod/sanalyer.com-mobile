@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/permissions/thread_permissions.dart';
 import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
+import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/chat/domain/message.dart';
@@ -12,6 +13,8 @@ import 'package:fluxer_app/features/forum/domain/forum_channel.dart';
 import 'package:fluxer_app/features/forum/presentation/widgets/forum_post_card.dart';
 import 'package:fluxer_app/features/forum/presentation/widgets/forum_tag_chip.dart';
 import 'package:fluxer_app/features/forum/providers/forum_first_messages_provider.dart';
+import 'package:fluxer_app/features/moderation/domain/iar_context.dart';
+import 'package:fluxer_app/features/moderation/presentation/report_flow/open_report_flow.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_menu_sheet.dart';
 import 'package:fluxer_app/features/threads/providers/thread_ui_providers.dart';
 import 'package:fluxer_app/features/threads/utils/thread_actions.dart';
@@ -20,8 +23,8 @@ import 'package:fluxer_app/features/ui/button/fluxer_button.dart';
 import 'package:fluxer_app/features/ui/toast/fluxer_toast.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_dart/export.dart' hide ChannelType;
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 Future<void> openForumPost(BuildContext context, WidgetRef ref, Channel post) =>
     openThread(context, ref, post, fromParent: true);
@@ -119,9 +122,10 @@ Future<void> showForumPostActionsSheet(
   WidgetRef hostRef, {
   required Channel forum,
   required Channel post,
+  required String title,
 }) => FluxerBottomSheet.show<void>(
   context,
-  title: post.name,
+  title: title,
   variant: FluxerBottomSheetVariant.menu,
   builder: (BuildContext sheetContext, VoidCallback close) => _ForumPostActions(
     hostContext: context,
@@ -177,6 +181,12 @@ class _ForumPostActions extends ConsumerWidget {
         actor != null &&
         forumAvailableTags(forum).isNotEmpty &&
         canSetTags(actor, touchesModeratedTag: false) == null;
+    final Message? firstMessage = ref.watch(
+      forumFirstMessagesProvider(watchAccountUserId(ref)),
+    )[post.id];
+    final bool canReport =
+        firstMessage != null &&
+        firstMessage.authorId != ref.watch(currentUserIdProvider);
     final List<List<Widget>> threadGroups = buildThreadMenuGroups(
       context: context,
       ref: ref,
@@ -240,6 +250,21 @@ class _ForumPostActions extends ConsumerWidget {
                   label: l10n.forumMarkPostRead,
                   onTap: () => _run(() => markThreadRead(hostRef, post)),
                 ),
+                if (canReport)
+                  FluxerBottomSheetMenuItem(
+                    icon: PhosphorIconsBold.flag,
+                    label: l10n.forumReportPost,
+                    isDanger: true,
+                    onTap: () => _run(
+                      () => openReportFlow(
+                        hostContext,
+                        iarContext: IarMessageContext(
+                          message: firstMessage,
+                          guildId: forum.guildId,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
             for (final List<Widget> group in threadGroups)

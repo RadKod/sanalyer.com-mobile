@@ -3,19 +3,15 @@ import 'package:fluxer_app/features/guilds/presentation/widgets/guild_menu_data.
 import 'package:fluxer_app/features/ui/action_menu/context_menu_widgets.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class GuildContextMenuItem extends StatelessWidget {
   final GuildMenuAction entry;
   final VoidCallback onTap;
-  final bool isDisabled;
-  final VoidCallback? onDisabledTap;
 
   const GuildContextMenuItem({
     required this.entry,
     required this.onTap,
-    this.isDisabled = false,
-    this.onDisabledTap,
     super.key,
   });
 
@@ -26,8 +22,6 @@ class GuildContextMenuItem extends StatelessWidget {
       hint: entry.hint,
       icon: entry.icon,
       isDanger: entry.isDanger,
-      isDisabled: isDisabled,
-      onDisabledTap: onDisabledTap,
       onTap: onTap,
     );
   }

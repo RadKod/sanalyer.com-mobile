@@ -29,8 +29,8 @@ import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/gestures/expandable_sheet_gestures.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const _kDesktopStickerColumns = 4;
 const _kMobileStickerColumns = 5;
@@ -431,7 +431,9 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
         _wrapSearchHeader(
           PickerSearchInput(
             controller: _searchController,
-            hintText: _hoveredSticker?.name ?? 'Find the perfect sticker',
+            hintText:
+                _hoveredSticker?.name ??
+                FluxerLocalizations.of(context).stickerPickerSearchHint,
             horizontalPadding: widget.searchHorizontalPadding ?? 12,
             topPadding: widget.searchTopPadding ?? (widget.isMobile ? 8 : 12),
             bottomPadding:
@@ -458,20 +460,21 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
     FluxerColorTheme colors,
     _StickerPickerData data,
   ) {
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
     if (data.allStickers.isEmpty) {
-      return const _StickerEmptyState(
+      return _StickerEmptyState(
         icon: PhosphorIconsDuotone.sticker,
-        title: 'No Stickers Available',
-        description: 'Join a community with stickers to get started!',
+        title: l10n.stickerPickerEmptyNoCommunitiesTitle,
+        description: l10n.stickerPickerEmptyNoCommunitiesBody,
       );
     }
 
     final visibleStickers = data.visibleStickers;
     if (visibleStickers.isEmpty) {
-      return const _StickerEmptyState(
+      return _StickerEmptyState(
         icon: PhosphorIconsDuotone.sticker,
-        title: 'No Stickers Available',
-        description: 'No stickers are available in this conversation.',
+        title: l10n.stickerPickerEmptyHereTitle,
+        description: l10n.stickerPickerEmptyHereBody,
       );
     }
     if (_searchQuery.trim().isNotEmpty) {
@@ -513,10 +516,11 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
     List<StickerEntry> stickers,
   ) {
     if (stickers.isEmpty) {
-      return const _StickerEmptyState(
+      final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+      return _StickerEmptyState(
         icon: PhosphorIconsDuotone.smileySad,
-        title: 'No Stickers Found',
-        description: 'Try a different search term',
+        title: l10n.stickerPickerNoResultsTitle,
+        description: l10n.stickerPickerNoResultsBody,
       );
     }
 
@@ -629,16 +633,14 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
     if (dismissed) {
       return const SizedBox.shrink();
     }
-    final stickerLabel = lockedStickers.length == 1
-        ? '1 sticker'
-        : '${lockedStickers.length} stickers';
-    final guildLabel = lockedGuilds.length == 1
-        ? 'another community'
-        : '${lockedGuilds.length} communities';
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: FluxerPlutoniumUpsell(
-        text: 'Unlock $stickerLabel from $guildLabel with Plutonium.',
+        text: l10n.stickerPlutoniumUpsellText(
+          l10n.stickerPlutoniumUpsellStickerCount(lockedStickers.length),
+          l10n.emojiPlutoniumUpsellCommunity(lockedGuilds.length),
+        ),
         onDismiss: () => unawaited(
           ref.read(plutoniumUpsellDismissedProvider.notifier).dismiss(),
         ),
@@ -667,7 +669,7 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
     final label =
         labelOverride ??
         (category == 'favorites'
-            ? 'Favorites'
+            ? FluxerLocalizations.of(context).favoritesTitle
             : FluxerLocalizations.of(context).emojiFrequentlyUsed);
     if (widget.isMobile) {
       return ExpressionSectionHeader(
@@ -718,7 +720,11 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
             ),
             const SizedBox(width: 8),
             AnimatedRotation(
-              turns: isCollapsed ? -0.25 : 0,
+              turns: !isCollapsed
+                  ? 0
+                  : Directionality.of(context) == TextDirection.rtl
+                  ? 0.25
+                  : -0.25,
               duration: context.motion.panel,
               child: PhosphorIcon(
                 PhosphorIconsBold.caretDown,
@@ -793,7 +799,9 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
     width: 46,
     decoration: BoxDecoration(
       color: colors.backgroundPrimary,
-      border: Border(right: BorderSide(color: colors.backgroundModifierAccent)),
+      border: BorderDirectional(
+        end: BorderSide(color: colors.backgroundModifierAccent),
+      ),
     ),
     child: ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -832,7 +840,7 @@ class _StickerPickerContentState extends ConsumerState<StickerPickerContent> {
       children: [
         if (data.favoriteStickers.isNotEmpty)
           ExpressionRailButton(
-            label: 'Favorites',
+            label: FluxerLocalizations.of(context).favoritesTitle,
             icon: PhosphorIconsFill.star,
             onTap: () => _scrollToCategory('favorites'),
           ),

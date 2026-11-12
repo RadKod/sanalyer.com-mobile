@@ -55,6 +55,9 @@ class ActiveInstance extends _$ActiveInstance {
         .touchRecentInstance(
           domain: snapshot.displayDomain,
           name: snapshot.instanceDisplayName,
+          url: _normalizer.describeApiEndpoint(
+            _normalizer.normalizeEndpoint(input),
+          ),
         );
   }
 
@@ -94,8 +97,13 @@ String fluxerBaseUrl(Ref ref) {
 
 @Riverpod(keepAlive: true)
 String? activeInstanceGatewayUrl(Ref ref) {
-  final String gateway = ref.watch(activeInstanceProvider).gatewayUrl.trim();
-  return gateway.isEmpty ? null : gateway;
+  final InstanceConfigSnapshot instance = ref.watch(activeInstanceProvider);
+  final String gateway = instance.gatewayUrl.trim();
+  if (gateway.isEmpty ||
+      !isGatewayTrustedForApi(gateway, instance.apiBaseUrl)) {
+    return null;
+  }
+  return gateway;
 }
 
 @Riverpod(keepAlive: true)
@@ -108,4 +116,9 @@ String activeInstanceDisplayDomain(Ref ref) {
 bool isActiveInstanceOfficial(Ref ref) {
   final String apiBaseUrl = ref.watch(fluxerBaseUrlProvider);
   return const InstanceEndpointNormalizer().isOfficialInstanceInput(apiBaseUrl);
+}
+
+@Riverpod(keepAlive: true)
+bool activeInstanceSupportsPasskeys(Ref ref) {
+  return passkeysSupportedFor(ref.watch(fluxerBaseUrlProvider));
 }

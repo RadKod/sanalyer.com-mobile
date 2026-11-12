@@ -6,8 +6,9 @@ import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/user_date_formatting.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MessageListOverlay extends StatelessWidget {
   const MessageListOverlay({
@@ -142,7 +143,7 @@ class MessageListLoadErrorBar extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 6, 6, 6),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -223,11 +224,19 @@ class MessageListNewMessagesBar extends ConsumerWidget {
         compactTime,
       ),
     };
+    final bool desktop = !isMobile && usesDesktopPointerUi(context);
+    final Color foreground = desktop
+        ? context.colors.brandPrimaryFill
+        : Colors.white;
     final TextStyle textStyle = context.textStyles.smallText.copyWith(
-      color: Colors.white,
+      color: foreground,
       fontSize: 14,
       fontWeight: FontWeight.w500,
     );
+    final Color? overlayColor = desktop ? Colors.transparent : null;
+    final InteractiveInkFeatureFactory? splashFactory = desktop
+        ? NoSplash.splashFactory
+        : null;
     return Material(
       color: context.colors.brandPrimary,
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
@@ -248,6 +257,9 @@ class MessageListNewMessagesBar extends ConsumerWidget {
                   label: l10n.chatNewMessagesBarJumpToFirstUnread,
                   child: InkWell(
                     onTap: onJumpToUnread,
+                    hoverColor: overlayColor,
+                    highlightColor: overlayColor,
+                    splashFactory: splashFactory,
                     child: Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: Padding(
@@ -265,6 +277,9 @@ class MessageListNewMessagesBar extends ConsumerWidget {
               ),
               InkWell(
                 onTap: onMarkRead,
+                hoverColor: overlayColor,
+                highlightColor: overlayColor,
+                splashFactory: splashFactory,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Row(
@@ -278,9 +293,9 @@ class MessageListNewMessagesBar extends ConsumerWidget {
                         maxLines: 1,
                         style: textStyle.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      const PhosphorIcon(
+                      PhosphorIcon(
                         PhosphorIconsBold.check,
-                        color: Colors.white,
+                        color: foreground,
                         size: 16,
                       ),
                     ],

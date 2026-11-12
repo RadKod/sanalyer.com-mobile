@@ -3,6 +3,8 @@ import 'package:drift/drift.dart';
 class UserPreferencesTable extends Table {
   TextColumn get userId => text()();
   TextColumn get theme => text().withDefault(const Constant('dark'))();
+  BoolColumn get systemThemeChosenLocally =>
+      boolean().withDefault(const Constant(false))();
   RealColumn get scaleFactor => real().withDefault(const Constant(1))();
   BoolColumn get plutoniumUpsellDismissed =>
       boolean().withDefault(const Constant(false))();
@@ -123,8 +125,12 @@ class UserPreferencesTable extends Table {
       boolean().withDefault(const Constant(true))();
   BoolColumn get syncThemeColorsToThemeStudio =>
       boolean().withDefault(const Constant(true))();
+  BoolColumn get useSystemDynamicColors =>
+      boolean().withDefault(const Constant(false))();
   BoolColumn get screenReaderAnnounceNewMessages =>
       boolean().withDefault(const Constant(false))();
+  BoolColumn get announceCallJoinsAndLeaves =>
+      boolean().withDefault(const Constant(true))();
   BoolColumn get syncReducedMotionWithSystem =>
       boolean().withDefault(const Constant(true))();
   BoolColumn get reducedMotionOverride =>

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/theme/fluxer_motion_theme.dart';
@@ -8,10 +9,12 @@ import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/cha
 import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/channel_pins_content.dart';
 import 'package:fluxer_app/features/chat/providers/channel/channel_pins_open_request_provider.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
+import 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_surface.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 typedef ChannelPinsAnchorBuilder =
     Widget Function(
@@ -36,6 +39,11 @@ class ChannelPinsOverlayButton extends ConsumerStatefulWidget {
   ConsumerState<ChannelPinsOverlayButton> createState() =>
       _ChannelPinsOverlayButtonState();
 }
+
+const double _kPinsPopoutWidth = 480;
+const double _kPinsPopoutHeight = 640;
+const double _kPinsPopoutEdge = 12;
+const double _kPinsPopoutGap = 4;
 
 class _ChannelPinsOverlayButtonState
     extends ConsumerState<ChannelPinsOverlayButton>
@@ -82,7 +90,7 @@ class _ChannelPinsOverlayButtonState
     if (!mounted) {
       return;
     }
-    if (isMobileLayout(context)) {
+    if (!usesDesktopPointerUi(context)) {
       unawaited(
         showChannelPinsSheet(context, ref, channelId: widget.channelId),
       );
@@ -104,7 +112,19 @@ class _ChannelPinsOverlayButtonState
     );
   }
 
+  double _availablePopoutHeight(Size screen) {
+    double top = _kPinsPopoutEdge;
+    final RenderObject? anchor = context.findRenderObject();
+    if (anchor is RenderBox && anchor.hasSize && anchor.attached) {
+      top =
+          anchor.localToGlobal(Offset(0, anchor.size.height)).dy +
+          _kPinsPopoutGap;
+    }
+    return math.max(0, screen.height - top - _kPinsPopoutEdge);
+  }
+
   Widget _buildOverlay(BuildContext context) {
+    final Size screen = MediaQuery.sizeOf(context);
     return Stack(
       children: <Widget>[
         Positioned.fill(
@@ -118,18 +138,39 @@ class _ChannelPinsOverlayButtonState
           opacity: _fadeAnimation,
           child: CompositedTransformFollower(
             link: _layerLink,
-            targetAnchor: Alignment.bottomRight,
-            followerAnchor: Alignment.topRight,
-            offset: const Offset(0, 4),
+            targetAnchor: AlignmentDirectional.bottomEnd.resolve(
+              Directionality.of(context),
+            ),
+            followerAnchor: AlignmentDirectional.topEnd.resolve(
+              Directionality.of(context),
+            ),
+            offset: const Offset(0, _kPinsPopoutGap),
             child: Align(
-              alignment: Alignment.topRight,
-              child: Material(
-                elevation: 8,
-                borderRadius: context.layout.radiusLg,
-                color: context.colors.backgroundSecondary,
-                child: SizedBox(
-                  width: 420,
-                  height: 480,
+              alignment: AlignmentDirectional.topEnd.resolve(
+                Directionality.of(context),
+              ),
+              child: Container(
+                width: math.min(
+                  _kPinsPopoutWidth,
+                  screen.width - _kPinsPopoutEdge * 2,
+                ),
+                height: math.min(
+                  _kPinsPopoutHeight,
+                  _availablePopoutHeight(screen),
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: context.layout.radiusLg,
+                  boxShadow: fluxerDesktopPanelShadow(context),
+                ),
+                child: Material(
+                  color: fluxerFormSurfaceBackground(context),
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: context.layout.radiusLg,
+                    side: BorderSide(
+                      color: context.colors.backgroundModifierAccent,
+                    ),
+                  ),
                   child: ChannelPinsContent(
                     channelId: widget.channelId,
                     guildId: widget.guildId,

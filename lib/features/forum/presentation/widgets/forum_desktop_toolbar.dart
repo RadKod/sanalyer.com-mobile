@@ -14,8 +14,8 @@ import 'package:fluxer_app/features/ui/popout/fluxer_popout.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_dart/export.dart' hide ChannelType;
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ForumDesktopToolbar extends ConsumerWidget {
   const ForumDesktopToolbar({
@@ -74,7 +74,7 @@ class _ForumSearchCard extends ConsumerWidget {
         border: Border.all(color: colors.backgroundModifierAccent),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+        padding: const EdgeInsetsDirectional.fromSTEB(12, 6, 6, 6),
         child: Row(
           children: <Widget>[
             if (unavailable)
@@ -114,14 +114,20 @@ class _ForumSearchCard extends ConsumerWidget {
                           ),
                         ),
                         if (searchController.text.isNotEmpty)
-                          FluxerGestureDetector(
-                            onTap: searchController.clear,
-                            child: Padding(
-                              padding: const EdgeInsets.all(6),
-                              child: PhosphorIcon(
-                                PhosphorIconsBold.x,
-                                size: 14,
-                                color: colors.textTertiary,
+                          Semantics(
+                            button: true,
+                            label: FluxerLocalizations.of(
+                              context,
+                            ).userSettingsSearchClear,
+                            child: FluxerGestureDetector(
+                              onTap: searchController.clear,
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: PhosphorIcon(
+                                  PhosphorIconsBold.x,
+                                  size: 14,
+                                  color: colors.textTertiary,
+                                ),
                               ),
                             ),
                           ),

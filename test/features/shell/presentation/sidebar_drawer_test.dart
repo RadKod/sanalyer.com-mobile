@@ -10,6 +10,7 @@ import 'package:fluxer_app/core/theme/themes/dark.dart';
 import 'package:fluxer_app/features/channels/domain/channel.dart';
 import 'package:fluxer_app/features/channels/providers/channel_providers.dart';
 import 'package:fluxer_app/features/chat/providers/core/chat_view_model.dart';
+import 'package:fluxer_app/features/friends/providers/blocked_user_ids_provider.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/shell/presentation/sidebar_drawer.dart';
 import 'package:fluxer_app/features/shell/providers/drawer/drawer_providers.dart';
@@ -18,6 +19,7 @@ import 'package:fluxer_app/features/shell/providers/layout/shell_popup_overlay_p
 import 'package:fluxer_app/features/threads/providers/thread_entered_from_parent_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/gestures/defer_horizontal_drag_while_coasting.dart';
+import 'package:fluxer_app/shared/gestures/horizontal_reveal_physics.dart';
 import 'package:fluxer_app/shared/gestures/nested_horizontal_scrollable.dart';
 import 'package:fluxer_app/shared/markdown/native_markdown_parser.dart';
 import 'package:fluxer_app/shared/widgets/playback_seek_gesture_target.dart';
@@ -114,6 +116,29 @@ void main() {
   });
 
   group('sidebarDrawerTargetForDrag', () {
+    test('RTL opens on a leftward fling', () {
+      expect(
+        sidebarDrawerTargetForDrag(
+          translate: 0,
+          width: 400,
+          primaryVelocity: -700,
+          completionThreshold: 0.4,
+          edge: HorizontalRevealEdge.right,
+        ),
+        RevealSide.left,
+      );
+      expect(
+        sidebarDrawerTargetForDrag(
+          translate: 400,
+          width: 400,
+          primaryVelocity: 700,
+          completionThreshold: 0.4,
+          edge: HorizontalRevealEdge.right,
+        ),
+        RevealSide.main,
+      );
+    });
+
     test('uses fling velocity before position threshold', () {
       expect(
         sidebarDrawerTargetForDrag(
@@ -842,6 +867,7 @@ void main() {
       overrides: [
         fluxerRouterProvider.overrideWithValue(router),
         shellHasPopupOverlayProvider.overrideWithValue(true),
+        blockedUserIdsProvider.overrideWithValue(const <String>{}),
       ],
     );
     addTearDown(container.dispose);
@@ -1723,6 +1749,7 @@ ProviderContainer _containerFor(
   final container = ProviderContainer(
     overrides: <Override>[
       fluxerRouterProvider.overrideWithValue(router),
+      blockedUserIdsProvider.overrideWithValue(const <String>{}),
       ...extraOverrides,
     ],
   );

@@ -3,18 +3,25 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
+import 'package:drift/native.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
+import 'package:fluxer_app/core/api/retry_interceptor.dart';
 import 'package:fluxer_app/core/api/service_unavailable.dart';
 import 'package:fluxer_app/core/build/app_build_config.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart';
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
 import 'package:fluxer_app/core/providers/app/app_startup_provider.dart';
+import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
+import 'package:fluxer_app/core/providers/app/shell_cache.dart';
+import 'package:fluxer_app/core/providers/app/startup_gateway_fallback_provider.dart';
 import 'package:fluxer_app/core/providers/app_runtime_info_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
 import 'package:fluxer_app/core/providers/gateway/gateway_connection_provider.dart';
 import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
+import 'package:fluxer_app/core/providers/gateway/gateway_reconnect_provider.dart';
 import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/core/router/app_location_persistence.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
@@ -25,6 +32,7 @@ import 'package:fluxer_app/features/chat/providers/pickers/favorite_gifs_provide
 import 'package:fluxer_app/features/quick_switcher/providers/recent_channel_visits_provider.dart';
 import 'package:fluxer_app/features/settings/providers/guild/known_guild_bans_provider.dart';
 import 'package:fluxer_dart/export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/open_test_database.dart';
 import '../../helpers/recording_asset_channel.dart';
@@ -84,6 +92,7 @@ class _FakeWellKnown extends WellKnown {
         guildCreateAccess: true,
       ),
       services: InstanceServicesSchema(
+        connectionProviders: <InstanceConnectionProviderSchema>[],
         gifEnabled: false,
         youtubeEnabled: false,
         blueskyEnabled: false,
@@ -111,6 +120,11 @@ class _FakeWellKnown extends WellKnown {
           premiumInfoUrl: null,
           faviconDarkUrl: null,
           signInBackdropUrl: null,
+          premiumPageColor: null,
+          premiumShowcaseExpressionsUrl: null,
+          premiumShowcaseProfileUrl: null,
+          premiumShowcaseStreamUrl: null,
+          premiumShowcaseUploadUrl: null,
           customCss: null,
           uploadLimitMessage: null,
           trustedDomains: <String>[],
@@ -132,6 +146,8 @@ class _FakeWellKnown extends WellKnown {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
 
   test('retry recovers the provider after a failed startup', () async {
     var failStartup = true;
@@ -217,9 +233,7 @@ void main() {
         wellKnownProvider.overrideWith(_FakeWellKnown.new),
         appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
         authTokenStorageProvider.overrideWithValue(tokens),
-        fluxerClientProvider.overrideWithValue(
-          FluxerClient(dio, baseUrl: 'https://api.fluxer.app/v1'),
-        ),
+        fluxerDioProvider.overrideWithValue(dio),
         authenticatedSessionBindingsProvider.overrideWith((Ref ref) {}),
       ],
     );
@@ -287,9 +301,7 @@ void main() {
         wellKnownProvider.overrideWith(_FakeWellKnown.new),
         appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
         authTokenStorageProvider.overrideWithValue(tokens),
-        fluxerClientProvider.overrideWithValue(
-          FluxerClient(dio, baseUrl: 'https://api.fluxer.app/v1'),
-        ),
+        fluxerDioProvider.overrideWithValue(dio),
         authenticatedSessionBindingsProvider.overrideWith((Ref ref) {
           bindCalled = true;
           boundBeforeUsersMe = !releaseUsersMe.isCompleted;
@@ -328,9 +340,7 @@ void main() {
           wellKnownProvider.overrideWith(_FakeWellKnown.new),
           appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
           authTokenStorageProvider.overrideWithValue(tokens),
-          fluxerClientProvider.overrideWithValue(
-            FluxerClient(dio, baseUrl: 'https://api.fluxer.app/v1'),
-          ),
+          fluxerDioProvider.overrideWithValue(dio),
           authenticatedSessionBindingsProvider.overrideWith((Ref ref) {
             bindCount++;
           }),
@@ -444,6 +454,139 @@ void main() {
     );
   });
 
+  test(
+    'a hanging API opens the cached shell after the timeout and READY takes over',
+    () {
+      fakeAsync((FakeAsync async) {
+        final FluxerDatabase db = FluxerDatabase.forTesting(
+          NativeDatabase.memory(),
+        );
+        final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+        unawaited(db.authSessionDao.saveSessionMetadata(userId: 'user-1'));
+        unawaited(tokens.saveToken(userId: 'user-1', token: 'token-1'));
+        unawaited(
+          db.userSettingsDao.upsertSettings(
+            UserSettingsTableCompanion.insert(userId: 'user-1', data: '{}'),
+          ),
+        );
+        async.flushMicrotasks();
+        final Completer<void> releaseUsersMe = Completer<void>();
+        final Dio dio = Dio(BaseOptions(baseUrl: 'https://api.fluxer.app/v1'))
+          ..httpClientAdapter = _HoldingUsersMeAdapter(
+            statusCode: 503,
+            release: releaseUsersMe,
+          );
+        final container = ProviderContainer(
+          retry: (int retryCount, Object error) => null,
+          overrides: [
+            fluxerDatabaseProvider.overrideWithValue(db),
+            wellKnownProvider.overrideWith(_FakeWellKnown.new),
+            appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
+            authTokenStorageProvider.overrideWithValue(tokens),
+            fluxerDioProvider.overrideWithValue(dio),
+            authenticatedSessionBindingsProvider.overrideWith((Ref ref) {}),
+            gatewayConnectivityCheckProvider.overrideWithValue(
+              () async => true,
+            ),
+          ],
+        );
+        container.read(appUiForegroundProvider.notifier).setResumed(true);
+        container.listen(appStartupProvider, (_, _) {});
+
+        async.elapse(const Duration(seconds: 1));
+        expect(container.read(appStartupProvider), isA<AsyncLoading<void>>());
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.none,
+        );
+
+        async.elapse(kStartupGatewayFallbackDelay);
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.cachedShell,
+        );
+        expect(container.read(appStartupProvider), isA<AsyncData<void>>());
+        expect(container.read(authStateProvider), isTrue);
+        expect(container.read(currentUserIdProvider), 'user-1');
+
+        container.read(gatewayReadyProvider.notifier).setReady();
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.none,
+        );
+        expect(container.read(appStartupProvider), isA<AsyncData<void>>());
+
+        releaseUsersMe.complete();
+        async.elapse(const Duration(seconds: 1));
+        container.dispose();
+        unawaited(db.close());
+        async.elapse(const Duration(seconds: 1));
+      });
+    },
+  );
+
+  test(
+    'a 502 with cached data opens the cached shell before the gateway timer',
+    () {
+      fakeAsync((FakeAsync async) {
+        final FluxerDatabase db = FluxerDatabase.forTesting(
+          NativeDatabase.memory(),
+        );
+        final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+        unawaited(db.authSessionDao.saveSessionMetadata(userId: 'user-1'));
+        unawaited(tokens.saveToken(userId: 'user-1', token: 'token-1'));
+        unawaited(
+          db.userSettingsDao.upsertSettings(
+            UserSettingsTableCompanion.insert(userId: 'user-1', data: '{}'),
+          ),
+        );
+        async.flushMicrotasks();
+        final Dio dio = Dio(BaseOptions(baseUrl: 'https://api.fluxer.app/v1'))
+          ..httpClientAdapter = const _UsersMeAdapter(statusCode: 502);
+        dio.interceptors.add(RetryInterceptor(dio: dio));
+        final container = ProviderContainer(
+          retry: (int retryCount, Object error) => null,
+          overrides: [
+            fluxerDatabaseProvider.overrideWithValue(db),
+            wellKnownProvider.overrideWith(_FakeWellKnown.new),
+            appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
+            authTokenStorageProvider.overrideWithValue(tokens),
+            fluxerDioProvider.overrideWithValue(dio),
+            authenticatedSessionBindingsProvider.overrideWith((Ref ref) {}),
+            gatewayConnectivityCheckProvider.overrideWithValue(
+              () async => true,
+            ),
+          ],
+        );
+        container.read(appUiForegroundProvider.notifier).setResumed(true);
+        container.listen(appStartupProvider, (_, _) {});
+
+        async.elapse(const Duration(milliseconds: 200));
+        expect(container.read(appStartupProvider), isA<AsyncData<void>>());
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.cachedShell,
+        );
+        expect(container.read(authStateProvider), isTrue);
+
+        container.read(gatewayReadyProvider.notifier).setReady();
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.none,
+        );
+
+        async.elapse(kStartupGatewayFallbackDelay);
+        expect(
+          container.read(startupGatewayFallbackProvider),
+          StartupGatewayFallback.none,
+        );
+        container.dispose();
+        unawaited(db.close());
+        async.elapse(const Duration(seconds: 1));
+      });
+    },
+  );
+
   test('401 against another host does not expire the session', () async {
     final db = openTestDatabase();
     final MapAuthTokenStorage tokens = MapAuthTokenStorage();
@@ -479,6 +622,257 @@ void main() {
     final session = await db.authSessionDao.getSession('user-1');
     expect(session!.isValid, isFalse);
   });
+
+  group('cache-first launch', () {
+    test('opens the shell without waiting for /users/@me or READY', () async {
+      _mockLaunchPreferences();
+      final db = openTestDatabase();
+      final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+      await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+      await _seedTrustedCache(db);
+      final Completer<void> releaseUsersMe = Completer<void>();
+      final container = _startupContainer(
+        db: db,
+        tokens: tokens,
+        apiBaseUrl: 'https://self.example/api',
+        adapter: _HoldingUsersMeAdapter(release: releaseUsersMe),
+      );
+      addTearDown(() {
+        if (!releaseUsersMe.isCompleted) {
+          releaseUsersMe.complete();
+        }
+        container.dispose();
+      });
+
+      container.listen(appStartupProvider, (_, _) {});
+      await container.read(appStartupProvider.future);
+      await pumpEventQueue();
+
+      expect(
+        container.read(startupGatewayFallbackProvider),
+        StartupGatewayFallback.cacheFirst,
+      );
+      expect(container.read(shellDataReadyProvider), isTrue);
+      expect(container.read(authStateProvider), isTrue);
+      expect(container.read(currentUserIdProvider), 'user-1');
+
+      container.read(gatewayReadyProvider.notifier).setReady();
+      expect(
+        container.read(startupGatewayFallbackProvider),
+        StartupGatewayFallback.none,
+      );
+      expect(container.read(shellDataReadyProvider), isTrue);
+    });
+
+    for (final (String name, int generation, Duration liveAgo)
+        in <(String, int, Duration)>[
+          (
+            'the cache generation is stale',
+            kShellCacheGeneration - 1,
+            const Duration(hours: 1),
+          ),
+          (
+            'the cache was last live over 7 days ago',
+            kShellCacheGeneration,
+            kShellCacheMaxAge + const Duration(hours: 1),
+          ),
+        ]) {
+      test('waits for /users/@me when $name', () async {
+        _mockLaunchPreferences(generation: generation, liveAgo: liveAgo);
+        final db = openTestDatabase();
+        final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+        await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+        await _seedTrustedCache(db);
+        final Completer<void> releaseUsersMe = Completer<void>();
+        final container = _startupContainer(
+          db: db,
+          tokens: tokens,
+          apiBaseUrl: 'https://self.example/api',
+          adapter: _HoldingUsersMeAdapter(release: releaseUsersMe),
+        );
+        addTearDown(() {
+          if (!releaseUsersMe.isCompleted) {
+            releaseUsersMe.complete();
+          }
+          container.dispose();
+        });
+        container.listen(appStartupProvider, (_, _) {});
+
+        await pumpEventQueue();
+
+        expect(container.read(appStartupProvider), isA<AsyncLoading<void>>());
+        expect(container.read(shellDataReadyProvider), isFalse);
+      });
+    }
+
+    test(
+      'waits for /users/@me when the cache belongs to another user',
+      () async {
+        _mockLaunchPreferences();
+        final db = openTestDatabase();
+        final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+        await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+        await db.userSettingsDao.upsertSettings(
+          UserSettingsTableCompanion.insert(userId: 'user-2', data: '{}'),
+        );
+        final Completer<void> releaseUsersMe = Completer<void>();
+        final container = _startupContainer(
+          db: db,
+          tokens: tokens,
+          apiBaseUrl: 'https://self.example/api',
+          adapter: _HoldingUsersMeAdapter(release: releaseUsersMe),
+        );
+        addTearDown(() {
+          if (!releaseUsersMe.isCompleted) {
+            releaseUsersMe.complete();
+          }
+          container.dispose();
+        });
+        container.listen(appStartupProvider, (_, _) {});
+
+        await pumpEventQueue();
+
+        expect(container.read(appStartupProvider), isA<AsyncLoading<void>>());
+      },
+    );
+
+    test('a failed background check retries once when READY arrives', () async {
+      _mockLaunchPreferences();
+      final db = openTestDatabase();
+      final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+      await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+      await _seedTrustedCache(db);
+      final _CountingUsersMeAdapter adapter = _CountingUsersMeAdapter();
+      final container = _startupContainer(
+        db: db,
+        tokens: tokens,
+        apiBaseUrl: 'https://self.example/api',
+        adapter: adapter,
+      );
+      addTearDown(container.dispose);
+      container.listen(appStartupProvider, (_, _) {});
+
+      await container.read(appStartupProvider.future);
+      await pumpEventQueue();
+      expect(adapter.usersMeRequests, 1);
+      expect(container.read(authStateProvider), isTrue);
+
+      container.read(gatewayReadyProvider.notifier).setReady();
+      await pumpEventQueue();
+      expect(adapter.usersMeRequests, 2);
+
+      container.read(gatewayReadyProvider.notifier)
+        ..reset()
+        ..setReady();
+      await pumpEventQueue();
+      expect(adapter.usersMeRequests, 2);
+      expect(container.read(authStateProvider), isTrue);
+    });
+
+    test(
+      'a background check that fails after READY still retries once',
+      () async {
+        _mockLaunchPreferences();
+        final db = openTestDatabase();
+        final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+        await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+        await _seedTrustedCache(db);
+        final Completer<void> release = Completer<void>();
+        final _CountingUsersMeAdapter adapter = _CountingUsersMeAdapter(
+          release: release,
+        );
+        final container = _startupContainer(
+          db: db,
+          tokens: tokens,
+          apiBaseUrl: 'https://self.example/api',
+          adapter: adapter,
+        );
+        addTearDown(() {
+          if (!release.isCompleted) {
+            release.complete();
+          }
+          container.dispose();
+        });
+        container.listen(appStartupProvider, (_, _) {});
+
+        await container.read(appStartupProvider.future);
+        await pumpEventQueue();
+        expect(adapter.usersMeRequests, 1);
+
+        container.read(gatewayReadyProvider.notifier).setReady();
+        await pumpEventQueue();
+        release.complete();
+        await pumpEventQueue();
+
+        expect(adapter.usersMeRequests, 2);
+      },
+    );
+
+    test('a background 401 on the stored host signs out', () async {
+      _mockLaunchPreferences();
+      final db = openTestDatabase();
+      final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+      await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+      await _seedTrustedCache(db);
+      final container = _startupContainer(
+        db: db,
+        tokens: tokens,
+        apiBaseUrl: 'https://self.example/api',
+        statusCode: 401,
+      );
+      addTearDown(container.dispose);
+
+      await container.read(appStartupProvider.future);
+      await pumpEventQueue();
+
+      final session = await db.authSessionDao.getSession('user-1');
+      expect(session!.isValid, isFalse);
+      expect(container.read(authStateProvider), isFalse);
+    });
+
+    test('a background 401 from another host keeps the session', () async {
+      _mockLaunchPreferences();
+      final db = openTestDatabase();
+      final MapAuthTokenStorage tokens = MapAuthTokenStorage();
+      await _saveSession(db, tokens, apiBaseUrl: 'https://self.example/api');
+      await _seedTrustedCache(db);
+      final container = _startupContainer(
+        db: db,
+        tokens: tokens,
+        apiBaseUrl: 'https://other.example/api',
+        statusCode: 401,
+      );
+      addTearDown(container.dispose);
+
+      await container.read(appStartupProvider.future);
+      await pumpEventQueue();
+
+      final session = await db.authSessionDao.getSession('user-1');
+      expect(session!.isValid, isTrue);
+      expect(container.read(authStateProvider), isTrue);
+    });
+  });
+}
+
+Future<void> _seedTrustedCache(FluxerDatabase db) async {
+  await db.userSettingsDao.upsertSettings(
+    UserSettingsTableCompanion.insert(userId: 'user-1', data: '{}'),
+  );
+  await db.userDao.upsertUser(
+    UsersCompanion.insert(id: 'user-1', username: 'me'),
+  );
+}
+
+void _mockLaunchPreferences({
+  int generation = kShellCacheGeneration,
+  Duration liveAgo = const Duration(hours: 1),
+}) {
+  SharedPreferences.setMockInitialValues(<String, Object>{
+    'shell_cache_generation': generation,
+    'shell_cache_live_at': DateTime.now()
+        .subtract(liveAgo)
+        .millisecondsSinceEpoch,
+  });
 }
 
 Future<void> _saveSession(
@@ -501,10 +895,11 @@ ProviderContainer _startupContainer({
   required FluxerDatabase db,
   required MapAuthTokenStorage tokens,
   required String apiBaseUrl,
-  required int statusCode,
+  int? statusCode,
+  HttpClientAdapter? adapter,
 }) {
   final Dio dio = Dio(BaseOptions(baseUrl: apiBaseUrl))
-    ..httpClientAdapter = _UsersMeAdapter(statusCode: statusCode);
+    ..httpClientAdapter = adapter ?? _UsersMeAdapter(statusCode: statusCode);
   return ProviderContainer(
     retry: (int retryCount, Object error) => null,
     overrides: [
@@ -512,9 +907,7 @@ ProviderContainer _startupContainer({
       wellKnownProvider.overrideWith(_FakeWellKnown.new),
       appRuntimeInfoProvider.overrideWith((Ref ref) => _testRuntimeInfo),
       authTokenStorageProvider.overrideWithValue(tokens),
-      fluxerClientProvider.overrideWithValue(
-        FluxerClient(dio, baseUrl: apiBaseUrl),
-      ),
+      fluxerDioProvider.overrideWithValue(dio),
       authenticatedSessionBindingsProvider.overrideWith((Ref ref) {}),
     ],
   );
@@ -546,6 +939,35 @@ class _UsersMeAdapter implements HttpClientAdapter {
       statusMessage: 'Service Unavailable',
       headers: <String, List<String>>{
         Headers.contentTypeHeader: <String>['text/html'],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
+class _CountingUsersMeAdapter implements HttpClientAdapter {
+  _CountingUsersMeAdapter({this.release});
+
+  final Completer<void>? release;
+  int usersMeRequests = 0;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    if (options.path.endsWith('/users/@me')) {
+      usersMeRequests++;
+    }
+    await release?.future;
+    return ResponseBody.fromString(
+      'error',
+      500,
+      headers: <String, List<String>>{
+        Headers.contentTypeHeader: <String>['text/plain'],
       },
     );
   }

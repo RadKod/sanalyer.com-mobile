@@ -1,19 +1,19 @@
 import 'package:fluxer_app/features/guilds/presentation/modals/add_guild_action_button.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class AddGuildLandingView extends StatelessWidget {
   const AddGuildLandingView({
     required this.onCreateTap,
     required this.onJoinTap,
-    required this.onImportTap,
+    this.onImportTap,
     super.key,
   });
 
   final VoidCallback onCreateTap;
   final VoidCallback onJoinTap;
-  final VoidCallback onImportTap;
+  final VoidCallback? onImportTap;
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +40,15 @@ class AddGuildLandingView extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        AddGuildActionButton(
-          icon: PhosphorIconsBold.downloadSimple,
-          label: l10n.addGuildImportDiscordTemplate,
-          layout: AddGuildActionButtonLayout.row,
-          onTap: onImportTap,
-        ),
+        if (onImportTap case final VoidCallback onImport) ...<Widget>[
+          const SizedBox(height: 12),
+          AddGuildActionButton(
+            icon: PhosphorIconsBold.downloadSimple,
+            label: l10n.addGuildImportDiscordTemplate,
+            layout: AddGuildActionButtonLayout.row,
+            onTap: onImport,
+          ),
+        ],
       ],
     );
   }

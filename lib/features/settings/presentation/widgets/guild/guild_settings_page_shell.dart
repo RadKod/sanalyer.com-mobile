@@ -10,8 +10,8 @@ import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/spinner/fluxer_loading_spinner.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 Color guildSettingsPageBackgroundColor(BuildContext context) {
   if (isMobileLayout(context)) {
@@ -54,6 +54,7 @@ class GuildSettingsPageShell extends StatelessWidget {
           automaticallyImplyLeading: false,
           leading: showsInAppShellBackButton(context)
               ? IconButton(
+                  tooltip: l10n.back,
                   icon: const PhosphorIcon(PhosphorIconsBold.arrowLeft),
                   onPressed: () => context.pop(),
                 )

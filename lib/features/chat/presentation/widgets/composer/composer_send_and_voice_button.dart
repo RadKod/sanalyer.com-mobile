@@ -8,13 +8,14 @@ import 'package:fluxer_app/features/chat/presentation/widgets/composer/wide_comp
 import 'package:fluxer_app/features/chat/providers/channel/channel_message_permissions_provider.dart';
 import 'package:fluxer_app/features/chat/providers/core/chat_view_model.dart';
 import 'package:fluxer_app/features/chat/providers/slowmode/slowmode_blocked_provider.dart';
+import 'package:fluxer_app/features/chat/utils/composer/composer_command.dart';
 import 'package:fluxer_app/features/chat/utils/composer/composer_voice_button_visibility.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kDisabledOpacity = 0.6;
 const double _kWideActionExtent = WideComposerLayout.actionButtonExtent;
@@ -56,6 +57,11 @@ class ComposerSendAndVoiceButton extends ConsumerWidget {
             channelId,
           ).select((AsyncValue<bool> value) => value.value ?? false),
         );
+    final bool isReplaceCommand = ref.watch(
+      chatViewModelProvider.select(
+        (s) => parseComposerCommand(s.messageText) is ComposerReplaceCommand,
+      ),
+    );
     final bool canUseVoice = perms.isVoiceEnabled && !isSlowmodeBlocked;
     final bool touchActions = isTouchPrimaryInput(ref);
     final bool showSendButtonPreference = ref.watch(
@@ -79,13 +85,16 @@ class ComposerSendAndVoiceButton extends ConsumerWidget {
     );
     final bool voiceDisabled =
         !canUseVoice || !perms.isComposerEnabled || isOverCharacterLimit;
-    final VoidCallback? sendOnPressed = !hasSendable || isOverCharacterLimit
+    final VoidCallback? sendOnPressed = !hasSendable
         ? null
         : perms.isComposerEnabled
         ? onSend
         : onNoSendPermission;
     final bool sendVisuallyEnabled =
-        perms.isComposerEnabled && sendOnPressed != null && !isSlowmodeBlocked;
+        perms.isComposerEnabled &&
+        sendOnPressed != null &&
+        !isOverCharacterLimit &&
+        (!isSlowmodeBlocked || isReplaceCommand);
     final bool voiceVisuallyEnabled = !voiceDisabled;
     final FluxerLocalizations l10n = FluxerLocalizations.of(context);
     final FluxerButtonSize voiceSize = useHoldToRecord
@@ -153,7 +162,7 @@ class ComposerSendAndVoiceButton extends ConsumerWidget {
                     icon: PhosphorIconsBold.arrowUp,
                     iconSize: 20,
                     size: FluxerButtonSize.small,
-                    semanticLabel: l10n.permissionSendMessages,
+                    semanticLabel: l10n.composerSendMessage,
                     onPressed: sendOnPressed,
                   ),
                 )
@@ -174,19 +183,10 @@ class ComposerSendAndVoiceButton extends ConsumerWidget {
                   context: context,
                   key: const ValueKey<String>('send'),
                   enabled: sendVisuallyEnabled,
-                  child: IconButton(
-                    icon: const PhosphorIcon(
-                      PhosphorIconsBold.arrowUp,
-                      size: 20,
-                    ),
-                    color: context.colors.interactiveNormal,
-                    tooltip: l10n.permissionSendMessages,
+                  child: WideComposerMouseButton(
+                    icon: PhosphorIconsRegular.paperPlaneRight,
+                    tooltip: l10n.composerSendMessage,
                     onPressed: sendOnPressed,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(
-                      minWidth: _kWideActionExtent,
-                      minHeight: _kWideActionExtent,
-                    ),
                   ),
                 )
               : showVoiceButton
@@ -202,7 +202,7 @@ class ComposerSendAndVoiceButton extends ConsumerWidget {
               key: const ValueKey<String>('send'),
               enabled: sendVisuallyEnabled,
               child: MobileComposerSendButton(
-                semanticLabel: l10n.permissionSendMessages,
+                semanticLabel: l10n.composerSendMessage,
                 onPressed: sendOnPressed,
               ),
             )

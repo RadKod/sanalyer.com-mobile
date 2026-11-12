@@ -7,7 +7,7 @@ import 'package:fluxer_app/features/forum/providers/forum_posts_provider.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class ForumMobileHeaderSearch extends ConsumerStatefulWidget {
   const ForumMobileHeaderSearch({required this.channelId, super.key});
@@ -83,7 +83,7 @@ class _ForumMobileHeaderSearchState
     final colors = context.colors;
     if (unavailable) {
       return Align(
-        alignment: Alignment.centerLeft,
+        alignment: AlignmentDirectional.centerStart,
         child: Text(
           l10n.forumSearchPosts,
           style: context.textStyles.channelName,
@@ -104,7 +104,7 @@ class _ForumMobileHeaderSearchState
           color: colors.textTertiary,
         ),
         prefixIcon: Padding(
-          padding: const EdgeInsets.only(left: 4),
+          padding: const EdgeInsetsDirectional.only(start: 4),
           child: PhosphorIcon(
             PhosphorIconsBold.magnifyingGlass,
             size: 18,
@@ -115,14 +115,18 @@ class _ForumMobileHeaderSearchState
           minWidth: 32,
           minHeight: 32,
         ),
-        suffixIcon: FluxerGestureDetector(
-          onTap: _close,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: PhosphorIcon(
-              PhosphorIconsBold.x,
-              size: 16,
-              color: colors.textTertiary,
+        suffixIcon: Semantics(
+          button: true,
+          label: FluxerLocalizations.of(context).uiClose,
+          child: FluxerGestureDetector(
+            onTap: _close,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: PhosphorIcon(
+                PhosphorIconsBold.x,
+                size: 16,
+                color: colors.textTertiary,
+              ),
             ),
           ),
         ),

@@ -13,6 +13,7 @@ abstract final class InstanceConstants {
   static const String defaultMarketingBaseUrl = 'https://sanalyer.com';
   static const String defaultTermsUrl = 'https://sanalyer.com/kullanim-kosullari';
   static const String defaultPrivacyUrl = 'https://sanalyer.com/gizlilik';
+  static const String helpCenterUrl = 'https://sanalyer.com';
   static const String defaultProductName = 'sanalyer';
   static const String defaultPremiumProductName = 'Premium';
   static const int maxRecentInstances = 5;

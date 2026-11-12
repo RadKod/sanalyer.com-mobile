@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
+import 'package:fluxer_app/core/app_lock/app_lock_controller.dart';
+import 'package:fluxer_app/core/app_lock/app_lock_store.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart'
     show FluxerDatabase;
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
@@ -80,11 +82,32 @@ class _FakeAuthRepository implements AuthRepository {
   );
 
   @override
+  Future<void> removeStoredAccount(String userId) async {}
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _MemoryAppLockSecretStore implements AppLockSecretStore {
+  final Map<String, String> values = <String, String>{};
+
+  @override
+  Future<String?> read(String key) async => values[key];
+
+  @override
+  Future<void> write(String key, String value) async {
+    values[key] = value;
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    values.remove(key);
+  }
 }
 
 ({ProviderContainer container, FluxerDatabase db}) _harness({
   required String baseUrl,
+  String? targetBaseUrl,
 }) {
   final db = openTestDatabase();
   final container = ProviderContainer(
@@ -92,9 +115,10 @@ class _FakeAuthRepository implements AuthRepository {
       fluxerDatabaseProvider.overrideWithValue(db),
       fluxerBaseUrlProvider.overrideWithValue(baseUrl),
       authRepositoryProvider.overrideWithValue(
-        _FakeAuthRepository(targetBaseUrl: baseUrl),
+        _FakeAuthRepository(targetBaseUrl: targetBaseUrl ?? baseUrl),
       ),
       syncedPreferencesStoreProvider.overrideWith(SyncedPreferencesStore.new),
+      appLockSecretStoreProvider.overrideWithValue(_MemoryAppLockSecretStore()),
     ],
   );
   addTearDown(container.dispose);
@@ -147,6 +171,26 @@ _heldSwitchToUser2() async {
 }
 
 void main() {
+  test('removing an account logs it out on its own instance', () async {
+    final active = await _FakeApiServer.start();
+    addTearDown(active.close);
+    final other = await _FakeApiServer.start();
+    addTearDown(other.close);
+    final (:container, :db) = _harness(
+      baseUrl: active.baseUrl,
+      targetBaseUrl: other.baseUrl,
+    );
+    await _signIn(container, db);
+
+    await container
+        .read(accountManagerProvider.notifier)
+        .removeAccount('user-2');
+
+    expect(active.requests, isEmpty);
+    expect(other.requests, ['POST /auth/logout']);
+    expect(other.authHeaders, ['token-user-2']);
+  });
+
   test(
     '401 on /users/@me expires the session and signs the user out',
     () async {

@@ -4,8 +4,8 @@ import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/members/utils/guild_members_page_permissions.dart';
 import 'package:fluxer_app/features/settings/domain/guild/guild_settings_tab.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/user_date_formatting.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 enum GuildAction {
   markAsRead,
@@ -32,6 +32,7 @@ enum GuildAction {
   deleteMyMessages,
   debugCommunity,
   copyGuildId,
+  reportGuild,
   mute15Min,
   mute30Min,
   mute1Hour,
@@ -222,6 +223,12 @@ List<GuildMenuGroup> buildGuildMenuGroups({
           label: l10n.guildNavbarDeleteMyMessagesConfirm,
           icon: PhosphorIconsFill.trash,
           action: GuildAction.deleteMyMessages,
+          isDanger: true,
+        ),
+        GuildMenuAction(
+          label: l10n.guildMenuReportCommunity,
+          icon: PhosphorIconsFill.flag,
+          action: GuildAction.reportGuild,
           isDanger: true,
         ),
         if (!isStockCommunity)

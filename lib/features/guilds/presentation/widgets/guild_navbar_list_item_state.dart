@@ -1,7 +1,6 @@
 part of 'guild_navbar.dart';
 
-class _GuildListItemState extends State<_GuildListItem>
-    with AutomaticKeepAliveClientMixin {
+class _GuildListItemState extends State<_GuildListItem> {
   var _isHovered = false;
   var _isPressed = false;
 
@@ -10,9 +9,6 @@ class _GuildListItemState extends State<_GuildListItem>
       setState(() => _isPressed = value);
     }
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -60,13 +56,13 @@ class _GuildListItemState extends State<_GuildListItem>
     if (iconUrl != null) {
       final int cacheSize = _guildNavbarIconMemCache(
         context,
-        GuildNavbarIconShape.size,
+        GuildNavbarIconShape.sizeOf(context),
       );
       return CachedNetworkImage(
         imageUrl: iconUrl,
         fit: BoxFit.cover,
-        width: GuildNavbarIconShape.size,
-        height: GuildNavbarIconShape.size,
+        width: GuildNavbarIconShape.sizeOf(context),
+        height: GuildNavbarIconShape.sizeOf(context),
         memCacheWidth: cacheSize,
         memCacheHeight: cacheSize,
         fadeInDuration: activeAnimatedIconUrl != null
@@ -87,12 +83,19 @@ class _GuildListItemState extends State<_GuildListItem>
     if (icon == null) {
       return FluxerGuildAcronym(name: widget.label, color: iconColor);
     }
-    return Center(child: PhosphorIcon(icon, color: iconColor, size: 32));
+    return Center(
+      child: PhosphorIcon(
+        icon,
+        color: iconColor,
+        size: usesDesktopPointerUi(context)
+            ? GuildNavbarIconShape.desktopFaceIconSize
+            : 32,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final FluxerLocalizations l10n = FluxerLocalizations.of(context);
     final isActive = widget.isSelected || _isHovered || _isPressed;
     final activeAnimatedIconUrl = widget.isSelected || _isHovered
@@ -102,16 +105,16 @@ class _GuildListItemState extends State<_GuildListItem>
     final hasImage = iconUrl != null && !widget.isUnavailable;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: GuildNavbarIconShape.itemSpacing / 2,
+      padding: EdgeInsets.symmetric(
+        vertical: GuildNavbarIconShape.itemSpacingOf(context) / 2,
       ),
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
           const SizedBox(width: kGuildNavbarWidth),
-          Positioned(
-            left: 0,
+          PositionedDirectional(
+            start: 0,
             top: 0,
             bottom: 0,
             child: Center(
@@ -169,11 +172,11 @@ class _GuildListItemState extends State<_GuildListItem>
                   child: SizedBox(
                     width: widget.opaqueHitTarget
                         ? kGuildNavbarWidth
-                        : GuildNavbarIconShape.size,
-                    height: GuildNavbarIconShape.size,
+                        : GuildNavbarIconShape.sizeOf(context),
+                    height: GuildNavbarIconShape.sizeOf(context),
                     child: Center(
                       child: SizedBox.square(
-                        dimension: GuildNavbarIconShape.size,
+                        dimension: GuildNavbarIconShape.sizeOf(context),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -191,9 +194,9 @@ class _GuildListItemState extends State<_GuildListItem>
                             ),
                             if (!widget.isUnavailable &&
                                 _displayMentionCount > 0)
-                              Positioned(
+                              PositionedDirectional(
                                 bottom: GuildNavbarPill.badgeInset,
-                                right: GuildNavbarPill.badgeInset,
+                                end: GuildNavbarPill.badgeInset,
                                 child: FluxerBadgeEntrance(
                                   child: FluxerBadge.count(
                                     count: _displayMentionCount,
@@ -204,9 +207,9 @@ class _GuildListItemState extends State<_GuildListItem>
                               ),
                             if (!widget.isUnavailable &&
                                 widget.voiceActivity != VoiceActivityType.none)
-                              Positioned(
-                                top: -4,
-                                right: -4,
+                              PositionedDirectional(
+                                top: _ringBadgeOffset(context),
+                                end: _ringBadgeOffset(context),
                                 child: _VoiceActivityBadge(
                                   type: widget.voiceActivity,
                                 ),
@@ -216,10 +219,10 @@ class _GuildListItemState extends State<_GuildListItem>
                                 widget.invitesPaused &&
                                 _displayMentionCount == 0 &&
                                 widget.voiceActivity == VoiceActivityType.none)
-                              const Positioned(
-                                bottom: -4,
-                                right: -4,
-                                child: _PauseBadge(),
+                              PositionedDirectional(
+                                bottom: _ringBadgeOffset(context),
+                                end: _ringBadgeOffset(context),
+                                child: const _PauseBadge(),
                               ),
                           ],
                         ),
@@ -272,8 +275,7 @@ class _GuildListItemState extends State<_GuildListItem>
       return;
     }
     widget.onMenuOpened?.call();
-    final isMobile = isMobileLayout(context);
-    if (!isMobile) {
+    if (usesDesktopPointerUi(context)) {
       return;
     }
     final int permissions = widget.resolveMenuPermissions != null
@@ -924,11 +926,6 @@ class _GuildListItemState extends State<_GuildListItem>
     final guildId = widget.guild!.id;
     final GuildSettingsTab? settingsTab = guildSettingsTabForAction(action);
     if (settingsTab != null) {
-      if (isGuildSettingsTabComingSoon(settingsTab)) {
-        final FluxerLocalizations l10n = FluxerLocalizations.of(context);
-        widget.onShowToast?.call(FluxerToast(message: l10n.comingSoon));
-        return;
-      }
       final bool isTouchPrimary = ProviderScope.containerOf(
         context,
       ).read(inputModalityProvider);
@@ -965,6 +962,21 @@ class _GuildListItemState extends State<_GuildListItem>
         return;
       case GuildAction.copyGuildId:
         unawaited(copyToClipboard(context: context, value: guildId));
+      case GuildAction.reportGuild:
+        final Guild guild = widget.guild!;
+        unawaited(
+          openReportFlow(
+            context,
+            iarContext: IarGuildContext(
+              guildId: guild.id,
+              name: guild.name,
+              iconUrl: FluxerMediaUrl.guildIcon(
+                guildId: guild.id,
+                hash: guild.icon,
+              ),
+            ),
+          ),
+        );
       case GuildAction.markAsRead:
         widget.onMarkAsRead?.call();
       case GuildAction.hideMutedChannels:

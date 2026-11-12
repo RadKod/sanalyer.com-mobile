@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
 import 'package:fluxer_app/core/api/session_authorization_header.dart';
+import 'package:fluxer_app/core/app_lock/app_lock_controller.dart';
 import 'package:fluxer_app/core/instance/instance_config_snapshot.dart';
 import 'package:fluxer_app/core/providers/app/app_startup_provider.dart';
 import 'package:fluxer_app/core/providers/database_provider.dart';
@@ -149,12 +150,11 @@ class AccountManager extends _$AccountManager {
     }
   }
 
-  Future<bool> _validateToken(String token, {String? baseUrl}) async {
+  Future<bool> _validateToken(String token, {required String baseUrl}) async {
     try {
-      final String resolvedBaseUrl = baseUrl ?? ref.read(fluxerBaseUrlProvider);
       await Dio(
         BaseOptions(
-          baseUrl: resolvedBaseUrl,
+          baseUrl: baseUrl,
           headers: {'Authorization': formatSessionAuthorizationHeader(token)},
           connectTimeout: const Duration(seconds: 5),
           receiveTimeout: const Duration(seconds: 5),
@@ -169,7 +169,7 @@ class AccountManager extends _$AccountManager {
     }
   }
 
-  Future<void> signOut(String userId) async {
+  Future<void> signOut(String userId, {bool keepInstance = false}) async {
     final repo = ref.read(authRepositoryProvider);
 
     await PushAccountLifecycle.leaveActiveAccount(
@@ -182,7 +182,10 @@ class AccountManager extends _$AccountManager {
     await loadAccounts();
 
     if (state.accounts.isEmpty) {
-      ref.read(activeInstanceProvider.notifier).resetToOfficialDefault();
+      await _turnOffAppLock();
+      if (!keepInstance) {
+        ref.read(activeInstanceProvider.notifier).resetToOfficialDefault();
+      }
       ref.invalidate(instanceSelectorProvider);
     }
 
@@ -192,18 +195,26 @@ class AccountManager extends _$AccountManager {
 
   Future<bool> expireSessionIfInvalid() async {
     final String? token = ref.read(fluxerAuthTokenProvider);
-    if (token == null || token.isEmpty) {
+    final String? issuerBaseUrl = ref
+        .read(fluxerAuthTokenProvider.notifier)
+        .issuerBaseUrl;
+    if (token == null || token.isEmpty || issuerBaseUrl == null) {
       return false;
     }
     bool isValid;
     try {
-      isValid = await _validateToken(token);
+      isValid = await _validateToken(token, baseUrl: issuerBaseUrl);
     } on Exception {
       return false;
     }
     if (isValid) {
       return false;
     }
+    await expireCurrentSession();
+    return true;
+  }
+
+  Future<void> expireCurrentSession() async {
     final String? userId = ref.read(currentUserIdProvider);
     if (userId != null && userId.isNotEmpty) {
       await ref.read(fluxerDatabaseProvider).authSessionDao.markInvalid(userId);
@@ -213,7 +224,6 @@ class AccountManager extends _$AccountManager {
     await loadAccounts();
     ref.read(fluxerAuthTokenProvider.notifier).setToken(null);
     ref.read(authStateProvider.notifier).setAuthenticated(value: false);
-    return true;
   }
 
   Future<void> removeAccount(String userId) async {
@@ -222,10 +232,11 @@ class AccountManager extends _$AccountManager {
 
     if (session != null) {
       try {
-        final baseUrl = ref.read(fluxerBaseUrlProvider);
+        final InstanceConfigSnapshot instance = await authRepository
+            .resolveInstanceSnapshotForUser(userId);
         await Dio(
           BaseOptions(
-            baseUrl: baseUrl,
+            baseUrl: instance.apiBaseUrl,
             headers: {
               'Authorization': formatSessionAuthorizationHeader(session.token),
             },
@@ -241,5 +252,16 @@ class AccountManager extends _$AccountManager {
     await PushAccountLifecycle.forgetStoredAccount(ref, userId);
     await authRepository.removeStoredAccount(userId);
     await loadAccounts();
+    if (state.accounts.isEmpty) {
+      await _turnOffAppLock();
+    }
+  }
+
+  Future<void> _turnOffAppLock() async {
+    try {
+      await ref.read(appLockControllerProvider.notifier).disable();
+    } on Object catch (e) {
+      talker.warning('[AccountManager] Failed to turn off app lock: $e');
+    }
   }
 }

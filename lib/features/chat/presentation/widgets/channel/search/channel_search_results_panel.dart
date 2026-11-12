@@ -14,11 +14,11 @@ import 'package:fluxer_app/features/chat/providers/channel/channel_details_provi
 import 'package:fluxer_app/features/chat/providers/channel/channel_header_search_provider.dart';
 import 'package:fluxer_app/features/chat/utils/channel_jump_navigator.dart';
 import 'package:fluxer_app/features/chat/utils/search/channel_search_utils.dart';
-import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 const double kChannelSearchResultsPanelWidth = 420;
 
@@ -53,8 +53,8 @@ class ChannelSearchResultsPanel extends ConsumerWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: context.colors.backgroundSecondary,
-          border: Border(
-            left: BorderSide(color: context.colors.backgroundModifierHover),
+          border: BorderDirectional(
+            start: BorderSide(color: context.colors.backgroundModifierHover),
           ),
         ),
         child: Column(
@@ -189,7 +189,7 @@ class ChannelSearchResultsPanel extends ConsumerWidget {
     final List<MessageSearchScopeFilter> options = channelSearchScopeOptions(
       isGuildChannel: isGuildChannel,
     );
-    final MessageSearchScopeFilter? selected = isMobileLayout(context)
+    final MessageSearchScopeFilter? selected = !usesDesktopPointerUi(context)
         ? await _showScopeBottomSheet(
             context: context,
             l10n: l10n,
@@ -224,7 +224,7 @@ class ChannelSearchResultsPanel extends ConsumerWidget {
     required MessageSearchSortFilter currentSort,
   }) async {
     final FluxerLocalizations l10n = FluxerLocalizations.of(context);
-    final MessageSearchSortFilter? selected = isMobileLayout(context)
+    final MessageSearchSortFilter? selected = !usesDesktopPointerUi(context)
         ? await _showSortBottomSheet(
             context: context,
             l10n: l10n,
@@ -258,6 +258,7 @@ class ChannelSearchResultsPanel extends ConsumerWidget {
     return FluxerBottomSheet.show<MessageSearchScopeFilter>(
       context,
       title: l10n.channelDetailsSearchIn,
+      variant: FluxerBottomSheetVariant.menu,
       builder: (BuildContext sheetContext, VoidCallback close) {
         return FluxerBottomSheetContent(
           child: Column(
@@ -423,7 +424,7 @@ class _SearchResultsHeader extends StatelessWidget {
             children: <Widget>[
               if (state.isSearching || state.indexing)
                 const Padding(
-                  padding: EdgeInsets.only(right: 12),
+                  padding: EdgeInsetsDirectional.only(end: 12),
                   child: SizedBox(
                     width: 18,
                     height: 18,

@@ -1,14 +1,16 @@
+// ignore_for_file: document_ignores, implementation_imports
+
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:fluxer_app/core/audio/system_voice_call_guard.dart';
-import 'package:fluxer_app/core/limits/instance_limit_provider.dart';
-import 'package:fluxer_app/core/limits/limit_key.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/features/voice/domain/voice_output_route.dart';
 import 'package:fluxer_app/features/voice/domain/voice_settings_state.dart';
 import 'package:fluxer_app/features/voice/providers/voice_noise_filter_provider.dart';
+import 'package:fluxer_app/features/voice/providers/voice_video_quality_provider.dart';
 import 'package:fluxer_app/features/voice/utils/audio/audio_publish_options.dart';
 import 'package:fluxer_app/features/voice/utils/audio/processing_profile.dart';
 import 'package:fluxer_app/features/voice/utils/audio/speaker_route.dart';
@@ -18,6 +20,7 @@ import 'package:fluxer_app/features/voice/utils/media/camera_platform.dart';
 import 'package:fluxer_app/features/voice/utils/media/camera_resolution_presets.dart';
 import 'package:fluxer_app/features/voice/utils/screen_share/screen_share_presets.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:livekit_client/src/managers/broadcast_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'voice_settings_applicator.g.dart';
@@ -25,19 +28,19 @@ part 'voice_settings_applicator.g.dart';
 class VoiceSettingsApplicator {
   const VoiceSettingsApplicator({
     required this.noiseFilterSupported,
-    required this.higherVideoQuality,
+    required this.videoQualityCaps,
     required this.meshPhoneCap,
   });
 
   final bool noiseFilterSupported;
-  final bool higherVideoQuality;
+  final VideoQualityCaps videoQualityCaps;
   final bool meshPhoneCap;
 
   VoiceSettingsApplicator forChannelMode(VoiceChannelMode mode) {
     final bool isP2p = mode == VoiceChannelMode.p2p;
     return VoiceSettingsApplicator(
       noiseFilterSupported: noiseFilterSupported,
-      higherVideoQuality: higherVideoQuality || isP2p,
+      videoQualityCaps: isP2p ? VideoQualityCaps.full : videoQualityCaps,
       meshPhoneCap: isFluxerMobileOs && isP2p,
     );
   }
@@ -45,13 +48,14 @@ class VoiceSettingsApplicator {
   VoiceSettingsState _clampVideo(VoiceSettingsState settings) {
     return clampVoiceVideoSettings(
       settings,
-      higherVideoQuality: higherVideoQuality,
+      caps: videoQualityCaps,
       meshPhoneCap: meshPhoneCap,
       phoneScreenShareCap: isFluxerNativeMobileOs,
     );
   }
 
   static Future<void> _cameraRefreshInFlight = Future<void>.value();
+  static VoidCallback? _pendingIosBroadcastListener;
 
   RoomOptions buildRoomOptions(
     VoiceSettingsState configured, {
@@ -297,16 +301,18 @@ class VoiceSettingsApplicator {
     );
   }
 
-  Future<void> setScreenShareEnabled({
+  Future<bool> setScreenShareEnabled({
     required LocalParticipant participant,
     required Room room,
     required VoiceSettingsState settings,
     required bool enabled,
     bool captureScreenAudio = false,
+    void Function(Object? error)? onBroadcastSettled,
   }) async {
     if (!enabled) {
+      _clearPendingIosBroadcast();
       await participant.setScreenShareEnabled(false);
-      return;
+      return false;
     }
 
     final RoomOptions roomOptions = room.roomOptions;
@@ -315,6 +321,17 @@ class VoiceSettingsApplicator {
     final VideoPublishOptions publishOptions = buildScreenSharePublishOptions(
       settings,
     );
+
+    if (Platform.isIOS && !BroadcastManager().isBroadcasting) {
+      await _requestIosBroadcast(
+        participant: participant,
+        room: room,
+        captureOptions: captureOptions,
+        publishOptions: publishOptions,
+        onSettled: onBroadcastSettled,
+      );
+      return true;
+    }
 
     // setScreenShareEnabled has no publishOptions param.
     // ignore: invalid_use_of_internal_member
@@ -336,6 +353,17 @@ class VoiceSettingsApplicator {
       // ignore: invalid_use_of_internal_member
       room.engine.roomOptions = roomOptions;
     }
+    await _applyMobileScreenShareScale(
+      participant: participant,
+      captureOptions: captureOptions,
+    );
+    return false;
+  }
+
+  Future<void> _applyMobileScreenShareScale({
+    required LocalParticipant participant,
+    required ScreenShareCaptureOptions captureOptions,
+  }) async {
     final VideoDimensions? source = nativeMobileScreenCaptureDimensions();
     if (source == null) {
       return;
@@ -347,6 +375,82 @@ class VoiceSettingsApplicator {
         target: captureOptions.params.dimensions,
       ),
     );
+  }
+
+  Future<void> _requestIosBroadcast({
+    required LocalParticipant participant,
+    required Room room,
+    required ScreenShareCaptureOptions captureOptions,
+    required VideoPublishOptions publishOptions,
+    required void Function(Object? error)? onSettled,
+  }) async {
+    _clearPendingIosBroadcast();
+    final BroadcastManager broadcast = BroadcastManager();
+    void onBroadcastChanged() {
+      if (!broadcast.isBroadcasting) {
+        return;
+      }
+      _clearPendingIosBroadcast();
+      if (!identical(room.localParticipant, participant) ||
+          room.connectionState != ConnectionState.connected) {
+        return;
+      }
+      unawaited(
+        _publishIosBroadcast(
+          participant: participant,
+          captureOptions: captureOptions,
+          publishOptions: publishOptions,
+          onSettled: onSettled,
+        ),
+      );
+    }
+
+    _pendingIosBroadcastListener = onBroadcastChanged;
+    broadcast
+      ..shouldPublishTrack = false
+      ..addListener(onBroadcastChanged);
+    try {
+      await broadcast.requestActivation();
+    } on Object {
+      _clearPendingIosBroadcast();
+      rethrow;
+    }
+  }
+
+  Future<void> _publishIosBroadcast({
+    required LocalParticipant participant,
+    required ScreenShareCaptureOptions captureOptions,
+    required VideoPublishOptions publishOptions,
+    required void Function(Object? error)? onSettled,
+  }) async {
+    LocalVideoTrack? track;
+    try {
+      track = await LocalVideoTrack.createScreenShareTrack(captureOptions);
+      await participant.publishVideoTrack(
+        track,
+        publishOptions: publishOptions,
+      );
+      await _applyMobileScreenShareScale(
+        participant: participant,
+        captureOptions: captureOptions,
+      );
+      onSettled?.call(null);
+    } on Object catch (error) {
+      await track?.dispose();
+      unawaited(BroadcastManager().requestStop());
+      onSettled?.call(error);
+    }
+  }
+
+  void _clearPendingIosBroadcast() {
+    final VoidCallback? listener = _pendingIosBroadcastListener;
+    if (listener == null) {
+      return;
+    }
+    _pendingIosBroadcastListener = null;
+    BroadcastManager()
+      ..removeListener(listener)
+      ..shouldPublishTrack = true;
   }
 
   Future<void> applyScreenShareSenderScale({
@@ -553,22 +657,14 @@ class VoiceSettingsApplicator {
     VoiceOutputRoute route,
   ) async {
     try {
-      switch (route) {
-        case VoiceOutputRoute.speaker:
-          await AudioManager.instance.setSpeakerOutputPreferred(
-            true,
-            force: true,
-          );
-        case VoiceOutputRoute.headset:
-        case VoiceOutputRoute.earpiece:
-          await AudioManager.instance.setSpeakerOutputPreferred(false);
-      }
+      await AudioManager.instance.setSpeakerOutputPreferred(
+        liveKitPrefersSpeaker(route),
+      );
     } on Object catch (_) {}
   }
 
   Future<void> applySpeakerOutput({
     required VoiceSettingsState settings,
-    bool holdRoute = true,
   }) async {
     if (await isExternalSystemVoiceCallActive()) {
       return;
@@ -576,18 +672,28 @@ class VoiceSettingsApplicator {
     if (!AudioManager.instance.canSwitchSpeakerphone) {
       return;
     }
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      await _applyLiveKitOutputRoutePreference(settings.outputRoute);
+      return;
+    }
     final Set<VoiceOutputRoute> available =
         await readAvailableVoiceOutputRoutes();
-    final VoiceOutputRoute route = resolveVoiceOutputRoute(
+    final VoiceOutputRoute route = resolveVoiceCallOutputRoute(
       preference: settings.outputRoute,
+      override: settings.outputRouteOverride,
       available: available,
     );
-    if (defaultTargetPlatform != TargetPlatform.android) {
-      await _applyLiveKitOutputRoutePreference(route);
-    }
-    final bool nativeHold =
-        defaultTargetPlatform == TargetPlatform.android && holdRoute;
-    await applyNativeVoiceOutputRoute(route, hold: nativeHold);
+    await applyNativeVoiceOutputRoute(
+      route,
+      deviceId: settings.outputRouteOverride == route
+          ? settings.outputDeviceOverride
+          : null,
+      explicit: isExplicitVoiceOutputRoute(
+        route: route,
+        preference: settings.outputRoute,
+        override: settings.outputRouteOverride,
+      ),
+    );
   }
 
   String? _resolveDeviceId(String deviceId) {
@@ -606,12 +712,9 @@ VoiceSettingsApplicator voiceSettingsApplicator(Ref ref) {
         data: (VoiceNoiseFilterState value) => value.isSupported,
         orElse: () => false,
       );
-  final bool higherVideoQuality = ref.watch(
-    instanceFeatureEnabledProvider(LimitKeys.featureHigherVideoQuality),
-  );
   return VoiceSettingsApplicator(
     noiseFilterSupported: noiseFilterSupported,
-    higherVideoQuality: higherVideoQuality,
+    videoQualityCaps: ref.watch(instanceVideoQualityCapsProvider),
     meshPhoneCap: false,
   );
 }

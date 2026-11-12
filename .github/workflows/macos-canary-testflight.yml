@@ -28,6 +28,7 @@ jobs:
         uses: axi92/flutter-action@72633a794ba0b23276fa4fc465a6cacb758a90c5
         with:
           channel: stable
+          flutter-version: 3.47.9
 
       - name: Set up Rust and native asset build hooks
         run: |
@@ -117,13 +118,13 @@ jobs:
             [ -e "$existing_profile" ] || continue
             PROFILE_APP_ID=$(security cms -D -i "$existing_profile" | plutil -extract Entitlements.application-identifier raw - 2>/dev/null || true)
             case "$PROFILE_APP_ID" in
-              *.com.fluxer.lite|*.com.fluxer.lite.canary)
+              *.com.fluxer.oxygen|*.com.fluxer.oxygen.canary)
                 rm -f "$existing_profile"
                 ;;
             esac
           done
           if [ -z "$PROVISIONING_PROFILE_BASE64" ]; then
-            echo "::error::CANARY_MACOS_PROVISIONING_PROFILE_BASE64 is not set. Add the base64-encoded Mac App Store profile for com.fluxer.lite.canary."
+            echo "::error::CANARY_MACOS_PROVISIONING_PROFILE_BASE64 is not set. Add the base64-encoded Mac App Store profile for com.fluxer.oxygen.canary."
             exit 1
           fi
           echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILES_DIR/profile.mobileprovision"

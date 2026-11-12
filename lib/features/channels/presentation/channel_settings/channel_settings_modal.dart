@@ -12,8 +12,8 @@ import 'package:fluxer_app/features/channels/presentation/widgets/channel_icon.d
 import 'package:fluxer_app/features/settings/presentation/widgets/settings_sidebar.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ChannelSettingsModal extends ConsumerStatefulWidget {
   const ChannelSettingsModal({
@@ -144,7 +144,12 @@ class _ChannelSettingsDesktopLayout extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 20, 16, 12),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      18,
+                      20,
+                      16,
+                      12,
+                    ),
                     child: Row(
                       children: <Widget>[
                         ChannelIcon(type: channel.type, channel: channel),
@@ -200,7 +205,7 @@ class _ChannelSettingsDesktopLayout extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(40, 12, 12, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(40, 12, 12, 0),
                   child: Row(
                     children: <Widget>[
                       Text(
@@ -210,16 +215,20 @@ class _ChannelSettingsDesktopLayout extends StatelessWidget {
                         style: context.textStyles.heading,
                       ),
                       const Spacer(),
-                      InkWell(
-                        onTap: () => context.pop(),
-                        borderRadius: BorderRadius.circular(20),
-                        child: SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: PhosphorIcon(
-                            PhosphorIconsBold.x,
-                            size: 18,
-                            color: context.colors.interactiveNormal,
+                      Semantics(
+                        button: true,
+                        label: l10n.uiClose,
+                        child: InkWell(
+                          onTap: () => context.pop(),
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: PhosphorIcon(
+                              PhosphorIconsBold.x,
+                              size: 18,
+                              color: context.colors.interactiveNormal,
+                            ),
                           ),
                         ),
                       ),

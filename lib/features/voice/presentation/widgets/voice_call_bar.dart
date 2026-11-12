@@ -19,9 +19,9 @@ import 'package:fluxer_app/features/voice/utils/connection/session_navigation.da
 import 'package:fluxer_app/features/voice/voice_session_errors.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:fluxer_dart/gateway.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class VoiceCallBar extends ConsumerWidget {
   const VoiceCallBar({super.key});
@@ -57,9 +57,13 @@ class VoiceCallBar extends ConsumerWidget {
     return findDmById(conversations, channelId);
   }
 
-  String _privateSubtitle(DmConversation? dm, String? channelId) {
+  String _privateSubtitle(
+    FluxerLocalizations l10n,
+    DmConversation? dm,
+    String? channelId,
+  ) {
     if (dm != null) {
-      return dm.displayName;
+      return dmConversationDisplayName(l10n, dm);
     }
     return channelId ?? '';
   }
@@ -149,7 +153,7 @@ class VoiceCallBar extends ConsumerWidget {
       dmViewModelProvider.select((s) => s.conversations),
     );
     final ChannelListState channelState = ref.watch(
-      channelListViewModelProvider.select((s) => s),
+      channelListViewModelProvider,
     );
     final DmConversation? dm = isGuildVoice
         ? null
@@ -182,7 +186,7 @@ class VoiceCallBar extends ConsumerWidget {
         voice: voice,
         isGroup: dm?.isGroup ?? false,
       );
-      subtitle = _privateSubtitle(dm, voice.channelId);
+      subtitle = _privateSubtitle(l10n, dm, voice.channelId);
     }
     final String? connectionId = voice.activeConnectionId;
     final VoiceState? selfVoiceState = connectionId == null
@@ -201,6 +205,7 @@ class VoiceCallBar extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
               child: FluxerGestureDetector(
                 behavior: HitTestBehavior.opaque,
+                excludeFromSemantics: true,
                 onTap: () {
                   _onBarNavigate(context, voice: voice);
                 },
@@ -216,41 +221,48 @@ class VoiceCallBar extends ConsumerWidget {
                         _buildStatusIcon(context),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                primaryLine,
-                                style: context.textStyles.channelName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (subtitle.isNotEmpty) ...<Widget>[
-                                const SizedBox(height: 2),
+                          child: Semantics(
+                            button: true,
+                            hint: l10n.voiceCallBarOpenCallHint,
+                            onTap: () {
+                              _onBarNavigate(context, voice: voice);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
                                 Text(
-                                  subtitle,
-                                  style: context.textStyles.categoryName,
+                                  primaryLine,
+                                  style: context.textStyles.channelName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                              ],
-                              if (voice.errorMessage != null) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  resolveVoiceSessionErrorMessage(
-                                    voice.errorMessage!,
-                                    l10n,
+                                if (subtitle.isNotEmpty) ...<Widget>[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    subtitle,
+                                    style: context.textStyles.categoryName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  style: context.textStyles.categoryName
-                                      .copyWith(
-                                        color: context.colors.statusDanger,
-                                      ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                ],
+                                if (voice.errorMessage != null) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    resolveVoiceSessionErrorMessage(
+                                      voice.errorMessage!,
+                                      l10n,
+                                    ),
+                                    style: context.textStyles.categoryName
+                                        .copyWith(
+                                          color: context.colors.statusDanger,
+                                        ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                         if (voice.errorMessage == null &&
@@ -266,6 +278,7 @@ class VoiceCallBar extends ConsumerWidget {
                             tooltip: isMuted
                                 ? l10n.voiceControlUnmute
                                 : l10n.voiceControlMute,
+                            semanticLabel: l10n.voiceControlMute,
                             toggled: isMuted,
                             onPressed: () {
                               unawaited(
@@ -286,6 +299,7 @@ class VoiceCallBar extends ConsumerWidget {
                             tooltip: isDeafened
                                 ? l10n.voiceControlUndeafen
                                 : l10n.voiceControlDeafen,
+                            semanticLabel: l10n.voiceControlDeafen,
                             toggled: isDeafened,
                             onPressed: () {
                               unawaited(
@@ -344,6 +358,7 @@ class _ControlIconButton extends StatelessWidget {
     required this.color,
     required this.onPressed,
     required this.tooltip,
+    required this.semanticLabel,
     this.toggled = false,
   });
 
@@ -351,16 +366,18 @@ class _ControlIconButton extends StatelessWidget {
   final Color color;
   final VoidCallback onPressed;
   final String tooltip;
+  final String semanticLabel;
   final bool toggled;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: tooltip,
+      label: semanticLabel,
       toggled: toggled,
       child: Tooltip(
         message: tooltip,
+        excludeFromSemantics: true,
         child: Material(
           color: color,
           shape: const CircleBorder(),

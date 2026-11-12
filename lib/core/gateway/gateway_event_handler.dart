@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:fluxer_app/core/database/daos/thread_dao.dart';
 import 'package:fluxer_app/core/database/fluxer_database.dart' as db;
 import 'package:fluxer_app/core/gateway/channel_last_message_index.dart';
 import 'package:fluxer_app/core/gateway/gateway_ready_guild_parser.dart';
@@ -190,6 +191,7 @@ class GatewayEventHandler {
     this.onUserSettingsHydrate,
     this.onCurrentUserUpdate,
     this.onSessionChanging,
+    this.isCacheOwnedBy,
     this.onUnavailableGuildsReady,
     this.onGuildAvailabilityChanged,
     this.onGuildAvailable,
@@ -277,6 +279,7 @@ class GatewayEventHandler {
   final UserSettingsHydrateCallback? onUserSettingsHydrate;
   final CurrentUserUpdateCallback? onCurrentUserUpdate;
   final SessionChangingCallback? onSessionChanging;
+  final Future<bool> Function(String userId)? isCacheOwnedBy;
   final UnavailableGuildsReadyCallback? onUnavailableGuildsReady;
   final GuildAvailabilityChangedCallback? onGuildAvailabilityChanged;
   final GuildAvailableCallback? onGuildAvailable;
@@ -795,19 +798,27 @@ class GatewayEventHandler {
         _hasCommittedReady &&
         _lastReadyUserId != null &&
         _lastReadyUserId == event.user.id;
-    final bool shouldFullWipe = !isSameUserReconnect;
-    if (shouldFullWipe) {
+    final bool diffAgainstCache =
+        isSameUserReconnect ||
+        (!_hasCommittedReady &&
+            await (isCacheOwnedBy?.call(event.user.id) ?? Future.value(false)));
+    final bool shouldFullWipe = !diffAgainstCache;
+    final String readyMode = shouldFullWipe
+        ? 'full'
+        : (isSameUserReconnect ? 'incremental' : 'cache');
+    if (!isSameUserReconnect) {
       _emit(onSessionChanging);
     }
     talker.info(
-      '[Gateway] READY received (session: ${event.sessionId})'
-      ' — guilds: ${event.guilds.length}'
+      '[Gateway] READY received (session: ${event.sessionId}),'
+      ' guilds: ${event.rawGuilds.length}'
       ', DMs: ${event.privateChannels.length}'
       ', relationships: ${event.relationships.length}'
       ', presences: ${event.presences.length}'
       ', readStates: ${event.readStates.length}'
+      ', dropped: ${event.droppedItems}'
       ', user: ${event.user.id}'
-      ', mode: ${shouldFullWipe ? 'full' : 'incremental'}',
+      ', mode: $readyMode',
     );
 
     _currentUserId = event.user.id;
@@ -845,7 +856,9 @@ class GatewayEventHandler {
     final bool keepCachedMessages =
         shouldFullWipe &&
         await database.userSettingsDao.getSettings(event.user.id) != null;
-    final Set<String> localGuildIdsBeforeReady = isSameUserReconnect
+    final bool trimCachedMessages =
+        keepCachedMessages || (diffAgainstCache && !isSameUserReconnect);
+    final Set<String> localGuildIdsBeforeReady = diffAgainstCache
         ? (await database.guildDao.getServers()).map((row) => row.id).toSet()
         : const <String>{};
 
@@ -857,7 +870,7 @@ class GatewayEventHandler {
         guildPositions: guildPositions,
         users: <Map<String, dynamic>>[
           ...?event.users,
-          jsonDecode(jsonEncode(event.user)) as Map<String, dynamic>,
+          _selfUserPartialJson(event.user),
         ],
       );
       guildsMs = parsePhase.elapsedMilliseconds;
@@ -960,16 +973,12 @@ class GatewayEventHandler {
             <db.UsersCompanion>[];
         final List<db.MembersCompanion> memberCompanions =
             <db.MembersCompanion>[];
-        final Map<String, List<db.ThreadMembersCompanion>> joinedThreads =
-            <String, List<db.ThreadMembersCompanion>>{};
-        final Map<String, Set<String>> listedThreadIds =
-            <String, Set<String>>{};
-        final List<({String guildId, List<db.GuildEmojisCompanion> emojis})>
-        emojiReplacements =
-            <({String guildId, List<db.GuildEmojisCompanion> emojis})>[];
-        final List<({String guildId, List<db.GuildStickersCompanion> stickers})>
-        stickerReplacements =
-            <({String guildId, List<db.GuildStickersCompanion> stickers})>[];
+        final Map<String, JoinedThreadsSnapshot> joinedThreads =
+            <String, JoinedThreadsSnapshot>{};
+        final Map<String, List<db.GuildEmojisCompanion>> emojiReplacements =
+            <String, List<db.GuildEmojisCompanion>>{};
+        final Map<String, List<db.GuildStickersCompanion>> stickerReplacements =
+            <String, List<db.GuildStickersCompanion>>{};
         final Map<String, Set<String>> snapshotChannelIdsByGuildId =
             <String, Set<String>>{};
         final Map<String, Set<String>> snapshotRoleIdsByGuildId =
@@ -1015,8 +1024,7 @@ class GatewayEventHandler {
               );
             }
           }
-          joinedThreads[guildId] = joined;
-          listedThreadIds[guildId] = listed;
+          joinedThreads[guildId] = (joined: joined, listedIds: listed);
           if (guildData.roles.isNotEmpty) {
             roleCompanions.addAll(
               guildData.roles.map((r) => roleFromSdk(r, guildId)),
@@ -1031,37 +1039,31 @@ class GatewayEventHandler {
           if (guildData.voiceStates.isNotEmpty) {
             readyVoiceStates.addAll(guildData.voiceStates);
           }
-          if (guildData.emojis.isNotEmpty || isSameUserReconnect) {
-            emojiReplacements.add((
-              guildId: guildId,
-              emojis: guildData.emojis
-                  .map(
-                    (e) => db.GuildEmojisCompanion.insert(
-                      id: e.id,
-                      guildId: guildId,
-                      name: e.name,
-                      animated: Value(e.animated),
-                    ),
-                  )
-                  .toList(),
-            ));
+          if (guildData.emojis.isNotEmpty || diffAgainstCache) {
+            emojiReplacements[guildId] = guildData.emojis
+                .map(
+                  (e) => db.GuildEmojisCompanion.insert(
+                    id: e.id,
+                    guildId: guildId,
+                    name: e.name,
+                    animated: Value(e.animated),
+                  ),
+                )
+                .toList();
           }
-          if (guildData.stickers.isNotEmpty || isSameUserReconnect) {
-            stickerReplacements.add((
-              guildId: guildId,
-              stickers: guildData.stickers
-                  .map(
-                    (s) => db.GuildStickersCompanion.insert(
-                      id: s.id,
-                      guildId: guildId,
-                      name: s.name,
-                      description: Value(s.description),
-                      tagsJson: Value(jsonEncode(s.tags)),
-                      animated: Value(s.animated),
-                    ),
-                  )
-                  .toList(),
-            ));
+          if (guildData.stickers.isNotEmpty || diffAgainstCache) {
+            stickerReplacements[guildId] = guildData.stickers
+                .map(
+                  (s) => db.GuildStickersCompanion.insert(
+                    id: s.id,
+                    guildId: guildId,
+                    name: s.name,
+                    description: Value(s.description),
+                    tagsJson: Value(jsonEncode(s.tags)),
+                    animated: Value(s.animated),
+                  ),
+                )
+                .toList();
           }
           if (snapshotChannelIds.isNotEmpty) {
             snapshotChannelIdsByGuildId[guildId] = snapshotChannelIds;
@@ -1089,61 +1091,46 @@ class GatewayEventHandler {
         if (memberCompanions.isNotEmpty) {
           await database.memberDao.upsertMembers(memberCompanions);
         }
-        for (final MapEntry<String, List<db.ThreadMembersCompanion>> entry
-            in joinedThreads.entries) {
-          _forgetThreads(
-            await database.threadDao.reconcileJoined(
-              entry.key,
-              entry.value,
-              listedIds: listedThreadIds[entry.key] ?? const <String>{},
-            ),
-            guildId: entry.key,
-          );
+        final Map<String, List<String>> staleThreadIds = await database
+            .threadDao
+            .reconcileJoinedForGuilds(joinedThreads);
+        for (final MapEntry<String, List<String>> entry
+            in staleThreadIds.entries) {
+          _forgetThreads(entry.value, guildId: entry.key);
         }
-        for (final ({String guildId, List<db.GuildEmojisCompanion> emojis})
-            replacement
-            in emojiReplacements) {
-          await database.guildEmojiDao.replaceForGuild(
-            replacement.guildId,
-            replacement.emojis,
-          );
-        }
-        for (final ({String guildId, List<db.GuildStickersCompanion> stickers})
-            replacement
-            in stickerReplacements) {
-          await database.guildStickerDao.replaceForGuild(
-            replacement.guildId,
-            replacement.stickers,
-          );
-        }
+        await database.guildEmojiDao.replaceForGuilds(emojiReplacements);
+        await database.guildStickerDao.replaceForGuilds(stickerReplacements);
 
-        if (isSameUserReconnect) {
+        if (diffAgainstCache) {
           prunedChannelIds.addAll(
             (await _pruneGuildSnapshots(
               channelIdsByGuildId: snapshotChannelIdsByGuildId,
               roleIdsByGuildId: snapshotRoleIdsByGuildId,
             )).channelIds,
           );
-          final readyGuildIds = <String>{
-            for (final rawGuild in event.rawGuilds)
-              if (rawGuild['id'] is String) rawGuild['id'] as String,
-          };
-          final Set<String> localIdsNow = (await database.guildDao.getServers())
-              .map((row) => row.id)
-              .toSet();
-          prunedGuildIds.addAll(
-            await removeGuildsNotInLocalDb(
-              database,
-              guildIdsKeptAfterMembershipSync(
-                apiGuildIds: readyGuildIds,
-                localGuildIdsBeforeFetch: localGuildIdsBeforeReady,
-                localGuildIdsAfterUpsert: localIdsNow,
-              ),
-            ),
-          );
         }
 
         fanoutMs = phase.elapsedMilliseconds;
+      }
+
+      if (diffAgainstCache) {
+        final readyGuildIds = <String>{
+          for (final rawGuild in event.rawGuilds)
+            if (rawGuild['id'] is String) rawGuild['id'] as String,
+        };
+        final Set<String> localIdsNow = (await database.guildDao.getServers())
+            .map((row) => row.id)
+            .toSet();
+        prunedGuildIds.addAll(
+          await removeGuildsNotInLocalDb(
+            database,
+            guildIdsKeptAfterMembershipSync(
+              apiGuildIds: readyGuildIds,
+              localGuildIdsBeforeFetch: localGuildIdsBeforeReady,
+              localGuildIdsAfterUpsert: localIdsNow,
+            ),
+          ),
+        );
       }
 
       phase
@@ -1175,7 +1162,7 @@ class GatewayEventHandler {
       await database.dmChannelDao.upsertDmChannels([
         buildPersonalNotesDmCompanion(userId: event.user.id),
       ]);
-      if (isSameUserReconnect) {
+      if (diffAgainstCache) {
         final List<String> closedDmIds = await database.dmChannelDao
             .deleteDmChannelsNotIn(<String>{
               event.user.id,
@@ -1245,7 +1232,7 @@ class GatewayEventHandler {
                   in await database.readStateDao.getReadStates())
                 row.channelId: row,
             };
-        final List<db.ReadStatesCompanion> readStateCompanions =
+        final List<db.ReadStatesCompanion> changedReadStates =
             <db.ReadStatesCompanion>[];
         for (final rs in event.readStates) {
           final db.ReadState? existing = existingByChannelId[rs.id];
@@ -1257,22 +1244,32 @@ class GatewayEventHandler {
           final String? sticky = keepManual
               ? existing?.stickyUnreadMessageId
               : null;
-          readStateCompanions.add(
-            db.ReadStatesCompanion(
-              channelId: Value(rs.id),
-              lastMessageId: Value(rs.lastMessageId),
-              mentionCount: Value(rs.mentionCount),
-              lastPinTimestamp: Value(rs.lastPinTimestamp),
-              manual: Value(keepManual),
-              stickyUnreadMessageId: Value(sticky),
-              version: Value(rs.version),
-              flags: Value(rs.flags),
-            ),
+          final String? outstandingAck = keepManual
+              ? null
+              : ackBatcher?.outstandingAck(rs.id);
+          final bool localAckAhead =
+              compareSnowflakeIds(outstandingAck, rs.lastMessageId) > 0;
+          final String? lastMessageId = localAckAhead
+              ? outstandingAck
+              : rs.lastMessageId;
+          final int mentionCount = localAckAhead ? 0 : rs.mentionCount;
+          final db.ReadStatesCompanion companion = db.ReadStatesCompanion(
+            channelId: Value(rs.id),
+            lastMessageId: Value(lastMessageId),
+            mentionCount: Value(mentionCount),
+            lastPinTimestamp: Value(rs.lastPinTimestamp),
+            manual: Value(keepManual),
+            stickyUnreadMessageId: Value(sticky),
+            version: Value(rs.version),
+            flags: Value(rs.flags),
           );
+          if (!readStateCompanionMatchesPersisted(existing, companion)) {
+            changedReadStates.add(companion);
+          }
           readStateWriteBatcher?.adoptPersisted(
             channelId: rs.id,
-            lastMessageId: rs.lastMessageId,
-            mentionCount: rs.mentionCount,
+            lastMessageId: lastMessageId,
+            mentionCount: mentionCount,
             manual: keepManual,
             stickyUnreadMessageId: sticky,
             lastPinTimestamp: rs.lastPinTimestamp,
@@ -1281,8 +1278,8 @@ class GatewayEventHandler {
           );
           existingByChannelId[rs.id] = db.ReadState(
             channelId: rs.id,
-            lastMessageId: rs.lastMessageId,
-            mentionCount: rs.mentionCount,
+            lastMessageId: lastMessageId,
+            mentionCount: mentionCount,
             lastPinTimestamp: rs.lastPinTimestamp,
             manual: keepManual,
             stickyUnreadMessageId: sticky,
@@ -1290,7 +1287,7 @@ class GatewayEventHandler {
             flags: rs.flags,
           );
         }
-        await upsertReadStatesIfChanged(database, readStateCompanions);
+        await database.readStateDao.upsertReadStates(changedReadStates);
       }
 
       readstatesMs = phase.elapsedMilliseconds;
@@ -1309,15 +1306,15 @@ class GatewayEventHandler {
 
       final guildSettings = event.userGuildSettings;
       if (guildSettings != null) {
-        for (final gs in guildSettings) {
-          final guildId = gs.guildId ?? '@me';
-          await database.userGuildSettingsDao.upsert(
-            db.UserGuildSettingsTableCompanion(
-              guildId: Value(guildId),
-              data: Value(jsonEncode(gs.toJson())),
-            ),
-          );
-        }
+        await database.userGuildSettingsDao.clearAll();
+        await database.userGuildSettingsDao
+            .upsertAll(<db.UserGuildSettingsTableCompanion>[
+              for (final gs in guildSettings)
+                db.UserGuildSettingsTableCompanion(
+                  guildId: Value(gs.guildId ?? '@me'),
+                  data: Value(jsonEncode(gs.toJson())),
+                ),
+            ]);
       }
 
       final notes = event.notes;
@@ -1355,6 +1352,7 @@ class GatewayEventHandler {
 
       final rtcRegions = event.rtcRegions;
       if (rtcRegions != null) {
+        await database.rtcRegionsDao.clearAll();
         for (final region in rtcRegions) {
           final id = region['id'] as String?;
           if (id == null) {
@@ -1374,7 +1372,7 @@ class GatewayEventHandler {
 
       await database.threadDao.pruneArchived(now: DateTime.now());
 
-      if (keepCachedMessages) {
+      if (trimCachedMessages) {
         await database.messageDao.deleteMessagesOutsideKnownChannels();
         await database.messageDao.keepNewestMessagesPerChannel(
           _cachedMessagesKeptPerChannel,
@@ -1415,7 +1413,7 @@ class GatewayEventHandler {
         'accountData=${accountDataMs}ms readstates=${readstatesMs}ms '
         'settings=${settingsMs}ms post=${postMs}ms '
         'total=${readyStopwatch.elapsedMilliseconds}ms '
-        'guildCount=${event.guilds.length}',
+        'guildCount=${event.rawGuilds.length}',
       );
   }
 
@@ -1687,11 +1685,7 @@ class GatewayEventHandler {
     _notifyOwnMessageCreated(event);
 
     if (event.message.webhookId == null) {
-      unawaited(
-        database.userDao.upsertUser(userFromPartialSdk(event.message.author)),
-      );
-      unawaited(upsertMentionUsersFromSdk(database, event.message.mentions));
-      unawaited(upsertSupplementalUsersFromSdk(database, event.message.users));
+      unawaited(upsertMessageUsersFromSdk(database, event.message));
     }
 
     final ReadStateIncomingMessageDecision decision =
@@ -1940,13 +1934,14 @@ class GatewayEventHandler {
   }) async {
     switch (decision.kind) {
       case ReadStateIncomingMessageKind.ackCurrentUserMessage:
-        ackBatcher?.cancel(msg.channelId);
+        ackBatcher?.cancelIfCovered(msg.channelId, msg.id);
         await _enqueueOrAckReadState(
           channelId: msg.channelId,
           messageId: msg.id,
           clearSticky: true,
           markDmRead: false,
         );
+        await readStateWriteBatcher?.flushAck(msg.channelId);
         return;
       case ReadStateIncomingMessageKind.ackAutomaticMessage:
       case ReadStateIncomingMessageKind.ackBlockedMessage:
@@ -2107,11 +2102,7 @@ class GatewayEventHandler {
       currentUserId: _selfUserId,
     );
     if (event.message.webhookId == null) {
-      unawaited(
-        database.userDao.upsertUser(userFromPartialSdk(event.message.author)),
-      );
-      unawaited(upsertMentionUsersFromSdk(database, event.message.mentions));
-      unawaited(upsertSupplementalUsersFromSdk(database, event.message.users));
+      unawaited(upsertMessageUsersFromSdk(database, event.message));
     }
     await database.transaction(() async {
       await database.messageDao.upsertMessage(msg.toCompanion());
@@ -2133,11 +2124,7 @@ class GatewayEventHandler {
       mentionRoleIds: event.message.mentionRoles,
     );
     if (event.message.webhookId == null) {
-      unawaited(
-        database.userDao.upsertUser(userFromPartialSdk(event.message.author)),
-      );
-      unawaited(upsertMentionUsersFromSdk(database, event.message.mentions));
-      unawaited(upsertSupplementalUsersFromSdk(database, event.message.users));
+      unawaited(upsertMessageUsersFromSdk(database, event.message));
     }
     final db.MessagesCompanion companion = msg
         .copyWith(isMentioned: mentionsCurrentUser)
@@ -2558,6 +2545,7 @@ class GatewayEventHandler {
         username: event.user.username,
         discriminator: event.user.discriminator,
         avatar: event.user.avatar,
+        email: event.user.email,
       ),
     );
     _emit(() => onCurrentUserUpdate?.call(event.user));
@@ -3368,6 +3356,20 @@ db.FavoriteMemesTableCompanion? _favoriteMemeCompanion(
     data: Value(jsonEncode(data)),
   );
 }
+
+Map<String, dynamic> _selfUserPartialJson(UserPrivateResponse user) =>
+    <String, dynamic>{
+      'id': user.id,
+      'username': user.username,
+      'discriminator': user.discriminator,
+      'global_name': user.globalName,
+      'avatar': user.avatar,
+      'avatar_color': user.avatarColor,
+      'flags': user.flags,
+      'bot': user.bot,
+      'system': user.system,
+      'mention_flags': user.mentionFlags?.json,
+    };
 
 String? _gatewaySnowflakeId(Object? value) {
   if (value is String) {

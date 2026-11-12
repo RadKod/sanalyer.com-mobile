@@ -16,8 +16,8 @@ class _AvatarStack extends StatelessWidget {
       child: Stack(
         children: [
           for (var i = 0; i < avatarUrls.length; i++)
-            Positioned(
-              left: i * 20.0,
+            PositionedDirectional(
+              start: i * 20.0,
               child: Container(
                 width: 28,
                 height: 28,
@@ -54,29 +54,21 @@ class _GuildBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isPartnered) {
-      return Container(
-        width: 16,
-        height: 16,
-        decoration: BoxDecoration(
-          color: context.colors.brandPrimary,
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: PhosphorIcon(
-            PhosphorIconsBold.infinity,
-            color: context.colors.textOnBrandPrimary,
-            size: 10,
-          ),
-        ),
+      return FluxerBrandLogo(
+        size: 16,
+        symbolColor: context.colors.textOnBrandPrimary,
       );
     }
     return PhosphorIcon(
-      PhosphorIconsFill.sealCheck,
+      PhosphorIconsFill.checkCircle,
       color: context.colors.textPrimary,
       size: 16,
     );
   }
 }
+
+double _ringBadgeOffset(BuildContext context) =>
+    usesDesktopPointerUi(context) ? -7 : -4;
 
 class _VoiceActivityBadge extends StatelessWidget {
   final VoiceActivityType type;
@@ -96,9 +88,10 @@ class _VoiceActivityBadge extends StatelessWidget {
       case VoiceActivityType.none:
         return const SizedBox.shrink();
     }
+    final double size = usesDesktopPointerUi(context) ? 26 : 24;
     return Container(
-      width: 24,
-      height: 24,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: context.colors.statusOnline,
         shape: BoxShape.circle,
@@ -181,11 +174,21 @@ class _GuildNotificationChannelIcon extends ConsumerWidget {
 class _TooltipShapePainter extends CustomPainter {
   final Color fillColor;
   final Color borderColor;
+  final TextDirection textDirection;
 
-  _TooltipShapePainter({required this.fillColor, required this.borderColor});
+  _TooltipShapePainter({
+    required this.fillColor,
+    required this.borderColor,
+    required this.textDirection,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (textDirection == TextDirection.rtl) {
+      canvas
+        ..translate(size.width, 0)
+        ..scale(-1, 1);
+    }
     const r = _kBorderRadius;
     const left = _kArrowWidth;
     final centerY = size.height / 2;
@@ -226,5 +229,7 @@ class _TooltipShapePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_TooltipShapePainter old) =>
-      old.fillColor != fillColor || old.borderColor != borderColor;
+      old.fillColor != fillColor ||
+      old.borderColor != borderColor ||
+      old.textDirection != textDirection;
 }

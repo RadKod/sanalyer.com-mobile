@@ -4,15 +4,18 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluxer_app/core/constants/assets.dart';
+import 'package:fluxer_app/core/desktop/window/desktop_main_window.dart';
+import 'package:fluxer_app/core/instance/instance_constants.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/guilds/domain/guild.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
+import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/external_links/external_link_handler.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:window_manager/window_manager.dart';
 
 const kNativeTitlebarHeight = 32.0;
@@ -29,13 +32,18 @@ class NativeTitlebar extends ConsumerWidget {
     final config = router.routerDelegate.currentConfiguration;
     final location = config.isNotEmpty ? config.last.matchedLocation : '/';
     final activeGuildId = ref.watch(activeGuildIdProvider);
-    final title = _resolveTitle(guilds, location, activeGuildId);
+    final title = _resolveTitle(
+      FluxerLocalizations.of(context),
+      guilds,
+      location,
+      activeGuildId,
+    );
     final bool showCustomWindowChrome = !Platform.isMacOS;
 
     return Material(
       color: context.colors.backgroundSecondaryAlt,
       child: FluxerGestureDetector(
-        onSecondaryTap: windowManager.popUpWindowMenu,
+        onSecondaryTap: popUpDesktopMainWindowMenu,
         child: SizedBox(
           height: kNativeTitlebarHeight,
           child: Stack(
@@ -69,7 +77,7 @@ class NativeTitlebar extends ConsumerWidget {
                       onPressed: () => unawaited(
                         handleExternalLinkTap(
                           context,
-                          'https://sanalyer.com',
+                          InstanceConstants.helpCenterUrl,
                         ),
                       ),
                     ),
@@ -81,16 +89,16 @@ class NativeTitlebar extends ConsumerWidget {
                           color: context.colors.borderColor,
                         ),
                       ),
-                      _WindowButton(
+                      const _WindowButton(
                         icon: PhosphorIconsBold.minus,
-                        onPressed: windowManager.minimize,
+                        onPressed: minimizeDesktopMainWindow,
                       ),
                       const _MaximizeButton(),
                       _WindowButton(
                         icon: PhosphorIconsBold.x,
                         hoverColor: context.colors.textDanger,
                         hoverIconColor: context.colors.textOnBrandPrimary,
-                        onPressed: windowManager.close,
+                        onPressed: closeDesktopMainWindow,
                       ),
                     ],
                   ],
@@ -104,15 +112,16 @@ class NativeTitlebar extends ConsumerWidget {
   }
 
   String _resolveTitle(
+    FluxerLocalizations l10n,
     List<Guild> guilds,
     String location,
     String? activeGuildId,
   ) {
     if (location.startsWith('/channels/@me')) {
-      return 'Direct Messages';
+      return l10n.dmListDirectMessagesTitle;
     }
     if (location.startsWith('/channels/@favorites')) {
-      return 'Favorites';
+      return l10n.favoritesTitle;
     }
     if (activeGuildId != null) {
       final guild = guilds.where((g) => g.id == activeGuildId).firstOrNull;
@@ -124,59 +133,19 @@ class NativeTitlebar extends ConsumerWidget {
   }
 }
 
-class _MaximizeButton extends StatefulWidget {
+class _MaximizeButton extends StatelessWidget {
   const _MaximizeButton();
 
   @override
-  State<_MaximizeButton> createState() => _MaximizeButtonState();
-}
-
-class _MaximizeButtonState extends State<_MaximizeButton> with WindowListener {
-  bool _isMaximized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    windowManager.addListener(this);
-    unawaited(_queryMaximized());
-  }
-
-  @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
-  }
-
-  Future<void> _queryMaximized() async {
-    final isMaximized = await windowManager.isMaximized();
-    if (mounted) {
-      setState(() => _isMaximized = isMaximized);
-    }
-  }
-
-  @override
-  void onWindowMaximize() {
-    setState(() => _isMaximized = true);
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    setState(() => _isMaximized = false);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return _WindowButton(
-      icon: _isMaximized
-          ? PhosphorIconsBold.cornersIn
-          : PhosphorIconsBold.square,
-      onPressed: () async {
-        if (_isMaximized) {
-          await windowManager.unmaximize();
-        } else {
-          await windowManager.maximize();
-        }
-      },
+    return ListenableBuilder(
+      listenable: desktopMainWindow,
+      builder: (BuildContext context, _) => _WindowButton(
+        icon: desktopMainWindow.isMaximized
+            ? PhosphorIconsBold.cornersIn
+            : PhosphorIconsBold.square,
+        onPressed: toggleMaximizeDesktopMainWindow,
+      ),
     );
   }
 }

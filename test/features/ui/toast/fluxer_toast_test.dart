@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart' as widgets;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
@@ -8,7 +9,7 @@ import 'package:fluxer_app/features/ui/toast/fluxer_toast.dart';
 import 'package:fluxer_app/features/ui/toast/fluxer_toast_overlay.dart';
 import 'package:fluxer_app/features/ui/toast/toast_provider.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 import '../../../helpers/test_l10n.dart';
 
@@ -142,7 +143,9 @@ void main() {
 
       await tester.pump();
 
-      final dynamic textWidget = tester.widget(find.textContaining('Line one'));
+      final widgets.Text textWidget = tester.widget<widgets.Text>(
+        find.textContaining('Line one'),
+      );
       expect(textWidget.textAlign, TextAlign.center);
     });
 
@@ -160,7 +163,9 @@ void main() {
 
       await tester.pump();
 
-      final dynamic textWidget = tester.widget(find.textContaining('Line one'));
+      final widgets.Text textWidget = tester.widget<widgets.Text>(
+        find.textContaining('Line one'),
+      );
       expect(textWidget.textAlign, isNull);
     });
 

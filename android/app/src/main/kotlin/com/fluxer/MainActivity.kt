@@ -2,16 +2,21 @@ package com.fluxer
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import com.hiennv.flutter_callkit_incoming.CallkitEventCallback
 import com.hiennv.flutter_callkit_incoming.FlutterCallkitIncomingPlugin
-import com.ryanheise.audioservice.AudioServiceActivity
+import com.ryanheise.audioservice.AudioServiceFragmentActivity
+import io.flutter.embedding.android.FlutterActivityLaunchConfigs
+import io.flutter.embedding.android.FlutterFragment
+import io.flutter.embedding.android.RenderMode
+import io.flutter.embedding.android.TransparencyMode
 import io.flutter.embedding.engine.FlutterEngine
 
-class MainActivity : AudioServiceActivity() {
+class MainActivity : AudioServiceFragmentActivity() {
     private val imeEditingShortcutBridge = ImeEditingShortcutBridge()
-    private var ownsMainEngine = false
+    private val appLockBridge = AppLockBridge(this)
 
     private val callkitEventCallback = object : CallkitEventCallback {
         override fun onCallEvent(
@@ -25,6 +30,15 @@ class MainActivity : AudioServiceActivity() {
             return
         }
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            splashScreen.setOnExitAnimationListener { view ->
+                view.animate()
+                    .alpha(0f)
+                    .setDuration(200L)
+                    .withEndAction { view.remove() }
+                    .start()
+            }
+        }
         FlutterCallkitIncomingPlugin.registerEventCallback(callkitEventCallback)
     }
 
@@ -35,19 +49,46 @@ class MainActivity : AudioServiceActivity() {
         super.onNewIntent(intent)
     }
 
-    override fun onDestroy() {
-        val ownedEngine = ownsMainEngine
-        ownsMainEngine = false
-        VoiceTaskRemovedRegistry.bridge = null
-        stopVoiceTaskRemovedWatcher(applicationContext)
-        FlutterCallkitIncomingPlugin.unregisterEventCallback(callkitEventCallback)
-        super.onDestroy()
-        if (ownedEngine) {
-            FluxerUnifiedPushService.noteMainEngineStopped()
-        }
+    override fun onStart() {
+        super.onStart()
+        MainEngineState.onActivityStarted()
     }
 
-    override fun popSystemNavigator(): Boolean = moveTaskToBack(true)
+    override fun onPause() {
+        appLockBridge.onPause()
+        super.onPause()
+    }
+
+    override fun onStop() {
+        MainEngineState.onActivityStopped()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        FlutterCallkitIncomingPlugin.unregisterEventCallback(callkitEventCallback)
+        super.onDestroy()
+    }
+
+    override fun createFlutterFragment(): FlutterFragment {
+        return FlutterFragment.CachedEngineFragmentBuilder(
+            MainFlutterFragment::class.java,
+            requireNotNull(cachedEngineId),
+        )
+            .renderMode(renderMode)
+            .transparencyMode(
+                if (backgroundMode == FlutterActivityLaunchConfigs.BackgroundMode.opaque) {
+                    TransparencyMode.opaque
+                } else {
+                    TransparencyMode.transparent
+                },
+            )
+            .handleDeeplinking(shouldHandleDeeplinking())
+            .shouldAttachEngineToActivity(shouldAttachEngineToActivity())
+            .destroyEngineWithFragment(shouldDestroyEngineWithHost())
+            .shouldDelayFirstAndroidViewDraw(renderMode == RenderMode.surface)
+            .shouldAutomaticallyHandleOnBackPressed(true)
+            .build()
+    }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (imeEditingShortcutBridge.dispatch(event)) {
@@ -58,18 +99,16 @@ class MainActivity : AudioServiceActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        ownsMainEngine = true
-        FluxerUnifiedPushService.noteMainEngineStarted()
+        MainEngineKeepAlive.attach(this, flutterEngine)
         BrowserLaunchBridge(applicationContext).register(flutterEngine)
         PhysicalKeyboardBridge(applicationContext).register(flutterEngine)
-        NotificationReplyBridge(applicationContext).register(flutterEngine)
-        VoiceSpeakerRouteBridge(this).register(flutterEngine)
-        SystemVoiceCallGuardBridge(applicationContext).register(flutterEngine)
         VoiceTaskRemovedBridge(applicationContext).also { bridge ->
             bridge.register(flutterEngine)
             VoiceTaskRemovedRegistry.bridge = bridge
         }
         AppRestartBridge(this).register(flutterEngine)
+        appLockBridge.register(flutterEngine)
+        PlayAgeRangeBridge(this).register(flutterEngine)
         UploadKeepAliveBridge(applicationContext).register(flutterEngine)
         imeEditingShortcutBridge.register(flutterEngine)
         MeasureReporting.register(flutterEngine, application)

@@ -3,7 +3,7 @@ import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/features/ui/preview/fluxer_widget_preview.dart';
 import 'package:fluxer_app/features/ui/settings/fluxer_settings_section.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class FluxerSettingsNavItem {
   const FluxerSettingsNavItem({
@@ -13,8 +13,6 @@ class FluxerSettingsNavItem {
     this.leading,
     this.hint,
     this.isDanger = false,
-    this.isDisabled = false,
-    this.onDisabledTap,
   }) : assert(icon != null || leading != null, 'Provide icon or leading');
 
   final String label;
@@ -23,8 +21,6 @@ class FluxerSettingsNavItem {
   final Widget? leading;
   final VoidCallback onTap;
   final bool isDanger;
-  final bool isDisabled;
-  final VoidCallback? onDisabledTap;
 }
 
 class FluxerSettingsNavGroup {
@@ -147,21 +143,6 @@ class _FluxerSettingsNavItemWidget extends StatelessWidget {
         icon: item.icon,
         leading: item.leading,
         isDanger: true,
-      );
-    }
-
-    if (item.isDisabled) {
-      return FluxerBottomSheetMenuItem(
-        label: item.label,
-        onTap: item.onDisabledTap ?? item.onTap,
-        icon: item.icon,
-        leading: item.leading,
-        enabled: false,
-        trailing: PhosphorIcon(
-          PhosphorIconsBold.caretRight,
-          size: 16,
-          color: context.colors.textSecondary,
-        ),
       );
     }
 

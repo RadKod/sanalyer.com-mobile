@@ -6,12 +6,15 @@ import 'package:fluxer_app/core/theme/fluxer_layout_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
 import 'package:fluxer_app/features/shell/presentation/shell_sidebar_width.dart';
 import 'package:fluxer_app/features/shell/providers/layout/shell_sidebar_width_provider.dart';
+import 'package:fluxer_app/features/ui/desktop_surface/fluxer_desktop_surface.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 const double _kHandleHitWidth = 44;
 const double _kIndicatorWidth = 4;
 const double _kIndicatorHeight = 40;
+const double _kDesktopHandleWidth = 6;
 
 class ShellSidebarResizeHandle extends ConsumerStatefulWidget {
   const ShellSidebarResizeHandle({
@@ -49,16 +52,34 @@ class _ShellSidebarResizeHandleState
     };
     final bool showIndicator =
         touchPrimary || _hovering || _dragging || _focusNode.hasFocus;
-    final Color indicatorColor = Color.alphaBlend(
-      context.colors.textPrimary.withValues(alpha: 0.35),
-      context.colors.backgroundSecondaryLighter.withValues(alpha: 0.65),
-    );
+    final bool desktop = usesDesktopPointerUi(context);
+    final Color indicatorColor = desktop
+        ? fluxerCssColorMix(
+            context.colors.backgroundSecondaryLighter,
+            context.colors.textPrimary,
+            0.65,
+          )
+        : Color.alphaBlend(
+            context.colors.textPrimary.withValues(alpha: 0.35),
+            context.colors.backgroundSecondaryLighter.withValues(alpha: 0.65),
+          );
+    final double hitWidth = desktop ? _kDesktopHandleWidth : _kHandleHitWidth;
+    final double indicatorWidth = desktop
+        ? _kDesktopHandleWidth *
+              (_dragging
+                  ? 1
+                  : _hovering || _focusNode.hasFocus
+                  ? 2 / 3
+                  : 1 / 3)
+        : _dragging || _hovering
+        ? _kIndicatorWidth * 1.5
+        : _kIndicatorWidth;
 
-    return Positioned(
-      left: -_kHandleHitWidth / 2,
+    return PositionedDirectional(
+      start: -hitWidth / 2,
       top: 0,
       bottom: widget.userAreaHeight,
-      width: _kHandleHitWidth,
+      width: hitWidth,
       child: MouseRegion(
         cursor: SystemMouseCursors.resizeColumn,
         onEnter: (_) => setState(() => _hovering = true),
@@ -87,11 +108,10 @@ class _ShellSidebarResizeHandleState
                   duration: const Duration(milliseconds: 160),
                   opacity: showIndicator ? (_dragging ? 1 : 0.92) : 0,
                   child: AnimatedContainer(
+                    key: ValueKey<bool>(desktop),
                     duration: const Duration(milliseconds: 160),
-                    width: _dragging || _hovering
-                        ? _kIndicatorWidth * 1.5
-                        : _kIndicatorWidth,
-                    height: _kIndicatorHeight,
+                    width: indicatorWidth,
+                    height: desktop ? double.infinity : _kIndicatorHeight,
                     decoration: BoxDecoration(
                       color: indicatorColor,
                       borderRadius: BorderRadius.circular(999),
@@ -145,12 +165,13 @@ class _ShellSidebarResizeHandleState
       unawaited(ref.read(shellSidebarWidthProvider.notifier).reset());
       return KeyEventResult.handled;
     }
+    final double step = (largeStep ? 48 : 12) * _widthGrowthSign();
     if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-      _nudge(largeStep ? -48 : -12);
+      _nudge(-step);
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-      _nudge(largeStep ? 48 : 12);
+      _nudge(step);
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.home) {
@@ -163,6 +184,9 @@ class _ShellSidebarResizeHandleState
     }
     return KeyEventResult.ignored;
   }
+
+  double _widthGrowthSign() =>
+      Directionality.of(context) == TextDirection.rtl ? -1 : 1;
 
   double? _dragStartWidth;
   double _dragDelta = 0;
@@ -179,7 +203,7 @@ class _ShellSidebarResizeHandleState
     if (start == null) {
       return;
     }
-    _dragDelta += details.delta.dx;
+    _dragDelta += details.delta.dx * _widthGrowthSign();
     _applySidebarWidth(start + _dragDelta, persist: false);
   }
 

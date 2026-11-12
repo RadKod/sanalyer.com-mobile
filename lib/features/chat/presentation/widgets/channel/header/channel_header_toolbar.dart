@@ -15,6 +15,7 @@ import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/cha
 import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/channel_header_search_field.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/channel_notification_settings_button.dart';
 import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/channel_pins_overlay_button.dart';
+import 'package:fluxer_app/features/chat/presentation/widgets/channel/header/oxygen_update_header_button.dart';
 import 'package:fluxer_app/features/chat/utils/channel_header_utils.dart';
 import 'package:fluxer_app/features/dm/domain/dm_channel_types.dart';
 import 'package:fluxer_app/features/dm/domain/dm_conversation.dart';
@@ -25,15 +26,18 @@ import 'package:fluxer_app/features/dm/providers/create_dm_view_model.dart';
 import 'package:fluxer_app/features/favorites/domain/favorite_guild_id.dart';
 import 'package:fluxer_app/features/favorites/providers/favorite_channels_provider.dart';
 import 'package:fluxer_app/features/guilds/providers/guild_permissions_provider.dart';
+import 'package:fluxer_app/features/mature_content/providers/mature_content_agreements_provider.dart';
 import 'package:fluxer_app/features/notifications/presentation/inbox_popout.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
 import 'package:fluxer_app/features/threads/presentation/thread_header_buttons.dart';
+import 'package:fluxer_app/features/threads/utils/thread_title.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/features/voice/utils/callkit/call_actions.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 class ChannelHeaderToolbar extends ConsumerWidget {
   const ChannelHeaderToolbar({
@@ -60,7 +64,11 @@ class ChannelHeaderToolbar extends ConsumerWidget {
     if (!showMessageActions) {
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: _buildCallButtons(context, ref),
+        spacing: usesDesktopPointerUi(context) ? 8 : 0,
+        children: [
+          ..._buildCallButtons(context, ref),
+          OxygenUpdateHeaderButton(highContrast: highContrast),
+        ],
       );
     }
 
@@ -70,11 +78,12 @@ class ChannelHeaderToolbar extends ConsumerWidget {
         targetId != null &&
         (ref.watch(channelUnreadProvider(targetId)).value?.hasUnreadPins ??
             false);
-    final bool showPins = shouldShowPinsForContext(channel: channel, dm: dm);
-    final bool showSearch = shouldShowSearchForContext(
-      channel: channel,
-      dm: dm,
-    );
+    final bool matureGateUp =
+        targetId != null && watchMatureContentGateUp(ref, targetId);
+    final bool showPins =
+        !matureGateUp && shouldShowPinsForContext(channel: channel, dm: dm);
+    final bool showSearch =
+        !matureGateUp && shouldShowSearchForContext(channel: channel, dm: dm);
     final bool showMembers = shouldShowMemberListToggle(
       channel: channel,
       dm: dm,
@@ -82,15 +91,18 @@ class ChannelHeaderToolbar extends ConsumerWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
+      spacing: usesDesktopPointerUi(context) ? 8 : 0,
       children: [
         if (channel != null && !isPersonalNotes && !channel!.isThread)
           buildChannelNotificationButton(channel: channel!),
         if (channel != null && showsThreadHeaderActions(channel))
           ThreadHeaderToolbarButtons(channel: channel!),
         ..._buildCallButtons(context, ref),
-        if (canOfferAnnouncementFollow(
-          channel,
-          ref.watch(guildPermissionsProvider(watchAccountUserId(ref))),
+        if (ref.watch(
+          guildPermissionsProvider(watchAccountUserId(ref)).select(
+            (Map<String, int> permissions) =>
+                canOfferAnnouncementFollow(channel, permissions),
+          ),
         ))
           ChannelHeaderIconButton(
             icon: PhosphorIconsFill.megaphone,
@@ -153,6 +165,7 @@ class ChannelHeaderToolbar extends ConsumerWidget {
             dm: dm,
             highContrast: highContrast,
           ),
+        OxygenUpdateHeaderButton(highContrast: highContrast),
         if (isWideLayout(context))
           InboxPopoutButton(
             anchorBuilder:
@@ -282,7 +295,20 @@ class _FavoriteStarButton extends ConsumerWidget {
           channelGuildId: channel?.guildId,
           isDm: dm != null,
         ),
-        nickname: channel?.name ?? dm?.displayName,
+        nickname:
+            (channel == null
+                ? null
+                : readThreadTitleText(
+                    ref,
+                    channel!,
+                    FluxerLocalizations.of(context),
+                  )) ??
+            (dm == null
+                ? null
+                : dmConversationDisplayName(
+                    FluxerLocalizations.of(context),
+                    dm!,
+                  )),
       );
     }
     if (!context.mounted) {

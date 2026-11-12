@@ -8,6 +8,52 @@
 	<string>$(MEASURE_API_KEY)</string>
 	<key>MeasureApiUrl</key>
 	<string>$(MEASURE_API_URL)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ar</string>
+		<string>be</string>
+		<string>bg</string>
+		<string>bn</string>
+		<string>ca</string>
+		<string>cs</string>
+		<string>da</string>
+		<string>de</string>
+		<string>el</string>
+		<string>en</string>
+		<string>en-GB</string>
+		<string>es</string>
+		<string>es-419</string>
+		<string>fi</string>
+		<string>fil</string>
+		<string>fr</string>
+		<string>he</string>
+		<string>hi</string>
+		<string>hr</string>
+		<string>hu</string>
+		<string>id</string>
+		<string>it</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>lt</string>
+		<string>lv</string>
+		<string>nb</string>
+		<string>nl</string>
+		<string>pl</string>
+		<string>pt-BR</string>
+		<string>pt-PT</string>
+		<string>ro</string>
+		<string>ru</string>
+		<string>sk</string>
+		<string>sl</string>
+		<string>sq</string>
+		<string>sv</string>
+		<string>th</string>
+		<string>tr</string>
+		<string>uk</string>
+		<string>vi</string>
+		<string>zh-Hans</string>
+		<string>zh-Hant</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -229,6 +275,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>FLTEnableImpeller</key>
 	<true/>
 	<key>FLTEnableWideGamut</key>
@@ -246,25 +294,27 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>sanalyer uses the camera when you take a photo to send or turn on video in a call.</string>
+	<string>sanalyer uses the camera when you take a photo to send in a chat or turn on your camera in a call.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>sanalyer uses Face ID to unlock the app when app lock is turned on.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>sanalyer uses your local network for calls between devices on the same network and to connect to a sanalyer instance running on your network.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>sanalyer does not use your location. A bundled library references location APIs, which requires this entry for App Store submission.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>sanalyer does not use your location. A bundled library references location APIs, which requires this entry for App Store submission.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Leave voice messages, audio, and video calls.</string>
+	<string>sanalyer uses the microphone when you record a voice message, talk in a voice or video call, or test your microphone in settings.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Add subtle motion to the splash and login backgrounds.</string>
+	<string>sanalyer uses motion data to move the animated star background when you tilt your device.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Save images and videos to your photo library.</string>
+	<string>sanalyer saves to your library when you choose to save a photo or video from a chat, or your recovery kit as an image.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Share photos from your library in a chat.</string>
+	<string>sanalyer shows your photos and videos in the attachment panel so you can choose which ones to send in a chat.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>INSendMessageIntent</string>
 	</array>
-	<key>NSVoIPUsageDescription</key>
-	<string>Support for receiving calls in the background</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
 	<key>RTCAppGroupIdentifier</key>
@@ -296,7 +346,6 @@
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>fetch</string>
 		<string>remote-notification</string>
 		<string>audio</string>
 		<string>voip</string>

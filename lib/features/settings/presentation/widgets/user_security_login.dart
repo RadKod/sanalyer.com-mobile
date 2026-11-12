@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/api/fluxer_client_provider.dart';
+import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
 import 'package:fluxer_app/core/theme/fluxer_color_theme.dart';
@@ -16,9 +17,11 @@ import 'package:fluxer_app/features/settings/presentation/sheets/passkey_name_sh
 import 'package:fluxer_app/features/settings/presentation/sheets/password_change_sheet.dart';
 import 'package:fluxer_app/features/settings/presentation/sheets/totp_disable_sheet.dart';
 import 'package:fluxer_app/features/settings/presentation/sheets/totp_enable_sheet.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/app_lock_settings_row.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_content_layout.dart';
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/settings/providers/view_models/webauthn_credentials_view_model.dart';
+import 'package:fluxer_app/features/settings/utils/resend_verification_email.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart'
     show isMobileLayout;
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
@@ -32,10 +35,10 @@ import 'package:fluxer_app/features/ui/text_link/fluxer_text_link.dart';
 import 'package:fluxer_app/features/ui/warning_alert/fluxer_warning_alert.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/api_error_presentation.dart';
 import 'package:fluxer_app/shared/utils/relative_time.dart';
 import 'package:fluxer_dart/export.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const int _kMaxPasskeys = 10;
 
@@ -90,9 +93,12 @@ class _UserSecurityLoginState extends ConsumerState<UserSecurityLogin> {
           FluxerSettingsSection(
             sectionId: 'security',
             title: l10n.securitySectionTitle,
-            description: l10n.securitySectionDescription,
+            description: ref.watch(activeInstanceSupportsPasskeysProvider)
+                ? l10n.securitySectionDescription
+                : l10n.securitySectionDescriptionNoPasskeys,
             children: [
               _buildSecuritySection(state, passkeyState, colors, l10n),
+              if (isFluxerNativeMobileOs) const AppLockSettingsRow(),
             ],
           ),
           _buildDangerZone(state, colors, l10n),
@@ -155,11 +161,25 @@ class _UserSecurityLoginState extends ConsumerState<UserSecurityLogin> {
               size: FluxerButtonSize.small,
             ),
           ),
-          if (!s.verified)
+          if (!s.verified) ...[
             FluxerWarningAlert(
               variant: FluxerAlertVariant.info,
               message: l10n.securityVerifyEmailRequired,
             ),
+            if (ref.watch(
+              instanceRuntimeConfigProvider.select(
+                (config) => config.emailsEnabled,
+              ),
+            ))
+              FluxerButton.primary(
+                onPressedAsync:
+                    ref.watch(resendVerificationEmailInFlightProvider)
+                    ? null
+                    : () => resendVerificationEmail(ref, context),
+                label: l10n.verificationResendEmail,
+                size: FluxerButtonSize.small,
+              ),
+          ],
         ],
       ],
     );
@@ -257,8 +277,10 @@ class _UserSecurityLoginState extends ConsumerState<UserSecurityLogin> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTfaSubsection(s, colors, l10n),
-        SizedBox(height: isMobileLayout(context) ? layout.s4 : layout.s8),
-        _buildPasskeysSubsection(s, passkeyState, colors, l10n),
+        if (ref.watch(activeInstanceSupportsPasskeysProvider)) ...[
+          SizedBox(height: isMobileLayout(context) ? layout.s4 : layout.s8),
+          _buildPasskeysSubsection(s, passkeyState, colors, l10n),
+        ],
       ],
     );
   }
@@ -510,7 +532,7 @@ class _UserSecurityLoginState extends ConsumerState<UserSecurityLogin> {
             ),
           FluxerBottomSheetMenuItem(
             label: l10n.dangerZoneDeleteTitle,
-            hint: l10n.dangerZoneDeleteDescription,
+            hint: l10n.dangerZoneDeleteEntryDescription,
             isDanger: true,
             onTap: () => unawaited(AccountDeleteSheet.show(context, ref)),
           ),
@@ -529,7 +551,7 @@ class _UserSecurityLoginState extends ConsumerState<UserSecurityLogin> {
             ),
           FluxerSettingsSubsection(
             title: l10n.dangerZoneDeleteTitle,
-            description: l10n.dangerZoneDeleteDescription,
+            description: l10n.dangerZoneDeleteEntryDescription,
             children: [
               FluxerButton.dangerPrimary(
                 onPressedAsync: () => AccountDeleteSheet.show(context, ref),

@@ -1,9 +1,8 @@
-import 'package:fluxer_app/core/theme/fluxer_color_theme.dart';
-import 'package:fluxer_app/core/theme/fluxer_text_theme.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
+import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 
 class DiscoverySidebar extends StatelessWidget {
   const DiscoverySidebar({super.key});
@@ -11,32 +10,35 @@ class DiscoverySidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final textStyles = context.textStyles;
     final layout = context.layout;
     final l10n = FluxerLocalizations.of(context);
     return ColoredBox(
       color: colors.channelSidebarBackground,
       child: ListView(
-        padding: EdgeInsets.symmetric(
-          horizontal: layout.s2,
-          vertical: layout.s2,
-        ),
+        padding: EdgeInsets.all(layout.s2),
         children: <Widget>[
           _DiscoverySidebarItem(
             label: l10n.discoveryCommunities,
             icon: PhosphorIconsFill.usersThree,
             isActive: true,
-            textStyles: textStyles,
-            colors: colors,
           ),
           const SizedBox(height: 4),
           _DiscoverySidebarItem(
-            label: l10n.discoveryApps,
+            label: l10n.discoverySidebarApps,
             icon: PhosphorIconsBold.appWindow,
-            isDisabled: true,
-            comingSoonLabel: l10n.comingSoon,
-            textStyles: textStyles,
-            colors: colors,
+            comingSoonLabel: l10n.discoverySidebarComingSoon,
+            semanticLabel: l10n.discoverySidebarComingSoonItem(
+              l10n.discoverySidebarApps,
+            ),
+          ),
+          const SizedBox(height: 4),
+          _DiscoverySidebarItem(
+            label: l10n.discoverySidebarThemes,
+            icon: PhosphorIconsBold.palette,
+            comingSoonLabel: l10n.discoverySidebarComingSoon,
+            semanticLabel: l10n.discoverySidebarComingSoonItem(
+              l10n.discoverySidebarThemes,
+            ),
           ),
         ],
       ),
@@ -48,68 +50,83 @@ class _DiscoverySidebarItem extends StatelessWidget {
   const _DiscoverySidebarItem({
     required this.label,
     required this.icon,
-    required this.textStyles,
-    required this.colors,
     this.isActive = false,
-    this.isDisabled = false,
     this.comingSoonLabel,
+    this.semanticLabel,
   });
 
   final String label;
   final IconData icon;
   final bool isActive;
-  final bool isDisabled;
   final String? comingSoonLabel;
-  final FluxerTextTheme textStyles;
-  final FluxerColorTheme colors;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    final Color textColor = isDisabled
+    final colors = context.colors;
+    final String? comingSoonLabel = this.comingSoonLabel;
+    final bool disabled = comingSoonLabel != null;
+    final Color textColor = disabled
         ? colors.textTertiaryMuted
         : isActive
         ? colors.textPrimary
         : colors.textSecondary;
-    final Color backgroundColor = isActive
-        ? colors.backgroundModifierSelected
-        : Colors.transparent;
-    return Opacity(
-      opacity: isDisabled ? 0.6 : 1,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          children: <Widget>[
-            PhosphorIcon(icon, size: 18, color: textColor),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: textStyles.bodyMedium.copyWith(
-                  color: textColor,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-            ),
-            if (comingSoonLabel != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: colors.backgroundModifierAccent,
-                  borderRadius: BorderRadius.circular(4),
-                ),
+    return Semantics(
+      button: true,
+      enabled: !disabled,
+      selected: isActive,
+      label: semanticLabel ?? label,
+      excludeSemantics: true,
+      child: MouseRegion(
+        cursor: disabled
+            ? SystemMouseCursors.forbidden
+            : SystemMouseCursors.click,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isActive
+                ? colors.backgroundModifierSelected
+                : Colors.transparent,
+            borderRadius: context.layout.radiusMd,
+          ),
+          child: Row(
+            children: <Widget>[
+              PhosphorIcon(icon, size: 20, color: textColor),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Text(
-                  comingSoonLabel!,
-                  style: textStyles.bodySmall.copyWith(
-                    color: colors.textTertiaryMuted,
-                    fontSize: 10,
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textStyles.bodyMedium.copyWith(
+                    color: textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-          ],
+              if (comingSoonLabel != null) ...<Widget>[
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundTertiary,
+                    borderRadius: context.layout.radiusSm,
+                  ),
+                  child: Text(
+                    comingSoonLabel.toUpperCase(),
+                    style: fluxerDesktopEyebrowStyle(
+                      context,
+                    ).copyWith(color: colors.textTertiary),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

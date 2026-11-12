@@ -12,13 +12,14 @@ import 'package:fluxer_app/features/guilds/presentation/widgets/guild_bottom_she
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/emoji/emoji_image_cache.dart';
 import 'package:fluxer_app/shared/utils/emoji/emoji_registry.dart';
 import 'package:fluxer_app/shared/utils/emoji/emoji_utils.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
 import 'package:fluxer_app/shared/widgets/unicode_emoji_widget.dart';
 import 'package:fluxer_markdown/fluxer_markdown.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kEmojiPreviewSize = 36.7;
 
@@ -34,7 +35,12 @@ class EmojiInfoBottomSheet {
     FluxerHaptics.medium();
     return FluxerBottomSheet.show<void>(
       context,
-      barrierColor: kEmojiInfoScrimColor,
+      barrierColor: usesDesktopPointerUi(context) ? null : kEmojiInfoScrimColor,
+      desktop: const FluxerDesktopPresentation(
+        surface: FluxerDesktopSurface.popout,
+        width: 300,
+        placement: FluxerDesktopPlacement.rightStart,
+      ),
       builder: (sheetContext, close) {
         return _EmojiInfoBottomSheetContent(emoji: emoji);
       },
@@ -108,7 +114,7 @@ class _EmojiInfoBottomSheetContent extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 2, top: 2),
+                padding: const EdgeInsetsDirectional.only(start: 2, top: 2),
                 child: _EmojiPreview(emoji: emoji),
               ),
               const SizedBox(width: 16),

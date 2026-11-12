@@ -5,30 +5,21 @@ import 'package:fluxer_app/core/build/app_build_config.dart';
 import 'package:fluxer_app/core/build/app_diagnostic_clipboard_text.dart';
 import 'package:fluxer_app/core/constants/external_urls.dart';
 import 'package:fluxer_app/core/deep_links/user_settings_deep_link.dart';
-import 'package:fluxer_app/core/gateway/providers/gateway_event_providers.dart';
+import 'package:fluxer_app/core/instance/instance_constants.dart';
 import 'package:fluxer_app/core/platform/alternate_app_icon_settings.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/premium/plutonium_store_gate.dart';
-import 'package:fluxer_app/core/providers/app/account_user_id.dart';
 import 'package:fluxer_app/core/providers/app_runtime_info_provider.dart';
-import 'package:fluxer_app/core/providers/gateway/gateway_provider.dart';
-import 'package:fluxer_app/core/providers/gateway/gateway_ready_provider.dart';
 import 'package:fluxer_app/core/providers/instance/instance_runtime_config_provider.dart';
-import 'package:fluxer_app/core/router/fluxer_router.dart';
+import 'package:fluxer_app/core/providers/instance/well_known_provider.dart';
 import 'package:fluxer_app/core/talker.dart';
 import 'package:fluxer_app/core/theme/fluxer_theme_extension.dart';
-import 'package:fluxer_app/features/auth/providers/account_manager_provider.dart';
-import 'package:fluxer_app/features/auth/providers/login_view_model.dart';
-import 'package:fluxer_app/features/channels/providers/channel_list_view_model.dart';
-import 'package:fluxer_app/features/chat/providers/core/chat_view_model.dart';
-import 'package:fluxer_app/features/dm/providers/dm_view_model.dart';
-import 'package:fluxer_app/features/guilds/providers/guild_list_view_model.dart';
-import 'package:fluxer_app/features/guilds/providers/organized_guild_list_provider.dart';
 import 'package:fluxer_app/features/guilds/utils/invites/invite_link_navigator.dart';
 import 'package:fluxer_app/features/settings/domain/user_settings_section.dart';
 import 'package:fluxer_app/features/settings/presentation/user_settings_nav.dart';
 import 'package:fluxer_app/features/settings/presentation/user_settings_search_query.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/app_licenses.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/desktop_settings_modal_header.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_page.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/premium/store/premium_store_style.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/settings_sidebar.dart';
@@ -41,6 +32,7 @@ import 'package:fluxer_app/features/settings/presentation/widgets/user_authorize
 import 'package:fluxer_app/features/settings/presentation/widgets/user_blocked_users.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_connections.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_default_apps.dart';
+import 'package:fluxer_app/features/settings/presentation/widgets/user_desktop_settings.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_developer_tools.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_gift_inventory.dart';
 import 'package:fluxer_app/features/settings/presentation/widgets/user_language_and_time.dart';
@@ -61,6 +53,7 @@ import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/settings/utils/commerce/user_settings_billing_nav.dart';
 import 'package:fluxer_app/features/settings/utils/commerce/user_settings_billing_utils.dart';
+import 'package:fluxer_app/features/settings/utils/sign_out_current_account.dart';
 import 'package:fluxer_app/features/settings/utils/user_settings/confirm_user_settings_logout.dart';
 import 'package:fluxer_app/features/settings/utils/user_settings/user_settings_deep_link_scope.dart';
 import 'package:fluxer_app/features/settings/utils/user_settings/user_settings_nav_l10n.dart';
@@ -72,10 +65,10 @@ import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/external_links/external_link_handler.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/clipboard_utils.dart';
 import 'package:fluxer_app/shared/utils/relative_time.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 String _userSettingsFooterText(AppRuntimeInfo info, FluxerLocalizations l10n) {
   final int? betaNumber = AppBuildConfig.betaNumber;
@@ -162,7 +155,7 @@ class UserSettingsModal extends ConsumerStatefulWidget {
   }) async {
     await FluxerPageSheet.showScrollable<void>(
       context,
-      title: 'Settings',
+      title: FluxerLocalizations.of(context).userSettingsTitle,
       presentation: FluxerPageSheetPresentation.root,
       builder: (sheetContext, scrollController, close) =>
           _MobileSettingsNavBody(
@@ -196,6 +189,8 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     super.initState();
     final bool showBilling = userSettingsShowBillingNav(ref);
     final bool showGiveFeedback = userSettingsShowGiveFeedbackNav(ref);
+    final bool showHelp = userSettingsShowHelpNav(ref);
+    final bool showWhatsNew = userSettingsShowWhatsNewNav(ref);
     final bool showJoinFluxerLabs = userSettingsShowJoinFluxerLabsNav(ref);
     final bool isTouchPrimary = ref.read(inputModalityProvider);
     final int? sectionIndex = widget.initialSection == null
@@ -204,9 +199,12 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
             widget.initialSection!,
             showBilling: showBilling,
             showGifts: userSettingsShowGiftBillingNav(ref),
+            showWhatsNew: showWhatsNew,
             showGiveFeedback: showGiveFeedback,
+            showHelp: showHelp,
             showJoinFluxerLabs: showJoinFluxerLabs,
             isTouchPrimary: isTouchPrimary,
+            showAppLogs: _showAppLogs(),
           );
     if (sectionIndex != null) {
       _selectedIndex = sectionIndex;
@@ -249,15 +247,31 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     final state = ref.watch(userSettingsViewModelProvider);
     final bool showBilling = userSettingsShowBillingNav(ref);
     final bool showGiveFeedback = userSettingsShowGiveFeedbackNav(ref);
+    final bool showHelp = userSettingsShowHelpNav(ref);
+    final bool showWhatsNew = userSettingsShowWhatsNewNav(ref);
     final bool showJoinFluxerLabs = userSettingsShowJoinFluxerLabsNav(ref);
     final bool isTouchPrimary = isTouchPrimaryInput(ref);
     final List<UserSettingsDesktopNavEntry> desktopNav =
         buildUserSettingsDesktopNav(
           showBilling: showBilling,
           showGifts: userSettingsShowGiftBillingNav(ref),
+          showWhatsNew: showWhatsNew,
           showGiveFeedback: showGiveFeedback,
+          showHelp: showHelp,
           showJoinFluxerLabs: showJoinFluxerLabs,
           isTouchPrimary: isTouchPrimary,
+          showAppLogs: state.developerMode || AppBuildConfig.isCanary,
+          showPrivacyPolicy: ref.watch(
+            refreshedActiveInstanceProvider.select(
+              (instance) => instance.privacyUrl != null,
+            ),
+          ),
+          showFluxerAppPrivacyPolicy: userSettingsShowFluxerAppPrivacyNav(ref),
+          showTerms: ref.watch(
+            refreshedActiveInstanceProvider.select(
+              (instance) => instance.termsUrl != null,
+            ),
+          ),
         );
 
     return WideSettingsModalFrame(
@@ -301,6 +315,15 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
             isTouchPrimary: isTouchPrimary,
           )
         : null;
+    if (usesDesktopPointerUi(context)) {
+      return _buildDesktopPointerLayout(
+        state: state,
+        desktopNav: desktopNav,
+        selectedEntry: selectedEntry,
+        storePane: storePane,
+        searchSidebar: searchSidebar,
+      );
+    }
     return Column(
       children: [
         Expanded(
@@ -380,7 +403,9 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
                                     return const SizedBox.shrink();
                                   }
                                   return Padding(
-                                    padding: const EdgeInsets.only(left: 8),
+                                    padding: const EdgeInsetsDirectional.only(
+                                      start: 8,
+                                    ),
                                     child: FluxerSettingsHeadingLinkButton(
                                       href: pageLink,
                                       target:
@@ -426,6 +451,121 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     );
   }
 
+  Widget _buildDesktopPointerLayout({
+    required UserSettingsViewState state,
+    required List<UserSettingsDesktopNavEntry> desktopNav,
+    required UserSettingsDesktopNavEntry selectedEntry,
+    required bool storePane,
+    required UserSettingsSearchSidebar? searchSidebar,
+  }) {
+    final l10n = FluxerLocalizations.of(context);
+    final Color contentBackground = wideSettingsContentBackground(context);
+    final int profileIndex = desktopNav.indexWhere(
+      (UserSettingsDesktopNavEntry entry) =>
+          entry.section == UserSettingsSection.profile,
+    );
+    final List<SettingsSidebarItem> navItems = desktopNav.map((
+      UserSettingsDesktopNavEntry entry,
+    ) {
+      final SettingsSidebarItem item = entry.toSidebarItem(l10n);
+      if (entry.section != UserSettingsSection.profile) {
+        return item;
+      }
+      return SettingsSidebarItem(
+        item.label,
+        icon: item.icon,
+        leading: item.leading,
+        isHidden: true,
+      );
+    }).toList();
+    final String? pageLink =
+        !isSettingsSearchActive && selectedEntry.section != null
+        ? userSettingsPageDeepLinkHref(selectedEntry.section!)
+        : null;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          width: wideSettingsDesktopSidebarWidth(context),
+          child: DecoratedBox(
+            position: DecorationPosition.foreground,
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                end: BorderSide(color: context.colors.backgroundModifierAccent),
+              ),
+            ),
+            child: SettingsSidebar(
+              items: searchSidebar?.items ?? navItems,
+              selectedIndex: searchSidebar == null ? _selectedIndex : -1,
+              onSelected: (index) {
+                if (searchSidebar != null) {
+                  _onSearchHitSelected(searchSidebar.hitAtIndex[index]);
+                  return;
+                }
+                _onItemSelected(index, desktopNav);
+              },
+              searchController: searchController,
+              onSearchChanged: onSearchQueryChanged,
+              onSearchClear: clearSearchQuery,
+              emptySearchMessage: isSettingsSearchActive
+                  ? l10n.userSettingsSearchNoResults
+                  : null,
+              userId: state.userId,
+              username: state.displayName,
+              avatarUrl: state.avatarUrl,
+              avatarColor: state.avatarColor,
+              profileSelected:
+                  searchSidebar == null && _selectedIndex == profileIndex,
+              onProfileTap: profileIndex < 0
+                  ? null
+                  : () {
+                      resetSearchQuery();
+                      setState(() => _selectedIndex = profileIndex);
+                    },
+              footer: const _SettingsBuildInfoFooter(inSidebar: true),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ColoredBox(
+            color: contentBackground,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                DesktopSettingsModalHeader(
+                  title: selectedEntry.displayLabel(l10n),
+                  backgroundColor: storePane
+                      ? PremiumStoreStyle.of(context).heroTop
+                      : contentBackground,
+                  foregroundColor: storePane
+                      ? PremiumStoreStyle.of(context).ink
+                      : null,
+                  titleTrailing: pageLink == null
+                      ? null
+                      : FluxerSettingsHeadingLinkButton(
+                          href: pageLink,
+                          target: FluxerSettingsHeadingLinkTarget.page,
+                        ),
+                  onClose: () => Navigator.of(context).pop(),
+                ),
+                Expanded(
+                  child: storePane
+                      ? ColoredBox(
+                          color: PremiumStoreStyle.of(context).page,
+                          child: _buildContent(state, desktopNav),
+                        )
+                      : WideSettingsContentLayout(
+                          child: _buildContent(state, desktopNav),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _onItemSelected(
     int index,
     List<UserSettingsDesktopNavEntry> desktopNav,
@@ -433,6 +573,10 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     final entry = desktopNav[index];
     if (entry.isLogout) {
       unawaited(_logout());
+      return;
+    }
+    if (entry.isAppLogs) {
+      _openAppLogs();
       return;
     }
     if (entry.isJoinFluxerLabs) {
@@ -443,8 +587,28 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
       unawaited(_openFeedback());
       return;
     }
+    if (entry.isHelp) {
+      unawaited(_openHelp());
+      return;
+    }
     if (entry.isWhatsNew) {
       unawaited(_openWhatsNew());
+      return;
+    }
+    if (entry.isPrivacyPolicy) {
+      unawaited(
+        _openLegalUrl(ref.read(refreshedActiveInstanceProvider).privacyUrl),
+      );
+      return;
+    }
+    if (entry.isFluxerAppPrivacyPolicy) {
+      unawaited(_openLegalUrl(InstanceConstants.defaultPrivacyUrl));
+      return;
+    }
+    if (entry.isTermsOfService) {
+      unawaited(
+        _openLegalUrl(ref.read(refreshedActiveInstanceProvider).termsUrl),
+      );
       return;
     }
     if (entry.isSeparator) {
@@ -465,8 +629,32 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     await handleExternalLinkTap(context, kFluxerFeedbackUrl);
   }
 
+  Future<void> _openHelp() async {
+    await handleExternalLinkTap(context, InstanceConstants.helpCenterUrl);
+  }
+
   Future<void> _openWhatsNew() async {
     await handleExternalLinkTap(context, ExternalUrls.fluxerPatchNotes);
+  }
+
+  Future<void> _openLegalUrl(String? url) async {
+    if (url == null) {
+      return;
+    }
+    await handleExternalLinkTap(context, url, skipWarning: true);
+  }
+
+  bool _showAppLogs() =>
+      ref.read(userSettingsViewModelProvider).developerMode ||
+      AppBuildConfig.isCanary;
+
+  void _openAppLogs() {
+    unawaited(
+      pushTalkerLogScreen(
+        context,
+        title: FluxerLocalizations.of(context).userSettingsNavAppLogs,
+      ),
+    );
   }
 
   void _onSearchHitSelected(UserSettingsSearchHit? hit) {
@@ -479,15 +667,20 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     }
     final bool showBilling = userSettingsShowBillingNav(ref);
     final bool showGiveFeedback = userSettingsShowGiveFeedbackNav(ref);
+    final bool showHelp = userSettingsShowHelpNav(ref);
+    final bool showWhatsNew = userSettingsShowWhatsNewNav(ref);
     final bool showJoinFluxerLabs = userSettingsShowJoinFluxerLabsNav(ref);
     final bool isTouchPrimary = ref.read(inputModalityProvider);
     final int? index = indexForUserSettingsSection(
       hit.section,
       showBilling: showBilling,
       showGifts: userSettingsShowGiftBillingNav(ref),
+      showWhatsNew: showWhatsNew,
       showGiveFeedback: showGiveFeedback,
+      showHelp: showHelp,
       showJoinFluxerLabs: showJoinFluxerLabs,
       isTouchPrimary: isTouchPrimary,
+      showAppLogs: _showAppLogs(),
     );
     if (index == null) {
       return;
@@ -502,36 +695,9 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
       return;
     }
 
-    final userId = ref.read(currentUserIdProvider) ?? '';
-
-    await ref.read(gatewayConnectionProvider).disconnect();
-    ref.read(gatewayReadyProvider.notifier).reset();
-
-    ref
-      ..invalidate(gatewayConnectionProvider)
-      ..invalidate(gatewayEventListenerProvider)
-      ..invalidate(gatewayStateListenerProvider)
-      ..invalidate(gatewayForegroundListenerProvider)
-      ..invalidate(gatewayReconnectBannerListenerProvider)
-      ..invalidate(gatewayReconnectBannerProvider)
-      ..invalidate(gatewayConnectionFailedProvider)
-      ..invalidate(connectivityListenerProvider)
-      ..invalidate(typingIndicatorsProvider)
-      ..invalidate(voiceStatesMapProvider)
-      ..invalidate(activeCallsProvider(readAccountUserId(ref)))
-      ..invalidate(outgoingVoiceCallInitiatorProvider(readAccountUserId(ref)))
-      ..invalidate(inviteCacheProvider(readAccountUserId(ref)))
-      ..invalidate(currentUserIdProvider)
-      ..invalidate(dmViewModelProvider)
-      ..invalidate(guildListViewModelProvider)
-      ..invalidate(organizedGuildListProvider)
-      ..invalidate(folderExpandedStateProvider)
-      ..invalidate(channelListViewModelProvider)
-      ..invalidate(chatViewModelProvider)
-      ..invalidate(userSettingsViewModelProvider)
-      ..invalidate(loginViewModelProvider);
-
-    await ref.read(accountManagerProvider.notifier).signOut(userId);
+    await signOutCurrentAccount(
+      ProviderScope.containerOf(context, listen: false),
+    );
     if (mounted) {
       Navigator.of(context).pop();
     }
@@ -555,15 +721,20 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
       onNavigateSection: (UserSettingsSection target) {
         final bool showBilling = userSettingsShowBillingNav(ref);
         final bool showGiveFeedback = userSettingsShowGiveFeedbackNav(ref);
+        final bool showHelp = userSettingsShowHelpNav(ref);
+        final bool showWhatsNew = userSettingsShowWhatsNewNav(ref);
         final bool showJoinFluxerLabs = userSettingsShowJoinFluxerLabsNav(ref);
         final bool isTouchPrimary = ref.read(inputModalityProvider);
         final int? index = indexForUserSettingsSection(
           target,
           showBilling: showBilling,
           showGifts: userSettingsShowGiftBillingNav(ref),
+          showWhatsNew: showWhatsNew,
           showGiveFeedback: showGiveFeedback,
+          showHelp: showHelp,
           showJoinFluxerLabs: showJoinFluxerLabs,
           isTouchPrimary: isTouchPrimary,
+          showAppLogs: _showAppLogs(),
         );
         if (index != null) {
           setState(() => _selectedIndex = index);
@@ -572,16 +743,20 @@ class _UserSettingsModalState extends ConsumerState<UserSettingsModal>
     );
   }
 
-  Widget _buildCloseButton({Color? color}) => InkWell(
-    onTap: () => Navigator.of(context).pop(),
-    borderRadius: BorderRadius.circular(20),
-    child: SizedBox(
-      width: 36,
-      height: 36,
-      child: PhosphorIcon(
-        PhosphorIconsBold.x,
-        size: 18,
-        color: color ?? context.colors.interactiveNormal,
+  Widget _buildCloseButton({Color? color}) => Semantics(
+    button: true,
+    label: FluxerLocalizations.of(context).uiClose,
+    child: InkWell(
+      onTap: () => Navigator.of(context).pop(),
+      borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        width: 36,
+        height: 36,
+        child: PhosphorIcon(
+          PhosphorIconsBold.x,
+          size: 18,
+          color: color ?? context.colors.interactiveNormal,
+        ),
       ),
     ),
   );
@@ -663,6 +838,8 @@ class _MobileSettingsNavBodyState extends ConsumerState<_MobileSettingsNavBody>
     final layout = context.layout;
     final bool showBilling = userSettingsShowBillingNav(ref);
     final bool showGiveFeedback = userSettingsShowGiveFeedbackNav(ref);
+    final bool showHelp = userSettingsShowHelpNav(ref);
+    final bool showWhatsNew = userSettingsShowWhatsNewNav(ref);
     final bool showJoinFluxerLabs = userSettingsShowJoinFluxerLabsNav(ref);
     final bool isTouchPrimary = isTouchPrimaryInput(ref);
     final List<UserSettingsSearchHit> hits = searchVisibleUserSettings(
@@ -677,6 +854,12 @@ class _MobileSettingsNavBodyState extends ConsumerState<_MobileSettingsNavBody>
     );
     final UserSettingsViewState settingsState = ref.watch(
       userSettingsViewModelProvider,
+    );
+    final String? privacyUrl = ref.watch(
+      refreshedActiveInstanceProvider.select((instance) => instance.privacyUrl),
+    );
+    final String? termsUrl = ref.watch(
+      refreshedActiveInstanceProvider.select((instance) => instance.termsUrl),
     );
 
     return FluxerSettingsNavList(
@@ -713,13 +896,30 @@ class _MobileSettingsNavBodyState extends ConsumerState<_MobileSettingsNavBody>
               l10n: l10n,
               onOpenSection: _openSettingsPage,
               onOpenAppLogs: _openAppLogs,
+              showAppLogs:
+                  settingsState.developerMode || AppBuildConfig.isCanary,
               onOpenWhatsNew: () => unawaited(_openWhatsNew()),
               onJoinFluxerLabs: () => unawaited(_joinFluxerLabs()),
               onGiveFeedback: () => unawaited(_openFeedback()),
+              onOpenHelp: () => unawaited(_openHelp()),
               onLogout: _logout,
+              onOpenPrivacyPolicy: privacyUrl == null
+                  ? null
+                  : () => unawaited(_openLegalUrl(privacyUrl)),
+              onOpenFluxerAppPrivacyPolicy:
+                  userSettingsShowFluxerAppPrivacyNav(ref)
+                  ? () => unawaited(
+                      _openLegalUrl(InstanceConstants.defaultPrivacyUrl),
+                    )
+                  : null,
+              onOpenTerms: termsUrl == null
+                  ? null
+                  : () => unawaited(_openLegalUrl(termsUrl)),
               showBilling: showBilling,
               showGifts: userSettingsShowGiftBillingNav(ref),
+              showWhatsNew: showWhatsNew,
               showGiveFeedback: showGiveFeedback,
+              showHelp: showHelp,
               showJoinFluxerLabs: showJoinFluxerLabs,
               isTouchPrimary: isTouchPrimary,
             ),
@@ -778,12 +978,28 @@ class _MobileSettingsNavBodyState extends ConsumerState<_MobileSettingsNavBody>
     await handleExternalLinkTap(context, kFluxerFeedbackUrl);
   }
 
+  Future<void> _openHelp() async {
+    await handleExternalLinkTap(context, InstanceConstants.helpCenterUrl);
+  }
+
   Future<void> _openWhatsNew() async {
     await handleExternalLinkTap(context, ExternalUrls.fluxerPatchNotes);
   }
 
+  Future<void> _openLegalUrl(String? url) async {
+    if (url == null) {
+      return;
+    }
+    await handleExternalLinkTap(context, url, skipWarning: true);
+  }
+
   void _openAppLogs() {
-    unawaited(pushTalkerLogScreen(context));
+    unawaited(
+      pushTalkerLogScreen(
+        context,
+        title: FluxerLocalizations.of(context).userSettingsNavAppLogs,
+      ),
+    );
   }
 
   Future<void> _logout() async {
@@ -791,36 +1007,9 @@ class _MobileSettingsNavBodyState extends ConsumerState<_MobileSettingsNavBody>
       return;
     }
 
-    final userId = ref.read(currentUserIdProvider) ?? '';
-
-    await ref.read(gatewayConnectionProvider).disconnect();
-    ref.read(gatewayReadyProvider.notifier).reset();
-
-    ref
-      ..invalidate(gatewayConnectionProvider)
-      ..invalidate(gatewayEventListenerProvider)
-      ..invalidate(gatewayStateListenerProvider)
-      ..invalidate(gatewayForegroundListenerProvider)
-      ..invalidate(gatewayReconnectBannerListenerProvider)
-      ..invalidate(gatewayReconnectBannerProvider)
-      ..invalidate(gatewayConnectionFailedProvider)
-      ..invalidate(connectivityListenerProvider)
-      ..invalidate(typingIndicatorsProvider)
-      ..invalidate(voiceStatesMapProvider)
-      ..invalidate(activeCallsProvider(readAccountUserId(ref)))
-      ..invalidate(outgoingVoiceCallInitiatorProvider(readAccountUserId(ref)))
-      ..invalidate(inviteCacheProvider(readAccountUserId(ref)))
-      ..invalidate(currentUserIdProvider)
-      ..invalidate(dmViewModelProvider)
-      ..invalidate(guildListViewModelProvider)
-      ..invalidate(organizedGuildListProvider)
-      ..invalidate(folderExpandedStateProvider)
-      ..invalidate(channelListViewModelProvider)
-      ..invalidate(chatViewModelProvider)
-      ..invalidate(userSettingsViewModelProvider)
-      ..invalidate(loginViewModelProvider);
-
-    await ref.read(accountManagerProvider.notifier).signOut(userId);
+    await signOutCurrentAccount(
+      ProviderScope.containerOf(context, listen: false),
+    );
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
     }
@@ -1038,6 +1227,13 @@ Widget _buildUserSettingsSectionBody({
       return scrollController == null
           ? const UserAppIconSettings()
           : UserAppIconSettings(scrollController: scrollController);
+    case UserSettingsSection.desktop:
+      if (!isFluxerDesktopOs) {
+        return const SizedBox.shrink();
+      }
+      return scrollController == null
+          ? const UserDesktopSettings()
+          : UserDesktopSettings(scrollController: scrollController);
     case UserSettingsSection.languageAndTime:
       return scrollController == null
           ? const UserLanguageAndTime()
@@ -1128,6 +1324,7 @@ class _SettingsBuildInfoFooter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final runtimeInfoAsync = ref.watch(appRuntimeInfoProvider);
     final l10n = FluxerLocalizations.of(context);
+    final bool desktop = inSidebar && usesDesktopPointerUi(context);
     return runtimeInfoAsync.when(
       data: (AppRuntimeInfo info) {
         final text = _userSettingsFooterText(info, l10n);
@@ -1136,18 +1333,24 @@ class _SettingsBuildInfoFooter extends ConsumerWidget {
         }
         final Widget buildInfo = Semantics(
           button: true,
-          label: 'Copy app info',
+          label: l10n.userSettingsCopyAppInfo,
           child: FluxerGestureDetector(
             onTap: () => _copyBuildInfoToClipboard(context, info),
             child: Text(
               text,
               textAlign: inSidebar ? TextAlign.start : TextAlign.center,
-              style: context.textStyles.timestamp.copyWith(
-                fontSize: 11,
-                color: inSidebar
-                    ? context.colors.textTertiarySecondary
-                    : context.colors.textPrimaryMuted,
-              ),
+              style: desktop
+                  ? context.textStyles.timestamp.copyWith(
+                      fontSize: 11,
+                      height: 14 / 11,
+                      color: context.colors.textPrimaryMuted,
+                    )
+                  : context.textStyles.timestamp.copyWith(
+                      fontSize: 11,
+                      color: inSidebar
+                          ? context.colors.textTertiarySecondary
+                          : context.colors.textPrimaryMuted,
+                    ),
             ),
           ),
         );

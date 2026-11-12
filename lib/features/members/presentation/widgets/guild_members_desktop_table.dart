@@ -27,10 +27,10 @@ import 'package:fluxer_app/features/ui/input/fluxer_clipboard_scope.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/utils/display_name.dart';
 import 'package:fluxer_app/shared/utils/role_color_utils.dart';
 import 'package:fluxer_app/shared/utils/user_tag.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kTableMinWidth = 870;
 const double _kActionsColumnWidth = 72;
@@ -313,7 +313,10 @@ class _GuildMembersDesktopTableState
       return _MembersTableEmptyState(message: l10n.guildMembersEmptySearch);
     }
     if (state.showTableProgress && state.members.isEmpty) {
-      return const SizedBox.expand();
+      if (state.indexing) {
+        return _MembersTableEmptyState(message: l10n.guildMembersIndexing);
+      }
+      return const Center(child: FluxerLoadingSpinner());
     }
     return ListView.builder(
       controller: _tableScrollController,
@@ -784,8 +787,8 @@ class _MembersTableProgressSlotState extends State<_MembersTableProgressSlot>
                       final double left = -width + travel * _controller.value;
                       return Stack(
                         children: <Widget>[
-                          Positioned(
-                            left: left,
+                          PositionedDirectional(
+                            start: left,
                             top: 0,
                             width: width,
                             height: 2,
@@ -1359,7 +1362,7 @@ class _MembersTableFooter extends StatelessWidget {
                   for (final GuildMembersPaginationItem item in pages)
                     switch (item) {
                       GuildMembersPageNumber(:final int page) => Padding(
-                        padding: const EdgeInsets.only(left: 4),
+                        padding: const EdgeInsetsDirectional.only(start: 4),
                         child: _PageButton(
                           page: page,
                           isActive: page == state.page,
@@ -1369,7 +1372,7 @@ class _MembersTableFooter extends StatelessWidget {
                       ),
                       GuildMembersPaginationEllipsis(:final bool isLeft) =>
                         Padding(
-                          padding: const EdgeInsets.only(left: 4),
+                          padding: const EdgeInsetsDirectional.only(start: 4),
                           child: activeEllipsisIsLeft == isLeft
                               ? SizedBox(
                                   width: 56,

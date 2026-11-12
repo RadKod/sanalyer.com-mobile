@@ -6,12 +6,19 @@ import 'package:fluxer_app/features/members/utils/member_list_access.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 
 const double kMemberListRowHeight = 50;
+const double kMemberListDesktopRowHeight = 44;
 const double kMemberListGroupHeaderHeight = 28;
 const double kMemberListDetailsGroupHeaderHeight = 36;
 const double kMemberListDetailsMemberRowHeight = 56;
+
+double memberListRowHeightOf(BuildContext context) =>
+    usesDesktopPointerUi(context)
+    ? kMemberListDesktopRowHeight
+    : kMemberListRowHeight;
 
 enum MemberListSkeletonStyle { sidebar, details }
 
@@ -117,7 +124,7 @@ class _MemberListSidebarMemberSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final FluxerLayoutTheme layout = context.layout;
     return SizedBox(
-      height: kMemberListRowHeight,
+      height: memberListRowHeightOf(context),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 1),
         child: Padding(
@@ -187,7 +194,7 @@ class _MemberListDetailsGroupHeaderSkeleton extends StatelessWidget {
           right: context.layout.s4,
         ),
         child: const Align(
-          alignment: Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: _MemberListSkeletonBar(width: 108, height: 10),
         ),
       ),
@@ -251,6 +258,7 @@ class MemberListSidebarGroupHeader extends StatelessWidget {
               '$groupName — $count',
               style: context.textStyles.categoryName.copyWith(
                 color: context.colors.textPrimaryMuted,
+                height: usesDesktopPointerUi(context) ? 16 / 14 : null,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -286,7 +294,7 @@ class MemberListDetailsGroupHeader extends StatelessWidget {
           right: context.layout.s4,
         ),
         child: Align(
-          alignment: Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: Row(
             children: <Widget>[
               if (iconRole != null && iconRole!.hasIcon) ...<Widget>[

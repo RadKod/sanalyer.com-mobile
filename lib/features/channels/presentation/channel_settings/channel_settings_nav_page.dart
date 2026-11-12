@@ -14,8 +14,8 @@ import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_bottom_sheet.dart';
 import 'package:fluxer_app/features/ui/settings/fluxer_settings_nav_list.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ChannelSettingsNavPage extends ConsumerWidget {
   const ChannelSettingsNavPage({required this.channelId, super.key});
@@ -55,6 +55,7 @@ class ChannelSettingsNavPage extends ConsumerWidget {
                   automaticallyImplyLeading: false,
                   leading: showsInAppShellBackButton(context)
                       ? IconButton(
+                          tooltip: l10n.back,
                           icon: const PhosphorIcon(PhosphorIconsBold.arrowLeft),
                           onPressed: () => context.pop(),
                         )

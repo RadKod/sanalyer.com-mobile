@@ -94,6 +94,7 @@ final class ApplePushBridge: NSObject, FlutterStreamHandler {
       identifier: PushNotificationPayload.messageReplyCategoryId,
       actions: [reply],
       intentIdentifiers: ["INSendMessageIntent"],
+      hiddenPreviewsBodyPlaceholder: NSLocalizedString("PUSH_NEW_MESSAGE", comment: ""),
       options: []
     )
     DispatchQueue.main.async {
@@ -407,34 +408,13 @@ final class ApplePushBridge: NSObject, FlutterStreamHandler {
     )
   }
 
-  private static func requestAuthorizationIfNeeded(completion: @escaping () -> Void) {
-    UNUserNotificationCenter.current().getNotificationSettings { settings in
-      switch settings.authorizationStatus {
-      case .notDetermined:
-        UNUserNotificationCenter.current().requestAuthorization(
-          options: [.alert, .badge, .sound]
-        ) { _, _ in
-          DispatchQueue.main.async {
-            completion()
-          }
-        }
-      default:
-        DispatchQueue.main.async {
-          completion()
-        }
-      }
-    }
-  }
-
   private func handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "registerRemoteNotifications":
       DispatchQueue.main.async {
         Self.logApns("registerRemoteNotifications requested")
-        Self.requestAuthorizationIfNeeded {
-          UIApplication.shared.registerForRemoteNotifications()
-          result(nil)
-        }
+        UIApplication.shared.registerForRemoteNotifications()
+        result(nil)
       }
     case "getDeviceToken":
       DispatchQueue.main.async {
@@ -504,6 +484,23 @@ final class ApplePushBridge: NSObject, FlutterStreamHandler {
         message: message,
         directMessage: directMessage
       )
+      result(nil)
+    case "setGroupDmNames":
+      guard let args = call.arguments as? [String: Any],
+        let userId = args["userId"] as? String,
+        !userId.isEmpty,
+        let names = args["names"] as? [String: String]
+      else {
+        result(
+          FlutterError(
+            code: "invalid_args",
+            message: "userId and names are required",
+            details: nil
+          )
+        )
+        return
+      }
+      PushNotificationPayload.storeGroupDmNames(userId: userId, names: names)
       result(nil)
     case "setActiveUserId":
       let userId = call.arguments as? String

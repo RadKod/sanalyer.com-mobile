@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -71,6 +72,29 @@ void main() {
     expect(state.email, 'user@example.com');
     expect(state.password, 'secret-password');
     expect(state.canLogin, isTrue);
+  });
+
+  testWidgets('names the instance in the heading and the account prompt', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          fluxerDatabaseProvider.overrideWithValue(database),
+          authInstanceSnapshotProvider.overrideWith(
+            (ref) => InstanceConfigSnapshot.officialDefault(),
+          ),
+        ],
+        child: _app(const LoginForm()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sign in to Fluxer'), findsOneWidget);
+    expect(find.text('New to Fluxer? '), findsOneWidget);
+    expect(find.text('Create an account'), findsOneWidget);
+    expect(find.text('Welcome back'), findsNothing);
+    expect(find.text('Register'), findsNothing);
   });
 
   testWidgets('updating email in the view model syncs to the input field', (
@@ -224,6 +248,34 @@ void main() {
     expect(find.bySemanticsLabel(testL10n.logIn), findsOneWidget);
     expect(find.bySemanticsLabel(testL10n.authShowPassword), findsOneWidget);
     handle.dispose();
+  });
+
+  testWidgets('hides the passkey button on a self-hosted instance on iOS', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          fluxerDatabaseProvider.overrideWithValue(database),
+          authInstanceSnapshotProvider.overrideWith(
+            (ref) => const InstanceConfigSnapshot(
+              apiBaseUrl: 'https://chat.example.com/api',
+              gatewayUrl: '',
+              displayDomain: 'chat.example.com',
+            ),
+          ),
+        ],
+        child: _app(const LoginForm()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(testL10n.logIn), findsOneWidget);
+    expect(find.text(testL10n.logInWithPasskey), findsNothing);
+    debugDefaultTargetPlatformOverride = null;
   });
 }
 

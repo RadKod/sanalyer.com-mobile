@@ -118,7 +118,7 @@ void main() {
           'parent_id': '5',
           'channel_name': 'release plan',
         }, title: 'Alice (#release plan, #general, My Server)'),
-        '#release plan, #general, My Server',
+        'release plan',
       );
     });
 
@@ -138,7 +138,7 @@ void main() {
           'parent_id': '5',
           'channel_name': 'a, b',
         }, title: 'Alice (#a, b, #general, My Server)'),
-        '#a, b, #general, My Server',
+        'a, b',
       );
     });
 
@@ -178,6 +178,32 @@ void main() {
           'guild_id': 'null',
         }, title: 'Alice'),
         isNull,
+      );
+    });
+  });
+
+  group('withPushConversationIdentity', () {
+    test('replaces identity values sent in the push', () {
+      expect(
+        withPushConversationIdentity(const <String, String>{
+          'title': 'Alice',
+          kPushConversationNameKey: 'Pushed name',
+          kPushConversationIconPathKey: '/pushed/path.png',
+        }, name: 'Weekend plans'),
+        <String, String>{
+          'title': 'Alice',
+          kPushConversationNameKey: 'Weekend plans',
+        },
+      );
+    });
+
+    test('keeps the pushed group name when none is found locally', () {
+      expect(
+        withPushConversationIdentity(const <String, String>{
+          kPushConversationNameKey: 'Pushed name',
+          kPushConversationIconPathKey: '/pushed/path.png',
+        }),
+        <String, String>{kPushConversationNameKey: 'Pushed name'},
       );
     });
   });
@@ -287,24 +313,6 @@ void main() {
 
     test('leaves a summary without a message id in place', () {
       expect(pushMessageIsCoveredByAck(null, '100'), isFalse);
-    });
-
-    test('reads the message id from a per-message tag', () {
-      expect(pushMessageIdFromChannelTag('channel:42:900', '42'), '900');
-      expect(pushMessageIdFromChannelTag('channel:42', '42'), isNull);
-    });
-  });
-
-  group('pushNotificationTagMatchesChannel', () {
-    test('matches the channel tag and per-message tags', () {
-      expect(pushNotificationTagMatchesChannel('channel:42', '42'), isTrue);
-      expect(
-        pushNotificationTagMatchesChannel('channel:42:msg-1', '42'),
-        isTrue,
-      );
-      expect(pushNotificationTagMatchesChannel('channel:42', '421'), isFalse);
-      expect(pushNotificationTagMatchesChannel('channel:7:1', '42'), isFalse);
-      expect(pushNotificationTagMatchesChannel(null, '42'), isFalse);
     });
   });
 }

@@ -7,10 +7,10 @@ import 'package:fluxer_app/features/chat/utils/search/channel_search_utils.dart'
 import 'package:fluxer_app/features/ui/tappable/fluxer_gesture_detector.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/utils/guild_user_display.dart';
 import 'package:fluxer_app/shared/utils/mention_display_utils.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 String watchChannelSearchTokenValueLabel(
   WidgetRef ref,
@@ -112,19 +112,25 @@ class ChannelSearchTokenChip extends ConsumerWidget {
           children: <Widget>[
             Flexible(child: label),
             if (remove != null)
-              FluxerGestureDetector(
-                key: ValueKey<String>('search-token-remove-${token.signature}'),
-                behavior: HitTestBehavior.opaque,
-                onTap: remove,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 6,
+              Semantics(
+                button: true,
+                label: MaterialLocalizations.of(context).deleteButtonTooltip,
+                child: FluxerGestureDetector(
+                  key: ValueKey<String>(
+                    'search-token-remove-${token.signature}',
                   ),
-                  child: PhosphorIcon(
-                    PhosphorIconsBold.x,
-                    size: 12,
-                    color: colors.textSecondary,
+                  behavior: HitTestBehavior.opaque,
+                  onTap: remove,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    child: PhosphorIcon(
+                      PhosphorIconsBold.x,
+                      size: 12,
+                      color: colors.textSecondary,
+                    ),
                   ),
                 ),
               ),

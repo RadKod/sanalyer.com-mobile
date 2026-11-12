@@ -90,23 +90,22 @@ import 'package:fluxer_app/features/settings/providers/preferences/advanced_pref
 import 'package:fluxer_app/features/settings/providers/preferences/appearance_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/utils/commerce/open_user_billing_settings.dart';
 import 'package:fluxer_app/features/shell/presentation/responsive_layout.dart';
+import 'package:fluxer_app/features/threads/utils/thread_title.dart';
 import 'package:fluxer_app/features/ui/bottom_sheet/fluxer_confirm_sheet.dart';
 import 'package:fluxer_app/features/ui/input/inline_token_clipboard.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
+import 'package:fluxer_app/shared/icons/phosphor.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_app/shared/utils/api_error_presentation.dart';
 import 'package:fluxer_app/shared/utils/chat_context_utils.dart';
 import 'package:fluxer_app/shared/utils/emoji/emoji_registry.dart';
 import 'package:fluxer_app/shared/utils/fluxer_haptics.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 const double _kComposerDisabledOpacity = 0.6;
 
-const double _kDesktopComposerAttachIconSize = 26;
-const double _kWideComposerActionExtent = WideComposerLayout.actionButtonExtent;
 const double _kWideComposerIconSize = 24;
 
 Widget _composerOpacity({
@@ -127,7 +126,7 @@ Widget _composerOpacity({
 Widget _composerSlot({
   required BuildContext context,
   required bool visible,
-  required Alignment alignment,
+  required AlignmentGeometry alignment,
   required Widget child,
 }) {
   return AnimatedSize(
@@ -262,26 +261,6 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
   bool _composerFocused = false;
   final ValueNotifier<bool> _showComposerCounter = ValueNotifier<bool>(false);
 
-  Widget _wideComposerIconButton({
-    required BuildContext context,
-    required IconData icon,
-    required VoidCallback? onPressed,
-    String? tooltip,
-    double iconSize = _kWideComposerIconSize,
-  }) {
-    return IconButton(
-      icon: PhosphorIcon(icon, size: iconSize),
-      color: context.colors.interactiveNormal,
-      tooltip: tooltip,
-      onPressed: onPressed,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(
-        minWidth: _kWideComposerActionExtent,
-        minHeight: _kWideComposerActionExtent,
-      ),
-    );
-  }
-
   Widget _buildComposerActionButton({
     required BuildContext context,
     required IconData icon,
@@ -299,10 +278,8 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
             semanticLabel: tooltip,
             onPressed: onPressed,
           )
-        : _wideComposerIconButton(
-            context: context,
+        : WideComposerMouseButton(
             icon: icon,
-            iconSize: iconSize,
             tooltip: tooltip,
             onPressed: onPressed,
           );
@@ -315,7 +292,9 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
       return wrapped;
     }
     return Padding(
-      padding: const EdgeInsets.only(left: WideComposerLayout.actionGap),
+      padding: const EdgeInsetsDirectional.only(
+        start: WideComposerLayout.actionGap,
+      ),
       child: wrapped,
     );
   }
@@ -747,7 +726,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
         maxLines: maxLines,
         enterSends: _enterSends,
         showComposerCounter: _showComposerCounter,
-        sendableWireLength: _composerContentLength(_sendableWireText()),
+        sendableWireLength: () => _composerContentLength(_sendableWireText()),
         hintSemanticsLabel: _resolveHintText(),
         onSendPressed: () => unawaited(_onSendPressed()),
         onComposerFieldTap: () => _keyboardSession.onComposerFieldTap(context),
@@ -1203,6 +1182,10 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
     final String channelId = _composerDisplayChannelId();
     final Channel? channel = resolveGuildChannel(ref, channelId);
     if (channel != null) {
+      if (channel.isThread &&
+          threadOwnerBlocked(channel, ref.read(blockedUserIdsProvider))) {
+        return readThreadTitleText(ref, channel, l10n);
+      }
       return l10n.channelComposerHint(channel.name);
     }
     final ComposerWatch? dm = ref.read(composerWatchProvider(channelId));
@@ -1231,22 +1214,22 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
     required Widget recordingChild,
     required Widget idleChild,
   }) {
-    return FluxerConstrainedUiTextScale(
-      child: AnimatedSwitcher(
-        duration: context.motion.panel,
-        switchInCurve: context.motion.emphasizedCurve,
-        switchOutCurve: context.motion.curve,
-        layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
-          return Stack(
-            alignment: Alignment.bottomCenter,
-            clipBehavior: Clip.none,
-            children: <Widget>[...previousChildren, ?currentChild],
-          );
-        },
-        child: KeyedSubtree(
-          key: ValueKey<bool>(recording),
-          child: recording ? recordingChild : idleChild,
-        ),
+    return AnimatedSwitcher(
+      duration: context.motion.panel,
+      switchInCurve: context.motion.emphasizedCurve,
+      switchOutCurve: context.motion.curve,
+      layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          clipBehavior: Clip.none,
+          children: <Widget>[...previousChildren, ?currentChild],
+        );
+      },
+      child: KeyedSubtree(
+        key: ValueKey<bool>(recording),
+        child: recording
+            ? FluxerConstrainedUiTextScale(child: recordingChild)
+            : idleChild,
       ),
     );
   }
@@ -1367,7 +1350,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                   _composerSlot(
                     context: context,
                     visible: perms.canShowAttachControls,
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -1375,12 +1358,8 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                           builder: (BuildContext attachContext) {
                             return _buildComposerActionButton(
                               context: context,
-                              icon: touchActions
-                                  ? PhosphorIconsBold.plus
-                                  : PhosphorIconsFill.plusCircle,
-                              iconSize: touchActions
-                                  ? 20
-                                  : _kDesktopComposerAttachIconSize,
+                              icon: PhosphorIconsBold.plus,
+                              iconSize: 20,
                               tooltip: l10n.chatAttachmentSourceBrowse,
                               onPressed: perms.isAttachEnabled
                                   ? () => unawaited(
@@ -1390,7 +1369,11 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                             );
                           },
                         ),
-                        const SizedBox(width: WideComposerLayout.actionGap),
+                        SizedBox(
+                          width: touchActions
+                              ? WideComposerLayout.actionGap
+                              : WideComposerLayout.mouseContentGap,
+                        ),
                       ],
                     ),
                   ),
@@ -1406,7 +1389,11 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                       decoration: inputDecoration,
                     ),
                   ),
-                  const SizedBox(width: WideComposerLayout.actionGap),
+                  SizedBox(
+                    width: touchActions
+                        ? WideComposerLayout.actionGap
+                        : WideComposerLayout.mouseContentGap,
+                  ),
                   ListenableBuilder(
                     listenable: _controller,
                     builder: (BuildContext context, Widget? child) {
@@ -1430,7 +1417,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                             _composerSlot(
                               context: context,
                               visible: composerButtonTabs.isNotEmpty,
-                              alignment: Alignment.centerRight,
+                              alignment: AlignmentDirectional.centerEnd,
                               child: _buildLargeExpressionPickerActions(
                                 context: context,
                                 channelId: channelId,
@@ -1469,8 +1456,10 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
     required List<ExpressionPickerTab> composerButtonTabs,
     required List<ExpressionPickerTab> popoutTabs,
   }) {
+    final bool touchActions = isTouchPrimaryInput(ref);
     return Row(
       mainAxisSize: MainAxisSize.min,
+      spacing: touchActions ? 0 : WideComposerLayout.mouseActionGap,
       children: [
         if (composerButtonTabs.contains(ExpressionPickerTab.gifs))
           FluxerEmojiPickerPopout(
@@ -1493,7 +1482,9 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
             },
             child: _buildComposerActionButton(
               context: context,
-              icon: PhosphorIconsFill.gif,
+              icon: touchActions
+                  ? PhosphorIconsFill.gif
+                  : PhosphorIconsRegular.gif,
               tooltip: FluxerLocalizations.of(context).emojiTabGifs,
               leadingTouchGap: _touchGapBeforeWideExpressionButton(
                 composerButtonTabs,
@@ -1525,7 +1516,9 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
             },
             child: _buildComposerActionButton(
               context: context,
-              icon: PhosphorIconsFill.image,
+              icon: touchActions
+                  ? PhosphorIconsFill.image
+                  : PhosphorIconsRegular.imageSquare,
               tooltip: FluxerLocalizations.of(context).emojiTabMedia,
               leadingTouchGap: _touchGapBeforeWideExpressionButton(
                 composerButtonTabs,
@@ -1557,7 +1550,9 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
             },
             child: _buildComposerActionButton(
               context: context,
-              icon: PhosphorIconsFill.sticker,
+              icon: touchActions
+                  ? PhosphorIconsFill.sticker
+                  : PhosphorIconsRegular.sticker,
               tooltip: FluxerLocalizations.of(context).emojiTabStickers,
               leadingTouchGap: _touchGapBeforeWideExpressionButton(
                 composerButtonTabs,
@@ -1728,7 +1723,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                       _composerSlot(
                         context: context,
                         visible: perms.canShowAttachControls,
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: Padding(
                           padding: const EdgeInsetsDirectional.only(
                             end: MobileComposerLayout.attachGap,
@@ -1776,7 +1771,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                       _composerSlot(
                         context: context,
                         visible: perms.isComposerEnabled,
-                        alignment: Alignment.centerRight,
+                        alignment: AlignmentDirectional.centerEnd,
                         child: _mobileComposerButtonCell(
                           _buildMobilePickerButton(context, perms),
                         ),
@@ -1784,7 +1779,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
                       _composerSlot(
                         context: context,
                         visible: perms.isComposerEnabled,
-                        alignment: Alignment.centerRight,
+                        alignment: AlignmentDirectional.centerEnd,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -1831,8 +1826,8 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
               ),
             ),
             if (recording && !_voiceRecording.isLocked)
-              Positioned(
-                right: 8,
+              PositionedDirectional(
+                end: 8,
                 top: -52,
                 child: VoiceMessageLockChip(controller: _voiceRecording),
               ),
@@ -1992,6 +1987,20 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
         );
   }
 
+  void _showOverCharacterLimitToast() {
+    final FluxerLocalizations l10n = FluxerLocalizations.of(context);
+    ref
+        .read(toastProvider.notifier)
+        .show(
+          FluxerToast(
+            message: l10n.characterCounterTooLongToast(
+              ref.read(maxMessageLengthProvider),
+            ),
+            variant: FluxerToastVariant.warning,
+          ),
+        );
+  }
+
   Future<void> _onSendPressed() async {
     final String channelId = ref.read(
       chatViewModelProvider.select((s) => s.channelId),
@@ -2018,6 +2027,7 @@ class _ChannelTextareaState extends ConsumerState<ChannelTextarea>
       return;
     }
     if (_isOverCharacterLimit(ref)) {
+      _showOverCharacterLimitToast();
       return;
     }
     final ChatViewModel vm = ref.read(chatViewModelProvider.notifier);
