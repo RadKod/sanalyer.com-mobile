@@ -196,12 +196,12 @@ class FluxerLocalizationsPt extends FluxerLocalizations {
 
   @override
   String systemPermissionMicrophoneMessage(String productName) {
-    return 'O Fluxer não tem acesso ao teu microfone. Podes concedê-lo nas definições de privacidade do teu dispositivo.';
+    return 'O sanalyer não tem acesso ao teu microfone. Podes concedê-lo nas definições de privacidade do teu dispositivo.';
   }
 
   @override
   String systemPermissionCameraMessage(String productName) {
-    return 'O Fluxer não tem acesso à tua câmara. Podes concedê-lo nas definições de privacidade do teu dispositivo.';
+    return 'O sanalyer não tem acesso à tua câmara. Podes concedê-lo nas definições de privacidade do teu dispositivo.';
   }
 
   @override
@@ -4582,15 +4582,15 @@ class FluxerLocalizationsPt extends FluxerLocalizations {
 
   @override
   String get ageRangeUnderMinimumBodyGoogle =>
-      'A faixa etária partilhada pela tua conta Google está abaixo dos 13 anos. O Fluxer é só para pessoas com 13 ou mais anos de idade.';
+      'A faixa etária partilhada pela tua conta Google está abaixo dos 13 anos. O sanalyer é só para pessoas com 13 ou mais anos de idade.';
 
   @override
   String get ageRangeUnlockBody =>
-      'Onde te encontras, a lei determina que a data de nascimento que escreves não é suficiente para o acesso a conteúdo para adultos, e podes usar a faixa etária na tua conta Apple para o desbloqueares. O Fluxer só obtém a faixa etária se esta for de 18 anos ou mais. Uma faixa etária de abaixo de 18 mantém-se apenas neste dispositivo.';
+      'Onde te encontras, a lei determina que a data de nascimento que escreves não é suficiente para o acesso a conteúdo para adultos, e podes usar a faixa etária na tua conta Apple para o desbloqueares. O sanalyer só obtém a faixa etária se esta for de 18 anos ou mais. Uma faixa etária de abaixo de 18 mantém-se apenas neste dispositivo.';
 
   @override
   String get ageRangeUnlockBodyGoogle =>
-      'Onde te encontras, a lei determina que a data de nascimento que escreves não é suficiente para o acesso a conteúdo para adultos, e podes usar a faixa etária na tua conta Google para o desbloqueares. O Fluxer só obtém a faixa etária se esta for de 18 anos ou mais. Uma faixa etária de abaixo de 18 mantém-se apenas neste dispositivo.';
+      'Onde te encontras, a lei determina que a data de nascimento que escreves não é suficiente para o acesso a conteúdo para adultos, e podes usar a faixa etária na tua conta Google para o desbloqueares. O sanalyer só obtém a faixa etária se esta for de 18 anos ou mais. Uma faixa etária de abaixo de 18 mantém-se apenas neste dispositivo.';
 
   @override
   String get ageRangeUnlockHelpLink =>
@@ -4601,19 +4601,19 @@ class FluxerLocalizationsPt extends FluxerLocalizations {
 
   @override
   String get ageRangeUnlockUnderAdult =>
-      'O conteúdo para adultos mantém-se desativado porque a faixa etária na tua conta Apple é de abaixo dos 18 anos. A faixa etária mantém-se neste dispositivo e não é enviada para o Fluxer.';
+      'O conteúdo para adultos mantém-se desativado porque a faixa etária na tua conta Apple é de abaixo dos 18 anos. A faixa etária mantém-se neste dispositivo e não é enviada para o sanalyer.';
 
   @override
   String get ageRangeUnlockUnderAdultGoogle =>
-      'O conteúdo para adultos mantém-se desativado porque a faixa etária na tua conta Google é de abaixo dos 18 anos. A faixa etária mantém-se neste dispositivo e não é enviada para o Fluxer.';
+      'O conteúdo para adultos mantém-se desativado porque a faixa etária na tua conta Google é de abaixo dos 18 anos. A faixa etária mantém-se neste dispositivo e não é enviada para o sanalyer.';
 
   @override
   String get ageRangeUnlockFailed =>
-      'O Fluxer não pôde desbloquear o conteúdo para adultos. Por favor tenta de novo mais tarde.';
+      'O sanalyer não pôde desbloquear o conteúdo para adultos. Por favor tenta de novo mais tarde.';
 
   @override
   String get ageRangeUnlockDateOfBirthRequired =>
-      'A tua conta precisa de uma data de nascimento antes de o Fluxer poder usar a tua faixa etária.';
+      'A tua conta precisa de uma data de nascimento antes de o sanalyer poder usar a tua faixa etária.';
 
   @override
   String get matureContentProceedButton => 'Continuar';
@@ -4654,7 +4654,7 @@ class FluxerLocalizationsPt extends FluxerLocalizations {
 
   @override
   String get sensitiveContentInstallFromPlayHint =>
-      'Desbloquear conteúdo para adultos com a tua conta Google requer a versão Google Play do Fluxer.';
+      'Desbloquear conteúdo para adultos com a tua conta Google requer a versão Google Play do sanalyer.';
 
   @override
   String get sensitiveContentFinishInPlayHint =>
@@ -18159,14 +18159,14 @@ class FluxerLocalizationsPt extends FluxerLocalizations {
 
   @override
   String get operatorPassWallReleaseListDescription =>
-      'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
+      'Each yearly list goes into the notes of a sanalyer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
 
   @override
-  String get operatorPassLabsTitle => 'Fluxer Labs';
+  String get operatorPassLabsTitle => 'sanalyer Labs';
 
   @override
   String get operatorPassLabsDescription =>
-      'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.';
+      'Your pass opens #operators in sanalyer Labs, where you can talk about self-hosting, bots and the API.';
 
   @override
   String get operatorPassShowOperatorsLabel => 'Show #operators';

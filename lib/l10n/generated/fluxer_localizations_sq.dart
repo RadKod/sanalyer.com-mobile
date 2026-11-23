@@ -17911,14 +17911,14 @@ class FluxerLocalizationsSq extends FluxerLocalizations {
 
   @override
   String get operatorPassWallReleaseListDescription =>
-      'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
+      'Each yearly list goes into the notes of a sanalyer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
 
   @override
-  String get operatorPassLabsTitle => 'Fluxer Labs';
+  String get operatorPassLabsTitle => 'sanalyer Labs';
 
   @override
   String get operatorPassLabsDescription =>
-      'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.';
+      'Your pass opens #operators in sanalyer Labs, where you can talk about self-hosting, bots and the API.';
 
   @override
   String get operatorPassShowOperatorsLabel => 'Show #operators';

@@ -29604,19 +29604,19 @@ abstract class FluxerLocalizations {
   /// Description under the yearly Operators list toggle.
   ///
   /// In en, this message translates to:
-  /// **'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.'**
+  /// **'Each yearly list goes into the notes of a sanalyer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.'**
   String get operatorPassWallReleaseListDescription;
 
   /// Operator Pass settings section for the Fluxer Labs community.
   ///
   /// In en, this message translates to:
-  /// **'Fluxer Labs'**
+  /// **'sanalyer Labs'**
   String get operatorPassLabsTitle;
 
   /// Description of the Fluxer Labs section. #operators is a channel name, keep it as is.
   ///
   /// In en, this message translates to:
-  /// **'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.'**
+  /// **'Your pass opens #operators in sanalyer Labs, where you can talk about self-hosting, bots and the API.'**
   String get operatorPassLabsDescription;
 
   /// Operator Pass toggle; #operators is a channel name, keep it as is.

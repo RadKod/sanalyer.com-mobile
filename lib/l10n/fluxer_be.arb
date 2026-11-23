@@ -90,7 +90,7 @@
     "@gatewayConnectedToast": {
         "description": "Banner shown when the gateway connection is restored."
     },
-    "gatewayOfflineToast": "Вы не ў сетцы. Fluxer падключыцца зноў, калі з’явіцца сетка.",
+    "gatewayOfflineToast": "Вы не ў сетцы. sanalyer падключыцца зноў, калі з’явіцца сетка.",
     "@gatewayOfflineToast": {
         "description": "Banner shown instead of the reconnecting message when the device has no network connection. The app keeps showing cached content and reconnects on its own."
     },
@@ -5766,7 +5766,7 @@
     "@matureChannelUnavailableBody": {
         "description": "Body when a minor cannot access a mature channel."
     },
-    "matureContentAppLockedBody": "Змесціва 18+ на iPhone і iPad выключана. Каб праглядаць тут суполкі і каналы з адзнакай 18+, адкрыйце Fluxer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».",
+    "matureContentAppLockedBody": "Змесціва 18+ на iPhone і iPad выключана. Каб праглядаць тут суполкі і каналы з адзнакай 18+, адкрыйце sanalyer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».",
     "@matureContentAppLockedBody": {
         "description": "Body of the gate shown in place of an 18+ community or channel in the iOS app when the account has not allowed 18+ content on the web. The quoted labels must match the web app's Privacy tab and switch."
     },
@@ -5778,23 +5778,23 @@
     "@matureMessageHiddenPreview": {
         "description": "Shown instead of a message preview in the inbox, mentions, saved messages and the DM list when 18+ content is not available to the account or device."
     },
-    "ageRangeUnderMinimumTitle": "Fluxer недаступны для гэтага ўліковага запісу",
+    "ageRangeUnderMinimumTitle": "sanalyer недаступны для гэтага ўліковага запісу",
     "@ageRangeUnderMinimumTitle": {
         "description": "Title of the full-screen page shown on iPhone and iPad when the age range shared by the Apple Account is under 13."
     },
-    "ageRangeUnderMinimumBody": "Паводле ўзроставага дыяпазону, які перадае ваш Apple Account, вам менш за 13 гадоў. Fluxer прызначаны толькі для людзей ад 13 гадоў.",
+    "ageRangeUnderMinimumBody": "Паводле ўзроставага дыяпазону, які перадае ваш Apple Account, вам менш за 13 гадоў. sanalyer прызначаны толькі для людзей ад 13 гадоў.",
     "@ageRangeUnderMinimumBody": {
         "description": "Body of the full-screen page shown on iPhone and iPad when the age range shared by the Apple Account is under 13."
     },
-    "ageRangeUnderMinimumBodyGoogle": "Паводле ўзроставага дыяпазону, які перадае ваш Google Account, вам менш за 13 гадоў. Fluxer прызначаны толькі для людзей ад 13 гадоў.",
+    "ageRangeUnderMinimumBodyGoogle": "Паводле ўзроставага дыяпазону, які перадае ваш Google Account, вам менш за 13 гадоў. sanalyer прызначаны толькі для людзей ад 13 гадоў.",
     "@ageRangeUnderMinimumBodyGoogle": {
         "description": "Body of the full-screen page shown on Android when the age range shared through Google Play is under 13."
     },
-    "ageRangeUnlockBody": "Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Apple Account. Fluxer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.",
+    "ageRangeUnlockBody": "Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Apple Account. sanalyer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.",
     "@ageRangeUnlockBody": {
         "description": "Text above the \"Unlock mature content\" button in the sensitive content settings on iPhone and iPad, shown only on fluxer.com accounts in places where the law says a date of birth typed into the app isn't enough for mature content. The button asks Apple for the age range on the Apple Account, and the app sends it to Fluxer only if it is 18 or over."
     },
-    "ageRangeUnlockBodyGoogle": "Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Google Account. Fluxer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.",
+    "ageRangeUnlockBodyGoogle": "Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Google Account. sanalyer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.",
     "@ageRangeUnlockBodyGoogle": {
         "description": "Text above the \"Unlock mature content\" button in the sensitive content settings on Android, shown only on fluxer.com accounts in places where the law says a date of birth typed into the app isn't enough for mature content. The button asks Google Play for the age range on the Google Account, and the app sends it to Fluxer only if it is 18 or over."
     },
@@ -5806,19 +5806,19 @@
     "@ageRangeUnlockButton": {
         "description": "Button in the sensitive content settings that asks Apple or Google Play for the age range on the account. Apple or Google shows its own prompt first."
     },
-    "ageRangeUnlockUnderAdult": "Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Apple Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў Fluxer.",
+    "ageRangeUnlockUnderAdult": "Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Apple Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў sanalyer.",
     "@ageRangeUnlockUnderAdult": {
         "description": "Shown in the sensitive content settings on iPhone and iPad when the age range from the Apple Account is under 18. The app keeps it on the device and never sends it."
     },
-    "ageRangeUnlockUnderAdultGoogle": "Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Google Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў Fluxer.",
+    "ageRangeUnlockUnderAdultGoogle": "Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Google Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў sanalyer.",
     "@ageRangeUnlockUnderAdultGoogle": {
         "description": "Shown in the sensitive content settings on Android when the age range from the Google Account is under 18. The app keeps it on the device and never sends it."
     },
-    "ageRangeUnlockFailed": "Fluxer не ўдалося адкрыць змесціва для дарослых. Паспрабуйце яшчэ раз пазней.",
+    "ageRangeUnlockFailed": "sanalyer не ўдалося адкрыць змесціва для дарослых. Паспрабуйце яшчэ раз пазней.",
     "@ageRangeUnlockFailed": {
         "description": "Shown under the \"Unlock mature content\" button when sending an age range of 18 or over to Fluxer failed."
     },
-    "ageRangeUnlockDateOfBirthRequired": "Каб Fluxer мог выкарыстаць ваш узроставы дыяпазон, ва ўліковым запісе павінна быць указана дата нараджэння.",
+    "ageRangeUnlockDateOfBirthRequired": "Каб sanalyer мог выкарыстаць ваш узроставы дыяпазон, ва ўліковым запісе павінна быць указана дата нараджэння.",
     "@ageRangeUnlockDateOfBirthRequired": {
         "description": "Shown under the \"Unlock mature content\" button when the account has no date of birth, which Fluxer needs before it accepts an age range."
     },
@@ -5866,11 +5866,11 @@
     "@sensitiveContentSaveButton": {
         "description": "Save button for sensitive content settings."
     },
-    "sensitiveContentAppLockedHint": "Каб выбраць тут «Паказаць», адкрыйце Fluxer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».",
+    "sensitiveContentAppLockedHint": "Каб выбраць тут «Паказаць», адкрыйце sanalyer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».",
     "@sensitiveContentAppLockedHint": {
         "description": "Hint under the sensitive content settings in the iOS app when the account has not allowed 18+ content on the web. The quoted labels must match the web app's labels."
     },
-    "sensitiveContentInstallFromPlayHint": "Каб адкрыць змесціва для дарослых праз Google Account, патрэбна копія Fluxer з Google Play.",
+    "sensitiveContentInstallFromPlayHint": "Каб адкрыць змесціва для дарослых праз Google Account, патрэбна копія sanalyer з Google Play.",
     "@sensitiveContentInstallFromPlayHint": {
         "description": "Hint under the \"Unlock mature content\" button on Android when the app was downloaded from outside Google Play, which can't get the age range from Google Play."
     },
@@ -6037,11 +6037,11 @@
     "@connectionTokenFileTitle": {
         "description": "Title of the token-file section in the verify step."
     },
-    "connectionTokenFileDescription": "Спампуйце **fluxer-verification** і пакладзіце яго ў папку **.well-known**, каб мы маглі праверыць дамен.",
+    "connectionTokenFileDescription": "Спампуйце **sanalyer-verification** і пакладзіце яго ў папку **.well-known**, каб мы маглі праверыць дамен.",
     "@connectionTokenFileDescription": {
         "description": "Explanatory text for the token-file step. **bold markers** indicate inline-code styling applied by the widget."
     },
-    "connectionTokenFileDownload": "Спампаваць fluxer-verification",
+    "connectionTokenFileDownload": "Спампаваць sanalyer-verification",
     "@connectionTokenFileDownload": {
         "description": "Label on the download button for the verification token file."
     },
@@ -6055,7 +6055,7 @@
             }
         }
     },
-    "connectionSaveTokenDialogTitle": "Захаваць fluxer-verification",
+    "connectionSaveTokenDialogTitle": "Захаваць sanalyer-verification",
     "@connectionSaveTokenDialogTitle": {
         "description": "Title of the save-file dialog opened by the download button."
     },
@@ -6139,7 +6139,7 @@
     "@connectionRemoveFailed": {
         "description": "Toast shown when the delete request fails."
     },
-    "connectionTokenSavedToast": "Файл fluxer-verification захаваны",
+    "connectionTokenSavedToast": "Файл sanalyer-verification захаваны",
     "@connectionTokenSavedToast": {
         "description": "Toast shown after the token file is saved successfully."
     },
@@ -12409,7 +12409,7 @@
     "@userSettingsNavSecurityLogin": {
         "description": "User settings navigation item for security and login settings."
     },
-    "userSettingsNavFluxerPlutonium": "Fluxer Plutonium",
+    "userSettingsNavFluxerPlutonium": "sanalyer Premium",
     "@userSettingsNavFluxerPlutonium": {
         "description": "User settings navigation item for Fluxer Plutonium subscription settings."
     },
@@ -12558,7 +12558,7 @@
         }
     },
     "premiumCompletePaymentTitle": "Завяршыць аплату",
-    "premiumCompletePaymentBody": "Цяпер вы пяройдзеце ў Stripe, каб завяршыць аплату. Пасля аплаты вярніцеся ў Fluxer.",
+    "premiumCompletePaymentBody": "Цяпер вы пяройдзеце ў Stripe, каб завяршыць аплату. Пасля аплаты вярніцеся ў sanalyer.",
     "premiumChoosePaymentMethodTitle": "Выберыце спосаб аплаты",
     "premiumPixPaymentPromptDescription": "Плаціце праз Pix automático, каб дазволіць рэгулярныя спісанні проста з вашага бразільскага банка. Або выберыце «Аплата карткай», каб увесці даныя крэдытнай карткі на наступным экране Stripe.",
     "premiumUsePix": "Выкарыстаць Pix",
@@ -12570,7 +12570,7 @@
     "premiumAlreadyVisionaryTitle": "Вы ўжо Visionary",
     "premiumAlreadyVisionaryBody": "Visionary ужо дае бестэрміновы доступ, таму рэгулярная падпіска не патрэбна. Купляць падарункі для іншых па-ранейшаму можна.",
     "premiumExistingSubscriptionTitle": "Падпіска ўжо ёсць",
-    "premiumExistingSubscriptionBody": "Мы знайшлі ў гэтага ўліковага запісу наяўную падпіску Fluxer Plutonium. Кіруйце ёю ў абароненым плацежным партале, каб абнавіць плацежныя даныя або праверыць стан працягнення. Калі вы толькі што аплацілі, пачакайце хвіліну і зноў адкрыйце гэту старонку.",
+    "premiumExistingSubscriptionBody": "Мы знайшлі ў гэтага ўліковага запісу наяўную падпіску sanalyer Premium. Кіруйце ёю ў абароненым плацежным партале, каб абнавіць плацежныя даныя або праверыць стан працягнення. Калі вы толькі што аплацілі, пачакайце хвіліну і зноў адкрыйце гэту старонку.",
     "premiumPurchasesDisabledTitle": "Пакупкі недаступныя",
     "premiumPurchasesDisabledBody": "Пакупкі для гэтага ўліковага запісу адключаны. Калі гэта падобна на памылку, напішыце на {supportEmail}.",
     "@premiumPurchasesDisabledBody": {
@@ -12585,8 +12585,8 @@
     "@premiumPurchasesDisabledBodySelfHosted": {
         "description": "Shown on a self-hosted instance when purchases are disabled for the account. Names no email address."
     },
-    "premiumClaimAccountToPurchase": "Каб купіць Fluxer Plutonium, замацуйце за сабой уліковы запіс.",
-    "premiumVerifyEmailToPurchase": "Каб купіць Fluxer Plutonium, пацвердзіце адрас электроннай пошты.",
+    "premiumClaimAccountToPurchase": "Каб купіць sanalyer Premium, замацуйце за сабой уліковы запіс.",
+    "premiumVerifyEmailToPurchase": "Каб купіць sanalyer Premium, пацвердзіце адрас электроннай пошты.",
     "premiumPerkCommunities": "Суполкі",
     "premiumPerkMessageCharacterLimit": "Ліміт сімвалаў у паведамленні",
     "premiumPerkBookmarkedMessages": "Закладкі на паведамленні",
@@ -12653,15 +12653,15 @@
     "@storePlutoniumVideoPlutoniumIos": {
         "description": "Plutonium cell of the video quality row in the iOS Plutonium comparison table."
     },
-    "storePlutoniumTagFootnote": "Можна выбраць толькі тэг, якога яшчэ няма ў іншага карыстальніка з такім самым імем. Вялікія і малыя літары ў імёнах не адрозніваюцца, таму Mina#4821 і mina#4821 лічацца аднолькавымі. Тэг #0000 зарэзерваваны для ўдзельнікаў Fluxer Visionary.",
+    "storePlutoniumTagFootnote": "Можна выбраць толькі тэг, якога яшчэ няма ў іншага карыстальніка з такім самым імем. Вялікія і малыя літары ў імёнах не адрозніваюцца, таму Mina#4821 і mina#4821 лічацца аднолькавымі. Тэг #0000 зарэзерваваны для ўдзельнікаў sanalyer Visionary.",
     "storePlutoniumTagFootnoteIos": "Можна выбраць толькі тэг, якога яшчэ няма ў іншага карыстальніка з такім самым імем. Вялікія і малыя літары ў імёнах не адрозніваюцца, таму Mina#4821 і mina#4821 лічацца аднолькавымі.",
     "@storePlutoniumTagFootnoteIos": {
         "description": "Footnote about the custom tag on the iOS Plutonium page."
     },
     "storePlutoniumLearnVisionary": "Даведайцеся больш пра Visionary.",
-    "storePlutoniumDonatePrompt": "Хочаце проста падтрымаць распрацоўку Fluxer з адкрытым кодам? ",
+    "storePlutoniumDonatePrompt": "Хочаце проста падтрымаць распрацоўку sanalyer з адкрытым кодам? ",
     "storePlutoniumDonateLink": "Лепш зрабіце ахвяраванне.",
-    "storePlutoniumHighlightsLead": "Падпіска фінансуе Fluxer і адкрывае",
+    "storePlutoniumHighlightsLead": "Падпіска фінансуе sanalyer і адкрывае",
     "storePlutoniumHighlightEmoji": "Уласныя эмоджы і стыкеры ў любым чаце",
     "storePlutoniumHighlightFiles": "Загрузка файлаў да 500 МБ",
     "storePlutoniumHighlightMessages": "Паведамленні да 4000 сімвалаў",
@@ -12689,8 +12689,8 @@
     "@storePlutoniumRestoreFailed": {
         "description": "Toast when \"Restore purchases\" on the iOS Plutonium page failed."
     },
-    "storePlutoniumAlreadySubscribed": "У вас ужо ёсць падпіска Fluxer Plutonium.",
-    "storePlutoniumOwnedByOtherAccount": "Apple Account на гэтай прыладзе ўжо аплачвае Plutonium для іншага ўліковага запісу Fluxer.",
+    "storePlutoniumAlreadySubscribed": "У вас ужо ёсць падпіска sanalyer Premium.",
+    "storePlutoniumOwnedByOtherAccount": "Apple Account на гэтай прыладзе ўжо аплачвае Plutonium для іншага ўліковага запісу sanalyer.",
     "@storePlutoniumOwnedByOtherAccount": {
         "description": "Shown on the iOS Plutonium page when the App Store subscription on this device belongs to another Fluxer account."
     },
@@ -13306,7 +13306,7 @@
     "@notificationsPushDeliveryGatewayLabel": {
         "description": "Label for the UnifiedPush gateway host on notification settings."
     },
-    "notificationsPushDeliveryRelayLabel": "Рэтранслятар Fluxer Push",
+    "notificationsPushDeliveryRelayLabel": "Рэтранслятар sanalyer Push",
     "@notificationsPushDeliveryRelayLabel": {
         "description": "Label for Fluxer Push relay status on notification settings."
     },
@@ -13326,7 +13326,7 @@
     "@notificationsPushRelaySectionTitle": {
         "description": "Notification settings section title for the Fluxer push relay."
     },
-    "notificationsPushRelaySectionDescription": "{pushProvider} дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар Fluxer.",
+    "notificationsPushRelaySectionDescription": "{pushProvider} дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар sanalyer.",
     "@notificationsPushRelaySectionDescription": {
         "description": "Notification settings section description explaining why the push relay exists.",
         "placeholders": {
@@ -13335,7 +13335,7 @@
             }
         }
     },
-    "notificationsPushRelayConsentLabel": "Выкарыстоўваць push-рэтранслятар Fluxer",
+    "notificationsPushRelayConsentLabel": "Выкарыстоўваць push-рэтранслятар sanalyer",
     "@notificationsPushRelayConsentLabel": {
         "description": "Toggle label for agreeing to the Fluxer push relay on this device."
     },
@@ -13347,7 +13347,7 @@
     "@pushRelayConsentTitle": {
         "description": "Title of the one-time Fluxer push relay consent sheet."
     },
-    "pushRelayConsentDescription": "{pushProvider} дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар Fluxer.",
+    "pushRelayConsentDescription": "{pushProvider} дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар sanalyer.",
     "@pushRelayConsentDescription": {
         "description": "Subtitle of the push relay consent sheet explaining why the relay exists.",
         "placeholders": {
@@ -13495,7 +13495,7 @@
     "@appIconAndroidChangeTitle": {
         "description": "Title for the confirmation sheet before changing the app icon on Android."
     },
-    "appIconAndroidChangeDescription": "Fluxer перазапусціцца, каб прымяніць новы значок на галоўным экране.",
+    "appIconAndroidChangeDescription": "sanalyer перазапусціцца, каб прымяніць новы значок на галоўным экране.",
     "@appIconAndroidChangeDescription": {
         "description": "Body for the confirmation sheet before changing the app icon on Android."
     },
@@ -13551,7 +13551,7 @@
     "@advancedPerformanceReportingTitle": {
         "description": "Advanced settings section title for crash and performance reporting."
     },
-    "advancedCrashReportingSectionDescription": "Дапамажыце Fluxer выпраўляць памылкі ў гэтай праграме: дзяліцеся данымі пра збоі і прадукцыйнасць. Прадвызначана гэта выключана.",
+    "advancedCrashReportingSectionDescription": "Дапамажыце sanalyer выпраўляць памылкі ў гэтай праграме: дзяліцеся данымі пра збоі і прадукцыйнасць. Прадвызначана гэта выключана.",
     "@advancedCrashReportingSectionDescription": {
         "description": "Advanced settings section description for opt-in crash and performance reporting, which is off until the user turns it on. Keep the name Fluxer as is. Fluxer is the company that runs the error tracker."
     },
@@ -13559,7 +13559,7 @@
     "@advancedPerformanceReportingLabel": {
         "description": "Toggle label for opting into crash and performance reporting."
     },
-    "advancedCrashReportingDescription": "Справаздачы трапляюць у сістэму адсочвання памылак Fluxer, нават калі вы ўвайшлі на іншым экзэмпляры. Яны звязаны з выпадковым ID гэтага ўсталявання і не ўтрымліваюць ID вашага ўліковага запісу, назваў экзэмпляраў або змесціва паведамленняў.",
+    "advancedCrashReportingDescription": "Справаздачы трапляюць у сістэму адсочвання памылак sanalyer, нават калі вы ўвайшлі на іншым экзэмпляры. Яны звязаны з выпадковым ID гэтага ўсталявання і не ўтрымліваюць ID вашага ўліковага запісу, назваў экзэмпляраў або змесціва паведамленняў.",
     "@advancedCrashReportingDescription": {
         "description": "Toggle description for crash and performance reporting. Reports always go to the error tracker run by Fluxer, the company, never to the instance the user is signed in to. They are tied to a random per-install ID and leave out the account ID, instance names and message content. Keep the name Fluxer as is."
     },
@@ -13567,11 +13567,11 @@
     "@observabilityReportingConsentTitle": {
         "description": "Title of the post-crash opt-in sheet for crash and error reporting."
     },
-    "observabilityReportingConsentSubtitle": "Fluxer нечакана закрыўся. Справаздача пра збой дапаможа нам хутчэй знайсці і выправіць праблему.",
+    "observabilityReportingConsentSubtitle": "sanalyer нечакана закрыўся. Справаздача пра збой дапаможа нам хутчэй знайсці і выправіць праблему.",
     "@observabilityReportingConsentSubtitle": {
         "description": "Subtitle on the post-crash crash reporting opt-in sheet. Keep the name Fluxer as is."
     },
-    "observabilityReportingConsentBody": "Справаздачы ўтрымліваюць журналы збояў, памылкі, даныя пра прадукцыйнасць, час выканання сеткавых запытаў, а таксама экраны і націсканні, якія папярэднічалі праблеме, і звязаны з выпадковым ID гэтага ўсталявання. Яны ніколі не ўтрымліваюць змесціва паведамленняў і трапляюць толькі ва ўласную сістэму адсочвання памылак Fluxer. Выключыць гэта можна ў любы час.",
+    "observabilityReportingConsentBody": "Справаздачы ўтрымліваюць журналы збояў, памылкі, даныя пра прадукцыйнасць, час выканання сеткавых запытаў, а таксама экраны і націсканні, якія папярэднічалі праблеме, і звязаны з выпадковым ID гэтага ўсталявання. Яны ніколі не ўтрымліваюць змесціва паведамленняў і трапляюць толькі ва ўласную сістэму адсочвання памылак sanalyer. Выключыць гэта можна ў любы час.",
     "@observabilityReportingConsentBody": {
         "description": "Body copy on the post-crash crash reporting opt-in sheet explaining what is collected."
     },
@@ -13790,7 +13790,7 @@
     "@userSettingsNavAppLogs": {
         "description": "User settings navigation item for in-app logs."
     },
-    "userSettingsNavFluxerAppPrivacyPolicy": "Палітыка прыватнасці праграмы Fluxer",
+    "userSettingsNavFluxerAppPrivacyPolicy": "Палітыка прыватнасці праграмы sanalyer",
     "@userSettingsNavFluxerAppPrivacyPolicy": {
         "description": "User settings navigation item shown on self-hosted instances. It opens the privacy policy of Fluxer, the company that makes the app, which still receives push relay traffic and opt-in crash reports. Keep the name Fluxer as is."
     },
@@ -13822,7 +13822,7 @@
     "@userSettingsNavWhatsNew": {
         "description": "User settings navigation item for release notes."
     },
-    "userSettingsJoinFluxerLabs": "Далучыцца да Fluxer Labs",
+    "userSettingsJoinFluxerLabs": "Далучыцца да sanalyer Labs",
     "@userSettingsJoinFluxerLabs": {
         "description": "User settings What's New action to join the Fluxer Labs community."
     },
@@ -14149,15 +14149,15 @@
     "@instanceUrlLabel": {
         "description": "Label for the self-hosted instance URL input on the login screen."
     },
-    "instanceUrlPlaceholder": "fluxer.com",
+    "instanceUrlPlaceholder": "sanalyer.com",
     "@instanceUrlPlaceholder": {
         "description": "Placeholder for the instance URL input."
     },
-    "instanceUrlHelper": "Для афіцыйнага экзэмпляра ўвядзіце fluxer.com, а для ўласнага — дакладны URL экзэмпляра.",
+    "instanceUrlHelper": "Для афіцыйнага экзэмпляра ўвядзіце sanalyer.com, а для ўласнага — дакладны URL экзэмпляра.",
     "@instanceUrlHelper": {
         "description": "Helper text explaining official vs self-hosted instance URLs."
     },
-    "resetToDefaultInstance": "Вярнуць Fluxer",
+    "resetToDefaultInstance": "Вярнуць sanalyer",
     "@resetToDefaultInstance": {
         "description": "Tooltip for the button that resets the instance URL to the official Fluxer instance."
     },
@@ -14186,7 +14186,7 @@
     "@instanceInvalidDiscoveryResponse": {
         "description": "Error when the instance discovery document cannot be parsed."
     },
-    "instanceOutdatedForClient": "Гэты экзэмпляр састарэў для гэтай праграмы. Папрасіце адміністратара {domain} абнавіць Fluxer.",
+    "instanceOutdatedForClient": "Гэты экзэмпляр састарэў для гэтай праграмы. Папрасіце адміністратара {domain} абнавіць sanalyer.",
     "@instanceOutdatedForClient": {
         "description": "Error when the instance api_code_version is below what this client requires.",
         "placeholders": {
@@ -14195,7 +14195,7 @@
             }
         }
     },
-    "instanceRequiresNewerClient": "На {domain} працуе навейшая версія Fluxer, чым гэта праграма. Абнавіце праграму і паспрабуйце яшчэ раз.",
+    "instanceRequiresNewerClient": "На {domain} працуе навейшая версія sanalyer, чым гэта праграма. Абнавіце праграму і паспрабуйце яшчэ раз.",
     "@instanceRequiresNewerClient": {
         "description": "Error when the instance speaks a protocol generation this client does not support.",
         "placeholders": {
@@ -14204,7 +14204,7 @@
             }
         }
     },
-    "instanceInsecureConnection": "{domain} не выкарыстоўвае абароненае злучэнне (https). Па http Fluxer падключаецца толькі да экзэмпляраў у вашай лакальнай сетцы.",
+    "instanceInsecureConnection": "{domain} не выкарыстоўвае абароненае злучэнне (https). Па http sanalyer падключаецца толькі да экзэмпляраў у вашай лакальнай сетцы.",
     "@instanceInsecureConnection": {
         "description": "Error when adding an instance whose address uses http on the public internet. domain is the instance address.",
         "placeholders": {
@@ -18642,7 +18642,7 @@
     "@homeQuickActionDms": {
         "description": "Home screen quick action that opens Direct Messages."
     },
-    "assistantNeedsLogin": "Спачатку адкрыйце Fluxer і ўвайдзіце.",
+    "assistantNeedsLogin": "Спачатку адкрыйце sanalyer і ўвайдзіце.",
     "@assistantNeedsLogin": {
         "description": "Siri/Shortcuts result when the user is logged out."
     },
@@ -18650,7 +18650,7 @@
     "@assistantNotInVoice": {
         "description": "Siri/Shortcuts result when mute or leave runs with no live call."
     },
-    "assistantNotFound": "Fluxer не ўдалося гэта знайсці.",
+    "assistantNotFound": "sanalyer не ўдалося гэта знайсці.",
     "@assistantNotFound": {
         "description": "Siri/Shortcuts result when a friend, channel, or community cannot be resolved."
     },
@@ -18658,7 +18658,7 @@
     "@assistantDmsDisabled": {
         "description": "Siri/Shortcuts result when DM actions are blocked by instance config."
     },
-    "assistantFailed": "Fluxer не ўдалося гэта выканаць.",
+    "assistantFailed": "sanalyer не ўдалося гэта выканаць.",
     "@assistantFailed": {
         "description": "Siri/Shortcuts fallback when an assistant command fails."
     },
@@ -18675,7 +18675,7 @@
             }
         }
     },
-    "assistantOkOpened": "Fluxer адкрываецца.",
+    "assistantOkOpened": "sanalyer адкрываецца.",
     "assistantOkMessageSent": "Паведамленне адпраўлена.",
     "assistantOkCustomStatusSet": "Уласны статус абноўлены.",
     "assistantOkCustomStatusCleared": "Уласны статус ачышчаны.",
@@ -20119,7 +20119,7 @@
     "@appLockConfigure": {
         "description": "App lock: appLockConfigure"
     },
-    "appLockSettingDescription": "Fluxer будзе пытацца ваш PIN-код, калі праграма прабудзе ў фоне выбраны вамі час. Блакіроўка дзейнічае для ўсіх уліковых запісаў на гэтай прыладзе.",
+    "appLockSettingDescription": "sanalyer будзе пытацца ваш PIN-код, калі праграма прабудзе ў фоне выбраны вамі час. Блакіроўка дзейнічае для ўсіх уліковых запісаў на гэтай прыладзе.",
     "@appLockSettingDescription": {
         "description": "App lock: appLockSettingDescription"
     },
@@ -20159,7 +20159,7 @@
     "@appLockTurnOffConfirmTitle": {
         "description": "App lock: appLockTurnOffConfirmTitle"
     },
-    "appLockTurnOffConfirmBody": "Fluxer будзе адкрывацца без PIN-кода.",
+    "appLockTurnOffConfirmBody": "sanalyer будзе адкрывацца без PIN-кода.",
     "@appLockTurnOffConfirmBody": {
         "description": "App lock: appLockTurnOffConfirmBody"
     },
@@ -20201,7 +20201,7 @@
     "@appLockTooManyAttemptsShort": {
         "description": "App lock: appLockTooManyAttemptsShort"
     },
-    "appLockUnlockTitle": "Разблакіраваць Fluxer",
+    "appLockUnlockTitle": "Разблакіраваць sanalyer",
     "@appLockUnlockTitle": {
         "description": "App lock: appLockUnlockTitle"
     },
@@ -20239,7 +20239,7 @@
     "@appLockSignOutConfirmBody": {
         "description": "App lock: appLockSignOutConfirmBody"
     },
-    "appLockBiometricReason": "Разблакіраваць Fluxer",
+    "appLockBiometricReason": "Разблакіраваць sanalyer",
     "@appLockBiometricReason": {
         "description": "App lock: appLockBiometricReason"
     },
@@ -20306,7 +20306,7 @@
     "@appLockChangePinButton": {
         "description": "App lock: appLockChangePinButton"
     },
-    "appLockRowDescription": "Патрабаваць PIN-код для адкрыцця Fluxer",
+    "appLockRowDescription": "Патрабаваць PIN-код для адкрыцця sanalyer",
     "@appLockRowDescription": {
         "description": "App lock: appLockRowDescription"
     },
@@ -20319,11 +20319,11 @@
             }
         }
     },
-    "appLockRowDescriptionEnabledImmediately": "Уключана. Блакіруецца адразу, як толькі вы выходзіце з Fluxer.",
+    "appLockRowDescriptionEnabledImmediately": "Уключана. Блакіруецца адразу, як толькі вы выходзіце з sanalyer.",
     "@appLockRowDescriptionEnabledImmediately": {
         "description": "App lock: settings row description while app lock is on with no delay"
     },
-    "appLockRowDescriptionWithBiometric": "Патрабаваць PIN-код або {method} для адкрыцця Fluxer",
+    "appLockRowDescriptionWithBiometric": "Патрабаваць PIN-код або {method} для адкрыцця sanalyer",
     "@appLockRowDescriptionWithBiometric": {
         "description": "App lock: appLockRowDescriptionWithBiometric",
         "placeholders": {

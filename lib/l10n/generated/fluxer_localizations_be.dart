@@ -100,7 +100,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get gatewayOfflineToast =>
-      'Вы не ў сетцы. Fluxer падключыцца зноў, калі з’явіцца сетка.';
+      'Вы не ў сетцы. sanalyer падключыцца зноў, калі з’явіцца сетка.';
 
   @override
   String get sessionExpiredToast =>
@@ -4653,7 +4653,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get matureContentAppLockedBody =>
-      'Змесціва 18+ на iPhone і iPad выключана. Каб праглядаць тут суполкі і каналы з адзнакай 18+, адкрыйце Fluxer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».';
+      'Змесціва 18+ на iPhone і iPad выключана. Каб праглядаць тут суполкі і каналы з адзнакай 18+, адкрыйце sanalyer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».';
 
   @override
   String get matureContentRegionLockedBody =>
@@ -4664,23 +4664,23 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get ageRangeUnderMinimumTitle =>
-      'Fluxer недаступны для гэтага ўліковага запісу';
+      'sanalyer недаступны для гэтага ўліковага запісу';
 
   @override
   String get ageRangeUnderMinimumBody =>
-      'Паводле ўзроставага дыяпазону, які перадае ваш Apple Account, вам менш за 13 гадоў. Fluxer прызначаны толькі для людзей ад 13 гадоў.';
+      'Паводле ўзроставага дыяпазону, які перадае ваш Apple Account, вам менш за 13 гадоў. sanalyer прызначаны толькі для людзей ад 13 гадоў.';
 
   @override
   String get ageRangeUnderMinimumBodyGoogle =>
-      'Паводле ўзроставага дыяпазону, які перадае ваш Google Account, вам менш за 13 гадоў. Fluxer прызначаны толькі для людзей ад 13 гадоў.';
+      'Паводле ўзроставага дыяпазону, які перадае ваш Google Account, вам менш за 13 гадоў. sanalyer прызначаны толькі для людзей ад 13 гадоў.';
 
   @override
   String get ageRangeUnlockBody =>
-      'Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Apple Account. Fluxer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.';
+      'Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Apple Account. sanalyer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.';
 
   @override
   String get ageRangeUnlockBodyGoogle =>
-      'Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Google Account. Fluxer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.';
+      'Па законе вашага рэгіёна для доступу да змесціва для дарослых недастаткова ўвесці дату нараджэння, але яго можна адкрыць з дапамогай узроставага дыяпазону з вашага Google Account. sanalyer атрымлівае ўзроставы дыяпазон, толькі калі вам 18 гадоў або больш. Дыяпазон да 18 гадоў застаецца на гэтай прыладзе.';
 
   @override
   String get ageRangeUnlockHelpLink =>
@@ -4691,19 +4691,19 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get ageRangeUnlockUnderAdult =>
-      'Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Apple Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў Fluxer.';
+      'Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Apple Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў sanalyer.';
 
   @override
   String get ageRangeUnlockUnderAdultGoogle =>
-      'Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Google Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў Fluxer.';
+      'Змесціва для дарослых застаецца выключаным, бо паводле ўзроставага дыяпазону ў вашым Google Account вам менш за 18 гадоў. Дыяпазон застаецца на гэтай прыладзе і не адпраўляецца ў sanalyer.';
 
   @override
   String get ageRangeUnlockFailed =>
-      'Fluxer не ўдалося адкрыць змесціва для дарослых. Паспрабуйце яшчэ раз пазней.';
+      'sanalyer не ўдалося адкрыць змесціва для дарослых. Паспрабуйце яшчэ раз пазней.';
 
   @override
   String get ageRangeUnlockDateOfBirthRequired =>
-      'Каб Fluxer мог выкарыстаць ваш узроставы дыяпазон, ва ўліковым запісе павінна быць указана дата нараджэння.';
+      'Каб sanalyer мог выкарыстаць ваш узроставы дыяпазон, ва ўліковым запісе павінна быць указана дата нараджэння.';
 
   @override
   String get matureContentProceedButton => 'Працягнуць';
@@ -4742,11 +4742,11 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get sensitiveContentAppLockedHint =>
-      'Каб выбраць тут «Паказаць», адкрыйце Fluxer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».';
+      'Каб выбраць тут «Паказаць», адкрыйце sanalyer у вэб-версіі або на камп’ютары, перайдзіце ў раздзел «Прыватнасць» у наладах і ўключыце «Дазволіць змесціва 18+ на iPhone і iPad».';
 
   @override
   String get sensitiveContentInstallFromPlayHint =>
-      'Каб адкрыць змесціва для дарослых праз Google Account, патрэбна копія Fluxer з Google Play.';
+      'Каб адкрыць змесціва для дарослых праз Google Account, патрэбна копія sanalyer з Google Play.';
 
   @override
   String get sensitiveContentFinishInPlayHint =>
@@ -4875,10 +4875,10 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get connectionTokenFileDescription =>
-      'Спампуйце **fluxer-verification** і пакладзіце яго ў папку **.well-known**, каб мы маглі праверыць дамен.';
+      'Спампуйце **sanalyer-verification** і пакладзіце яго ў папку **.well-known**, каб мы маглі праверыць дамен.';
 
   @override
-  String get connectionTokenFileDownload => 'Спампаваць fluxer-verification';
+  String get connectionTokenFileDownload => 'Спампаваць sanalyer-verification';
 
   @override
   String connectionTokenFileMeta(String dnsUrl) {
@@ -4886,7 +4886,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   }
 
   @override
-  String get connectionSaveTokenDialogTitle => 'Захаваць fluxer-verification';
+  String get connectionSaveTokenDialogTitle => 'Захаваць sanalyer-verification';
 
   @override
   String get connectionVerifyButton => 'Пацвердзіць';
@@ -4957,7 +4957,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get connectionRemoveFailed => 'Не ўдалося выдаліць падключэнне';
 
   @override
-  String get connectionTokenSavedToast => 'Файл fluxer-verification захаваны';
+  String get connectionTokenSavedToast => 'Файл sanalyer-verification захаваны';
 
   @override
   String get connectionTokenSaveFailedToast => 'Не ўдалося захаваць файл';
@@ -10108,7 +10108,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get userSettingsNavSecurityLogin => 'Бяспека і ўваход';
 
   @override
-  String get userSettingsNavFluxerPlutonium => 'Fluxer Plutonium';
+  String get userSettingsNavFluxerPlutonium => 'sanalyer Premium';
 
   @override
   String get userSettingsNavGiftsAndCodes => 'Падарункі';
@@ -10412,7 +10412,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get premiumCompletePaymentBody =>
-      'Цяпер вы пяройдзеце ў Stripe, каб завяршыць аплату. Пасля аплаты вярніцеся ў Fluxer.';
+      'Цяпер вы пяройдзеце ў Stripe, каб завяршыць аплату. Пасля аплаты вярніцеся ў sanalyer.';
 
   @override
   String get premiumChoosePaymentMethodTitle => 'Выберыце спосаб аплаты';
@@ -10454,7 +10454,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get premiumExistingSubscriptionBody =>
-      'Мы знайшлі ў гэтага ўліковага запісу наяўную падпіску Fluxer Plutonium. Кіруйце ёю ў абароненым плацежным партале, каб абнавіць плацежныя даныя або праверыць стан працягнення. Калі вы толькі што аплацілі, пачакайце хвіліну і зноў адкрыйце гэту старонку.';
+      'Мы знайшлі ў гэтага ўліковага запісу наяўную падпіску sanalyer Premium. Кіруйце ёю ў абароненым плацежным партале, каб абнавіць плацежныя даныя або праверыць стан працягнення. Калі вы толькі што аплацілі, пачакайце хвіліну і зноў адкрыйце гэту старонку.';
 
   @override
   String get premiumPurchasesDisabledTitle => 'Пакупкі недаступныя';
@@ -10470,11 +10470,11 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get premiumClaimAccountToPurchase =>
-      'Каб купіць Fluxer Plutonium, замацуйце за сабой уліковы запіс.';
+      'Каб купіць sanalyer Premium, замацуйце за сабой уліковы запіс.';
 
   @override
   String get premiumVerifyEmailToPurchase =>
-      'Каб купіць Fluxer Plutonium, пацвердзіце адрас электроннай пошты.';
+      'Каб купіць sanalyer Premium, пацвердзіце адрас электроннай пошты.';
 
   @override
   String get premiumPerkCommunities => 'Суполкі';
@@ -10644,7 +10644,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get storePlutoniumTagFootnote =>
-      'Можна выбраць толькі тэг, якога яшчэ няма ў іншага карыстальніка з такім самым імем. Вялікія і малыя літары ў імёнах не адрозніваюцца, таму Mina#4821 і mina#4821 лічацца аднолькавымі. Тэг #0000 зарэзерваваны для ўдзельнікаў Fluxer Visionary.';
+      'Можна выбраць толькі тэг, якога яшчэ няма ў іншага карыстальніка з такім самым імем. Вялікія і малыя літары ў імёнах не адрозніваюцца, таму Mina#4821 і mina#4821 лічацца аднолькавымі. Тэг #0000 зарэзерваваны для ўдзельнікаў sanalyer Visionary.';
 
   @override
   String get storePlutoniumTagFootnoteIos =>
@@ -10655,14 +10655,14 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get storePlutoniumDonatePrompt =>
-      'Хочаце проста падтрымаць распрацоўку Fluxer з адкрытым кодам? ';
+      'Хочаце проста падтрымаць распрацоўку sanalyer з адкрытым кодам? ';
 
   @override
   String get storePlutoniumDonateLink => 'Лепш зрабіце ахвяраванне.';
 
   @override
   String get storePlutoniumHighlightsLead =>
-      'Падпіска фінансуе Fluxer і адкрывае';
+      'Падпіска фінансуе sanalyer і адкрывае';
 
   @override
   String get storePlutoniumHighlightEmoji =>
@@ -10713,11 +10713,11 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get storePlutoniumAlreadySubscribed =>
-      'У вас ужо ёсць падпіска Fluxer Plutonium.';
+      'У вас ужо ёсць падпіска sanalyer Premium.';
 
   @override
   String get storePlutoniumOwnedByOtherAccount =>
-      'Apple Account на гэтай прыладзе ўжо аплачвае Plutonium для іншага ўліковага запісу Fluxer.';
+      'Apple Account на гэтай прыладзе ўжо аплачвае Plutonium для іншага ўліковага запісу sanalyer.';
 
   @override
   String get storePlutoniumClaimFailedTitle => 'Plutonium не дададзены';
@@ -11213,7 +11213,8 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get notificationsPushDeliveryGatewayLabel => 'Шлюз';
 
   @override
-  String get notificationsPushDeliveryRelayLabel => 'Рэтранслятар Fluxer Push';
+  String get notificationsPushDeliveryRelayLabel =>
+      'Рэтранслятар sanalyer Push';
 
   @override
   String get notificationsPushDeliveryRelayInUse => 'Выкарыстоўваецца';
@@ -11230,12 +11231,12 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String notificationsPushRelaySectionDescription(String pushProvider) {
-    return '$pushProvider дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар Fluxer.';
+    return '$pushProvider дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар sanalyer.';
   }
 
   @override
   String get notificationsPushRelayConsentLabel =>
-      'Выкарыстоўваць push-рэтранслятар Fluxer';
+      'Выкарыстоўваць push-рэтранслятар sanalyer';
 
   @override
   String get notificationsPushRelayConsentDescription =>
@@ -11246,7 +11247,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String pushRelayConsentDescription(String pushProvider) {
-    return '$pushProvider дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар Fluxer.';
+    return '$pushProvider дастаўляе push-апавяшчэнні толькі праз уласны сэрвіс, таму апавяшчэнні для гэтай прылады праходзяць праз рэтранслятар sanalyer.';
   }
 
   @override
@@ -11360,7 +11361,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get appIconAndroidChangeDescription =>
-      'Fluxer перазапусціцца, каб прымяніць новы значок на галоўным экране.';
+      'sanalyer перазапусціцца, каб прымяніць новы значок на галоўным экране.';
 
   @override
   String get appIconAndroidChangeConfirm => 'Змяніць значок';
@@ -11405,7 +11406,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get advancedCrashReportingSectionDescription =>
-      'Дапамажыце Fluxer выпраўляць памылкі ў гэтай праграме: дзяліцеся данымі пра збоі і прадукцыйнасць. Прадвызначана гэта выключана.';
+      'Дапамажыце sanalyer выпраўляць памылкі ў гэтай праграме: дзяліцеся данымі пра збоі і прадукцыйнасць. Прадвызначана гэта выключана.';
 
   @override
   String get advancedPerformanceReportingLabel =>
@@ -11413,18 +11414,18 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get advancedCrashReportingDescription =>
-      'Справаздачы трапляюць у сістэму адсочвання памылак Fluxer, нават калі вы ўвайшлі на іншым экзэмпляры. Яны звязаны з выпадковым ID гэтага ўсталявання і не ўтрымліваюць ID вашага ўліковага запісу, назваў экзэмпляраў або змесціва паведамленняў.';
+      'Справаздачы трапляюць у сістэму адсочвання памылак sanalyer, нават калі вы ўвайшлі на іншым экзэмпляры. Яны звязаны з выпадковым ID гэтага ўсталявання і не ўтрымліваюць ID вашага ўліковага запісу, назваў экзэмпляраў або змесціва паведамленняў.';
 
   @override
   String get observabilityReportingConsentTitle => 'Дапамажыце выправіць збоі';
 
   @override
   String get observabilityReportingConsentSubtitle =>
-      'Fluxer нечакана закрыўся. Справаздача пра збой дапаможа нам хутчэй знайсці і выправіць праблему.';
+      'sanalyer нечакана закрыўся. Справаздача пра збой дапаможа нам хутчэй знайсці і выправіць праблему.';
 
   @override
   String get observabilityReportingConsentBody =>
-      'Справаздачы ўтрымліваюць журналы збояў, памылкі, даныя пра прадукцыйнасць, час выканання сеткавых запытаў, а таксама экраны і націсканні, якія папярэднічалі праблеме, і звязаны з выпадковым ID гэтага ўсталявання. Яны ніколі не ўтрымліваюць змесціва паведамленняў і трапляюць толькі ва ўласную сістэму адсочвання памылак Fluxer. Выключыць гэта можна ў любы час.';
+      'Справаздачы ўтрымліваюць журналы збояў, памылкі, даныя пра прадукцыйнасць, час выканання сеткавых запытаў, а таксама экраны і націсканні, якія папярэднічалі праблеме, і звязаны з выпадковым ID гэтага ўсталявання. Яны ніколі не ўтрымліваюць змесціва паведамленняў і трапляюць толькі ва ўласную сістэму адсочвання памылак sanalyer. Выключыць гэта можна ў любы час.';
 
   @override
   String observabilityReportingConsentEnableLater(String reportingToggle) {
@@ -12010,7 +12011,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get userSettingsNavFluxerAppPrivacyPolicy =>
-      'Палітыка прыватнасці праграмы Fluxer';
+      'Палітыка прыватнасці праграмы sanalyer';
 
   @override
   String get userSettingsTitle => 'Налады';
@@ -12034,7 +12035,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get userSettingsNavWhatsNew => 'Што новага';
 
   @override
-  String get userSettingsJoinFluxerLabs => 'Далучыцца да Fluxer Labs';
+  String get userSettingsJoinFluxerLabs => 'Далучыцца да sanalyer Labs';
 
   @override
   String get userSettingsGiveFeedback => 'Пакінуць водгук';
@@ -12313,14 +12314,14 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get instanceUrlLabel => 'URL экзэмпляра';
 
   @override
-  String get instanceUrlPlaceholder => 'fluxer.com';
+  String get instanceUrlPlaceholder => 'sanalyer.com';
 
   @override
   String get instanceUrlHelper =>
-      'Для афіцыйнага экзэмпляра ўвядзіце fluxer.com, а для ўласнага — дакладны URL экзэмпляра.';
+      'Для афіцыйнага экзэмпляра ўвядзіце sanalyer.com, а для ўласнага — дакладны URL экзэмпляра.';
 
   @override
-  String get resetToDefaultInstance => 'Вярнуць Fluxer';
+  String get resetToDefaultInstance => 'Вярнуць sanalyer';
 
   @override
   String get instanceConnect => 'Падключыць';
@@ -12342,17 +12343,17 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String instanceOutdatedForClient(String domain) {
-    return 'Гэты экзэмпляр састарэў для гэтай праграмы. Папрасіце адміністратара $domain абнавіць Fluxer.';
+    return 'Гэты экзэмпляр састарэў для гэтай праграмы. Папрасіце адміністратара $domain абнавіць sanalyer.';
   }
 
   @override
   String instanceRequiresNewerClient(String domain) {
-    return 'На $domain працуе навейшая версія Fluxer, чым гэта праграма. Абнавіце праграму і паспрабуйце яшчэ раз.';
+    return 'На $domain працуе навейшая версія sanalyer, чым гэта праграма. Абнавіце праграму і паспрабуйце яшчэ раз.';
   }
 
   @override
   String instanceInsecureConnection(String domain) {
-    return '$domain не выкарыстоўвае абароненае злучэнне (https). Па http Fluxer падключаецца толькі да экзэмпляраў у вашай лакальнай сетцы.';
+    return '$domain не выкарыстоўвае абароненае злучэнне (https). Па http sanalyer падключаецца толькі да экзэмпляраў у вашай лакальнай сетцы.';
   }
 
   @override
@@ -16126,20 +16127,20 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get homeQuickActionDms => 'АЧ';
 
   @override
-  String get assistantNeedsLogin => 'Спачатку адкрыйце Fluxer і ўвайдзіце.';
+  String get assistantNeedsLogin => 'Спачатку адкрыйце sanalyer і ўвайдзіце.';
 
   @override
   String get assistantNotInVoice => 'Вы не ў выкліку.';
 
   @override
-  String get assistantNotFound => 'Fluxer не ўдалося гэта знайсці.';
+  String get assistantNotFound => 'sanalyer не ўдалося гэта знайсці.';
 
   @override
   String get assistantDmsDisabled =>
       'Асабістыя паведамленні адключаны на гэтым экзэмпляры.';
 
   @override
-  String get assistantFailed => 'Fluxer не ўдалося гэта выканаць.';
+  String get assistantFailed => 'sanalyer не ўдалося гэта выканаць.';
 
   @override
   String get assistantOkMuted => 'Мікрафон выключаны.';
@@ -16162,7 +16163,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   }
 
   @override
-  String get assistantOkOpened => 'Fluxer адкрываецца.';
+  String get assistantOkOpened => 'sanalyer адкрываецца.';
 
   @override
   String get assistantOkMessageSent => 'Паведамленне адпраўлена.';
@@ -17567,7 +17568,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get appLockSettingDescription =>
-      'Fluxer будзе пытацца ваш PIN-код, калі праграма прабудзе ў фоне выбраны вамі час. Блакіроўка дзейнічае для ўсіх уліковых запісаў на гэтай прыладзе.';
+      'sanalyer будзе пытацца ваш PIN-код, калі праграма прабудзе ў фоне выбраны вамі час. Блакіроўка дзейнічае для ўсіх уліковых запісаў на гэтай прыладзе.';
 
   @override
   String get appLockTimeoutLabel => 'Блакіраваць праз';
@@ -17598,7 +17599,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get appLockTurnOffConfirmBody =>
-      'Fluxer будзе адкрывацца без PIN-кода.';
+      'sanalyer будзе адкрывацца без PIN-кода.';
 
   @override
   String get appLockEnterCurrentPinTitle => 'Увядзіце PIN-код';
@@ -17629,7 +17630,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
       'Занадта шмат спроб. Пачакайце, перш чым паспрабаваць зноў.';
 
   @override
-  String get appLockUnlockTitle => 'Разблакіраваць Fluxer';
+  String get appLockUnlockTitle => 'Разблакіраваць sanalyer';
 
   @override
   String appLockUnlockSubtitlePin(int digits) {
@@ -17656,7 +17657,7 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
       'З усіх уліковых запісаў на гэтай прыладзе будзе выкананы выхад, а блакіроўка праграмы будзе выключана.';
 
   @override
-  String get appLockBiometricReason => 'Разблакіраваць Fluxer';
+  String get appLockBiometricReason => 'Разблакіраваць sanalyer';
 
   @override
   String get appLockPinFieldLabel => 'PIN-код';
@@ -17701,7 +17702,8 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
   String get appLockChangePinButton => 'Змяніць PIN-код';
 
   @override
-  String get appLockRowDescription => 'Патрабаваць PIN-код для адкрыцця Fluxer';
+  String get appLockRowDescription =>
+      'Патрабаваць PIN-код для адкрыцця sanalyer';
 
   @override
   String appLockRowDescriptionEnabled(String duration) {
@@ -17710,11 +17712,11 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get appLockRowDescriptionEnabledImmediately =>
-      'Уключана. Блакіруецца адразу, як толькі вы выходзіце з Fluxer.';
+      'Уключана. Блакіруецца адразу, як толькі вы выходзіце з sanalyer.';
 
   @override
   String appLockRowDescriptionWithBiometric(String method) {
-    return 'Патрабаваць PIN-код або $method для адкрыцця Fluxer';
+    return 'Патрабаваць PIN-код або $method для адкрыцця sanalyer';
   }
 
   @override
@@ -18330,14 +18332,14 @@ class FluxerLocalizationsBe extends FluxerLocalizations {
 
   @override
   String get operatorPassWallReleaseListDescription =>
-      'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
+      'Each yearly list goes into the notes of a sanalyer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
 
   @override
-  String get operatorPassLabsTitle => 'Fluxer Labs';
+  String get operatorPassLabsTitle => 'sanalyer Labs';
 
   @override
   String get operatorPassLabsDescription =>
-      'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.';
+      'Your pass opens #operators in sanalyer Labs, where you can talk about self-hosting, bots and the API.';
 
   @override
   String get operatorPassShowOperatorsLabel => 'Show #operators';
