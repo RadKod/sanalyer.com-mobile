@@ -5,7 +5,7 @@ Uygulama açılışta doğrudan https://sanalyer.com'a bağlanır, adı, ikonu v
 
 Repo: https://github.com/RadKod/sanalyer.com-mobile (eski adı RadKod/flutter_client, GitHub
 eski adresi yönlendiriyor). Upstream: https://github.com/fluxerapp/flutter_client, branch
-`canary`. Son senkron: 2026-11-12, upstream'den 159 commit (merge `3ed50d62f`); fork'un `canary` branch'i
+`canary`. Son senkron: 2026-11-23, upstream'den 94 commit (merge `2515a3588`; önceki 12 Kasım, `3ed50d62f`); fork'un `canary` branch'i
 upstream'le aynı yerde, `sanalyer` branch'ine merge edildi.
 
 ## Ne değişti
@@ -40,7 +40,7 @@ upstream'le aynı yerde, `sanalyer` branch'ine merge edildi.
 
 Flutter'ın güncel stable sürümü gerekiyor (pubspec `sdk: ^3.12.0` istiyor). Homebrew'daki
 Flutter 3.35.7 (Dart 3.9.2) yetmiyor. Bu Mac'te ayrı bir kopya var:
-`~/.local/share/flutter-stable-sanalyer` (Flutter 3.47.7, Dart 3.13.5; `git clone --depth 1 --branch 3.47.7 https://github.com/flutter/flutter.git`). Eski yeri `~/.cache` temizlikte silindi.
+`~/.local/share/flutter-stable-sanalyer` (Flutter 3.50.0, Dart 3.14.0; 23 Kasım'da `git fetch --depth 1 origin tag 3.50.0 && git checkout 3.50.0` ile yükseltildi, upstream `ScrollCacheExtent` kullandığı için 3.47.7 ile derlenmiyor). Eski yeri `~/.cache` temizlikte silindi.
 
 ```sh
 export PATH=~/.local/share/flutter-stable-sanalyer/bin:$PATH
@@ -229,6 +229,26 @@ Script keystore ve Firebase dosyalarını yerine koyar, `android-fcm` profiliyle
 üretir, sonunda `configure_build`'in değiştirdiği dosyaları geri alır. Build numarası `YYAAGGNN`
 (versionCode, her yüklemede artmalı). AAB Play Console'a elle yüklenir (internal testing); API ile
 yükleme için Play service account'u henüz yok, `fastlane android` lane'leri hâlâ `com.fluxer` bekliyor.
+
+## 23 Kasım senkronu notları
+
+- Flutter 3.50.0 gerekiyor (yukarıda). Android'de AGP 9.3.3, Gradle 9.5.0, `compileSdk = 37` geldi; mevcut SDK
+  kurulumuyla (platform `android-37` symlink'i dahil) derlendi.
+- Markdown ayrıştırıcısının Rust kaynağı artık `fluxer` submodule'ünde ve o Rust 1.98.1'e sabitli
+  (`fluxer/rust-toolchain.toml`). Mobil target'lar o toolchain'e de kurulmalı, yoksa Xcode build'i
+  "could not compile `itoa`/`memchr`" diye düşer:
+  `rustup target add --toolchain 1.98.1-aarch64-apple-darwin aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios aarch64-linux-android armv7-linux-androideabi x86_64-linux-android`.
+  Pub paketlerinin sabitlediği toolchain'ler için `tool/prefetch_native_rust_toolchains.sh`.
+- Flutter'ın `~/.config/flutter/settings` dosyasındaki `android-sdk` değeri `ANDROID_HOME`'dan önce gelir. Shell
+  profili `ANDROID_HOME`'u var olmayan `~/Library/Android/sdk`'ya ayarlıyor; build script'i bu yüzden SDK yolunu
+  profilden almıyor (`SANALYER_ANDROID_SDK` ile değiştirilebilir). Belirti: "No Android SDK found".
+- iOS: eklentiler SPM'e taşındı ama `ios/Podfile` ve `pod install` adımı duruyor, lane değişmeden çalıştı.
+  `macos/Podfile` silindi (bizim lane'i etkilemiyor).
+- Marka: Belarusça (55), Portekizce (10) ve İngilizce (3) yeni metinde Fluxer adı düzeltildi; 36 dilin
+  değerlerinde "Fluxer" kalmadı. Tek başına "Plutonium" bütün dillerde önceki gibi duruyor. Operator Pass
+  ayar bölümü yalnız sunucu Operator Pass verisi dönerse görünüyor, sanalyer sunucusu dönmüyor.
+- Build'ler: iOS 20261123.2210 (TestFlight), Android 26112301 (Play internal testing ve
+  `android-1.0.0-26112301` release'i).
 
 ## Bilerek bırakılanlar
 
