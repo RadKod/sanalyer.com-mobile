@@ -811,9 +811,6 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
       '您的账户尚未认领。没有用户名和密码，您将无法从其他设备登录，并可能丢失账户访问权限。立即认领您的账户以确保其安全。';
 
   @override
-  String get addFriendUsernameOnlyHint => '用户名';
-
-  @override
   String get registerTitle => '创建账号';
 
   @override
@@ -1095,9 +1092,6 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get embedGiftClaim => '领取礼物';
 
   @override
-  String get embedGiftClaimed => '礼物已领取';
-
-  @override
   String get embedGiftClaimAccount => '认领账号后领取';
 
   @override
@@ -1105,9 +1099,6 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get embedGiftUnknownSubtitle => '此礼品码无效或已被领取。';
-
-  @override
-  String get embedGiftUnavailable => '礼物不可用';
 
   @override
   String giftAcceptClaimSubscription(String productName) {
@@ -1312,6 +1303,12 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get incomingVoiceCallLabel => '来电';
 
   @override
+  String get incomingVoiceCallNotificationChannel => 'Incoming calls';
+
+  @override
+  String get missedVoiceCallNotificationChannel => 'Missed calls';
+
+  @override
   String get incomingVoiceCallIgnore => '忽略';
 
   @override
@@ -1473,9 +1470,6 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get addFriendSheetTitle => '添加好友';
-
-  @override
-  String get addFriendUsernameHint => '用户名#0000';
 
   @override
   String get addFriendUsernameLabel => '好友用户名';
@@ -4290,8 +4284,9 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get matureCommunityUnavailableBody => '你的账号无法访问此成人社区。';
 
   @override
-  String get matureContentIosWebOptInBody =>
-      '请在浏览器中访问 sanalyer.com 或在桌面应用中开启年龄限制的社区和频道。开启之前，它们在 iOS 应用中会保持隐藏。';
+  String matureContentIosWebOptInInstanceBody(String webAddress) {
+    return 'Turn on age-restricted communities and channels at $webAddress in your browser or in the desktop app. They stay hidden in the iOS app until you do.';
+  }
 
   @override
   String get matureCategoryUnavailableBody => '你的账号无法访问此成人内容类别。';
@@ -4598,6 +4593,33 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get connectionEnterDomain => '请输入域名。';
+
+  @override
+  String get connectionsEmptyDescriptionAccounts =>
+      'Link your accounts or verify domain ownership to display them on your profile.';
+
+  @override
+  String connectionsAddProviderAriaLabel(String providerName) {
+    return 'Add $providerName connection';
+  }
+
+  @override
+  String connectionConnectWithProvider(String providerName) {
+    return 'Connect with $providerName';
+  }
+
+  @override
+  String connectionProviderInstructions(String providerName) {
+    return '$providerName opens in your browser. Sign in there to connect your account.';
+  }
+
+  @override
+  String connectionProviderAuthorizeFailed(String providerName) {
+    return 'Couldn\'t start $providerName authorization.';
+  }
+
+  @override
+  String get connectionUnavailable => 'No longer available';
 
   @override
   String get lookAndFeelThemeSectionTitle => '主题';
@@ -5888,6 +5910,27 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get voiceControlVideo => '视频';
+
+  @override
+  String get voiceControlMoreOptions => 'More options';
+
+  @override
+  String get voiceControlInputSettings => 'Input settings';
+
+  @override
+  String get voiceControlOutputSettings => 'Output settings';
+
+  @override
+  String get voiceControlCameraSettings => 'Camera settings';
+
+  @override
+  String get voiceControlScreenShareSettings => 'Screen share settings';
+
+  @override
+  String get voiceControlStartScreenShare => 'Share your screen';
+
+  @override
+  String get voiceControlStopScreenShare => 'Stop sharing';
 
   @override
   String get voiceControlFlipCamera => '切换摄像头';
@@ -11385,6 +11428,16 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get discoveryFilterByLanguage => '按语言筛选';
 
   @override
+  String discoveryFilteringByLanguage(String language) {
+    return 'Filtering by $language';
+  }
+
+  @override
+  String discoverySearchResultsFor(String query) {
+    return 'Search results for “$query”';
+  }
+
+  @override
   String get discoveryAllLanguages => '所有语言';
 
   @override
@@ -11422,6 +11475,17 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get discoveryJoinCommunity => '加入社区';
+
+  @override
+  String get discoveryOpenCommunity => 'Open community';
+
+  @override
+  String get discoveryPublicCommunity => 'Public community';
+
+  @override
+  String discoveryPreviewCommunity(String communityName) {
+    return 'Preview $communityName';
+  }
 
   @override
   String get discoveryJoined => '已加入';
@@ -11906,6 +11970,9 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
 
   @override
   String get guildNavbarInvitesPaused => '此社区的邀请目前已暂停';
+
+  @override
+  String get guildNavbarInvitesPausedRaid => '检测到疑似突袭，邀请已暂停';
 
   @override
   String get guildNavbarDurationNever => '永不';
@@ -16266,6 +16333,11 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get oxygenUpdating => 'Updating…';
 
   @override
+  String oxygenUpdatingProgress(int percent) {
+    return 'Updating… $percent%';
+  }
+
+  @override
   String desktopTrayShow(String productName) {
     return 'Show $productName';
   }
@@ -16273,6 +16345,15 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   @override
   String desktopTrayHide(String productName) {
     return 'Hide $productName';
+  }
+
+  @override
+  String desktopBadgeUnreadMessages(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Unread messages: $countString';
   }
 
   @override
@@ -16350,8 +16431,518 @@ class FluxerLocalizationsZh extends FluxerLocalizations {
   String get desktopSettingsCloseToMenuBar => 'Close to menu bar';
 
   @override
-  String get operatorPassWallReleaseListHint =>
-      'Once a year, we publish a list of Operators in the notes of a sanalyer release and in its source code. Your wall name is only on it if you turn this on.';
+  String get desktopSettingsLaunchAtLogin => 'Launch at login';
+
+  @override
+  String get desktopSettingsStartMinimized => 'Start minimized';
+
+  @override
+  String get desktopSettingsStartMinimizedTrayDescription =>
+      'When launched at login, start in the system tray instead of opening the window';
+
+  @override
+  String get desktopSettingsStartMinimizedMenuBarDescription =>
+      'When launched at login, start in the menu bar instead of opening the window';
+
+  @override
+  String get desktopSettingsRememberWindowState =>
+      'Remember window size and position';
+
+  @override
+  String get desktopSettingsColoredTrayIcon => 'Use colored tray icon';
+
+  @override
+  String get desktopSettingsColoredTrayIconDescription =>
+      'Show the full-color icon instead of a monochrome one that matches your taskbar.';
+
+  @override
+  String get desktopSettingsUnreadLauncherBadge =>
+      'Badge the app icon for unread messages';
+
+  @override
+  String get desktopSettingsUnreadLauncherBadgeDescription =>
+      'Linux taskbars can only show a number, so unread messages without mentions show as 1. Mentions always show their count.';
+
+  @override
+  String get desktopSettingsDarkTaskbarBadge => 'Use dark taskbar badge';
+
+  @override
+  String get desktopSettingsDarkTaskbarBadgeDescription =>
+      'Draw the unread badge on the taskbar button in dark gray instead of red.';
+
+  @override
+  String get desktopSettingsUseNativeTitleBar => 'Use native title bar';
+
+  @override
+  String get desktopSettingsRestartRequiredDescription =>
+      'Takes effect after you restart the app.';
+
+  @override
+  String get desktopSettingsTrayIconColorTitle => 'Tray icon color';
+
+  @override
+  String get desktopSettingsTrayIconColorColoredNotice =>
+      'Turn off the colored tray icon to choose a color here.';
+
+  @override
+  String get desktopSettingsTrayIconColorAuto => 'Match the taskbar';
+
+  @override
+  String get desktopSettingsTrayIconColorAutoDescription =>
+      'Pick white or black from the color of your taskbar or panel.';
+
+  @override
+  String get desktopSettingsTrayIconColorWhite => 'White';
+
+  @override
+  String get desktopSettingsTrayIconColorBlack => 'Black';
+
+  @override
+  String get desktopBadgeUnreadMessagesNoCount => 'Unread messages';
+
+  @override
+  String get notificationsUnreadMessageBadgeLabel =>
+      'Enable unread message badge';
+
+  @override
+  String get keybindActionPushToTalk => 'Push to talk';
+
+  @override
+  String get keybindActionPushToMute => 'Push to mute';
+
+  @override
+  String get keybindActionToggleVoiceActivity =>
+      'Toggle voice activity / push-to-talk';
+
+  @override
+  String get keybindRecorderSemanticLabel => 'Record keybind';
+
+  @override
+  String get keybindRecorderRecording => 'Press a key combination…';
+
+  @override
+  String get keybindRecorderUnassigned => 'Not assigned';
+
+  @override
+  String get keybindsCustomSectionTitle => 'Custom keybinds';
+
+  @override
+  String get keybindsCustomSectionDescription =>
+      'Add your own keybinds. A custom keybind replaces the built-in shortcut for the same action.';
+
+  @override
+  String get keybindsAddKeybind => 'Add keybind';
+
+  @override
+  String get keybindsRemoveKeybind => 'Remove keybind';
+
+  @override
+  String get keybindsChooseAction => 'Choose an action';
+
+  @override
+  String get keybindsDisableBuiltinLabel => 'Disable built-in shortcuts';
+
+  @override
+  String get keybindsDisableBuiltinDescription =>
+      'Only your custom keybinds will work.';
+
+  @override
+  String get keybindsSyncAcrossDevicesLabel => 'Sync keybinds across devices';
+
+  @override
+  String get keybindsSyncAcrossDevicesDescription =>
+      'Use the same custom keybinds and push-to-talk settings on every device signed in to this account.';
+
+  @override
+  String get audioAndVideoInputModeTitle => 'Input mode';
+
+  @override
+  String get audioAndVideoPushToTalkLabel => 'Push-to-talk';
+
+  @override
+  String get audioAndVideoPushToTalkDescription =>
+      'Your microphone only transmits while you hold the push-to-talk key and the app is focused.';
+
+  @override
+  String get audioAndVideoPushToTalkKeybindLabel => 'Push-to-talk keybind';
+
+  @override
+  String get audioAndVideoReleaseDelayLabel => 'Release delay';
+
+  @override
+  String get audioAndVideoReleaseDelayDescription =>
+      'How long your microphone stays on after you let go of the key.';
+
+  @override
+  String audioAndVideoReleaseDelayMilliseconds(int milliseconds) {
+    return '$milliseconds ms';
+  }
+
+  @override
+  String audioAndVideoReleaseDelaySeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String get audioAndVideoAutoActivityThresholdLabel =>
+      'Auto-set activity threshold';
+
+  @override
+  String get audioAndVideoAutoActivityThresholdDescription =>
+      'Turn off to choose how loud you need to be before your microphone transmits.';
+
+  @override
+  String get audioAndVideoActivityThresholdLabel => 'Activity threshold';
+
+  @override
+  String get audioAndVideoActivityThresholdDescription =>
+      'Your microphone transmits when your input is above this level. Use the mic test to check your levels.';
+
+  @override
+  String get audioAndVideoShowConnectionIdsLabel => 'Show connection IDs';
+
+  @override
+  String get audioAndVideoShowConnectionIdsDescription =>
+      'Show the connection ID in the voice connection panel, useful when reporting call problems.';
+
+  @override
+  String get advancedSettingDisableScreenSharePipLabel =>
+      'Disable picture-in-picture popout for screen shares';
+
+  @override
+  String get advancedSettingScreenShareAv1OptInLabel =>
+      'Allow AV1 screen sharing';
+
+  @override
+  String get advancedSettingScreenShareHevcOptInLabel =>
+      'Allow H.265 (HEVC) screen sharing';
+
+  @override
+  String get advancedSettingScreenShareOptInDescription =>
+      'Off by default because it may cause compatibility issues for viewers.';
+
+  @override
+  String get entranceSoundSectionTitle => 'Entrance sound';
+
+  @override
+  String get entranceSoundSectionDescription =>
+      'Play a short sound for everyone when you join a voice channel.';
+
+  @override
+  String get entranceSoundUnavailable =>
+      'Custom entrance sounds aren\'t available on your account.';
+
+  @override
+  String get entranceSoundLoadFailed => 'Couldn\'t load your entrance sounds.';
+
+  @override
+  String get entranceSoundUploadFailed =>
+      'Couldn\'t upload that sound. Use an MP3, OGG, M4A or WAV clip up to 5.2 seconds.';
+
+  @override
+  String get entranceSoundUpdateFailed =>
+      'Couldn\'t update your entrance sound.';
+
+  @override
+  String get entranceSoundTooLarge => 'That file is larger than 1 MB.';
+
+  @override
+  String get entranceSoundAppliesTo => 'Applies to';
+
+  @override
+  String get entranceSoundScopeGlobal => 'All communities and DMs';
+
+  @override
+  String get entranceSoundScopeGlobalDescription =>
+      'Used by default unless a community or DM sound overrides it.';
+
+  @override
+  String get entranceSoundScopeGuilds => 'All communities';
+
+  @override
+  String get entranceSoundScopeGuildsDescription =>
+      'Used in communities that do not have their own sound.';
+
+  @override
+  String get entranceSoundScopeDms => 'Direct messages';
+
+  @override
+  String get entranceSoundScopeDmsDescription =>
+      'Used for all direct-message calls.';
+
+  @override
+  String get entranceSoundScopeGuildDescription =>
+      'Used only in this community.';
+
+  @override
+  String get entranceSoundNone => 'No sound';
+
+  @override
+  String entranceSoundDuration(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String get entranceSoundPreview => 'Play sound';
+
+  @override
+  String get entranceSoundDelete => 'Delete from library';
+
+  @override
+  String get entranceSoundUpload => 'Upload new';
+
+  @override
+  String entranceSoundLibraryCount(int count, int max) {
+    return 'Library: $count of $max';
+  }
+
+  @override
+  String get streamerModeSectionTitle => 'Streamer mode';
+
+  @override
+  String get streamerModeSectionDescription =>
+      'Hide personal details and quiet the app while you stream or share your screen.';
+
+  @override
+  String get streamerModeEnableLabel => 'Enable streamer mode';
+
+  @override
+  String get streamerModeAutoEnableLabel =>
+      'Automatically enable streamer mode';
+
+  @override
+  String get streamerModeAutoEnableDescription =>
+      'Turns on when OBS or XSplit is running.';
+
+  @override
+  String get streamerModeHidePersonalLabel => 'Hide personal information';
+
+  @override
+  String get streamerModeHidePersonalDescription =>
+      'Hides your email, profile connections and notes.';
+
+  @override
+  String get streamerModeHideInviteLinksLabel => 'Hide invite links';
+
+  @override
+  String get streamerModeHideInviteLinksDescription =>
+      'Invite links are hidden but can still be copied.';
+
+  @override
+  String get streamerModeDisableSoundsLabel => 'Disable all sound effects';
+
+  @override
+  String get streamerModeDisableNotificationsLabel => 'Disable notifications';
+
+  @override
+  String get streamerModeNagbarMessage =>
+      'Streamer mode is on. Personal details are hidden.';
+
+  @override
+  String get streamerModeNagbarDisable => 'Turn off';
+
+  @override
+  String get languageAndTimeRegionalFormatTitle => 'Regional format';
+
+  @override
+  String get languageAndTimeRegionalFormatDescription =>
+      'Dates, times and numbers follow this format. Prices stay in the currency of your billing country.';
+
+  @override
+  String get languageAndTimeRegionalFormatSearch => 'Search formats…';
+
+  @override
+  String get languageAndTimeRegionalFormatSameAsLanguage => 'Same as language';
+
+  @override
+  String get languageAndTimeRegionalFormatSystem => 'System format';
+
+  @override
+  String get languageAndTimeDateFormatTitle => 'Date format';
+
+  @override
+  String get languageAndTimeDateFormatAuto => 'Auto';
+
+  @override
+  String get languageAndTimeDateFormatIso => 'ISO 8601';
+
+  @override
+  String get languageAndTimeDateFormatDayFirst => 'Day first';
+
+  @override
+  String get languageAndTimeDateFormatMonthFirst => 'Month first';
+
+  @override
+  String get languageAndTimeFormatSyncFailed =>
+      'Couldn\'t save your format. Try again.';
+
+  @override
+  String get advancedSettingSequentialFileSendLabel =>
+      'Send file messages in order';
+
+  @override
+  String get advancedSettingSequentialFileSendDescription =>
+      'Wait for earlier uploads to finish so messages with files arrive in the order you sent them.';
+
+  @override
+  String get advancedSettingKeepAttachmentsOnEmptyEditLabel =>
+      'Keep attachments when clearing an edit';
+
+  @override
+  String get advancedSettingKeepAttachmentsOnEmptyEditDescription =>
+      'Saving an edit with no text keeps the attachments instead of doing nothing.';
+
+  @override
+  String get advancedSettingDoubleClickActionsLabel =>
+      'Double-click a message to edit or reply';
+
+  @override
+  String get advancedSettingDoubleClickActionsDescription =>
+      'Double-click your own message to edit it, or someone else\'s to reply.';
+
+  @override
+  String get messagesMediaConvertEmoticonsLabel => 'Convert emoticons to emoji';
+
+  @override
+  String get messagesMediaConvertEmoticonsDescription =>
+      'Turns text like :) into 🙂 when you send a message.';
+
+  @override
+  String get languageAndTimeSpellcheckTitle => 'Spellcheck';
+
+  @override
+  String get languageAndTimeSpellcheckLabel => 'Enable spellcheck';
+
+  @override
+  String get languageAndTimeSpellcheckDescription =>
+      'Underline misspelled words while you type messages.';
+
+  @override
+  String get securityPasskeyTwoFactorLabel =>
+      'Require a passkey as your second factor';
+
+  @override
+  String get securityPasskeyTwoFactorDescription =>
+      'Ask for a passkey after your password when you sign in.';
+
+  @override
+  String get securityPasskeyTwoFactorFailed =>
+      'Couldn\'t update passkey two-factor authentication.';
+
+  @override
+  String get advancedSettingShowHelpButtonLabel => 'Show help center button';
+
+  @override
+  String get advancedSettingShowHelpButtonDescription =>
+      'Show the question mark button at the bottom of the community list.';
+
+  @override
+  String get advancedSettingsCategoryExperimental => 'Experimental';
+
+  @override
+  String get advancedSettingHideBlockedMessagesLabel =>
+      'Hide messages from blocked users';
+
+  @override
+  String get advancedSettingHideBlockedMessagesDescription =>
+      'Blocked messages are removed from the chat instead of showing a collapsed row.';
+
+  @override
+  String get accessibilityAnimateGifPickerLabel =>
+      'Play GIFs in the GIF picker';
+
+  @override
+  String get guildVanityUrlTitle => 'Vanity URL';
+
+  @override
+  String get guildVanityUrlDescription =>
+      'Give your community a custom invite link. Leave it empty to remove it.';
+
+  @override
+  String get guildVanityUrlHint => 'your-community';
+
+  @override
+  String get guildVanityUrlSave => 'Save';
+
+  @override
+  String guildVanityUrlUses(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uses',
+      one: '1 use',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guildVanityUrlSaved => 'Vanity URL saved.';
+
+  @override
+  String get guildVanityUrlRemoved => 'Your vanity URL has been removed.';
+
+  @override
+  String get guildVanityUrlSaveFailed =>
+      'Couldn\'t save the vanity URL. It may already be taken.';
+
+  @override
+  String get guildVanityUrlLoadFailed =>
+      'Failed to load vanity URL. Try again.';
+
+  @override
+  String get guildVanityUrlTooShort =>
+      'Vanity URL must be at least 2 characters long.';
+
+  @override
+  String get guildVanityUrlTooLong =>
+      'Vanity URL must be no more than 32 characters long.';
+
+  @override
+  String get guildVanityUrlInvalidCharacters =>
+      'Vanity URL can only contain letters, numbers and hyphens between them.';
+
+  @override
+  String get operatorPassWallTitle => 'Operators\' wall';
+
+  @override
+  String get operatorPassWallShowMeLabel => 'Show me on the wall';
+
+  @override
+  String get operatorPassWallSendChangesLabel =>
+      'Send profile changes to the wall';
+
+  @override
+  String get operatorPassWallReleaseListLabel =>
+      'Add my name to the yearly Operators list';
+
+  @override
+  String get operatorPassWallReleaseListDescription =>
+      'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
+
+  @override
+  String get operatorPassLabsTitle => 'Fluxer Labs';
+
+  @override
+  String get operatorPassLabsDescription =>
+      'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.';
+
+  @override
+  String get operatorPassShowOperatorsLabel => 'Show #operators';
+
+  @override
+  String get operatorPassShowOperatorsDescription =>
+      'Turning this off takes away your access to #operators until you turn it on again.';
+
+  @override
+  String get operatorPassGreetingLabel => 'Welcome me in #operators';
+
+  @override
+  String get operatorPassGreetingDescription =>
+      'We welcome you by name in #operators once, soon after your pass is delivered or you turn this on.';
+
+  @override
+  String get operatorPassUpdateFailed =>
+      'Couldn\'t update your Operator Pass settings.';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -17132,9 +17723,6 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
       '您的帳戶尚未領取。沒有使用者名稱和密碼，您將無法從其他裝置登入，並且可能會遺失帳戶存取權。立即領取您的帳戶以確保安全。';
 
   @override
-  String get addFriendUsernameOnlyHint => '使用者名稱';
-
-  @override
   String get registerTitle => '建立帳號';
 
   @override
@@ -17416,9 +18004,6 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
   String get embedGiftClaim => '領取禮物';
 
   @override
-  String get embedGiftClaimed => '禮物已領取';
-
-  @override
   String get embedGiftClaimAccount => '認領帳號即可兌換';
 
   @override
@@ -17426,9 +18011,6 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
 
   @override
   String get embedGiftUnknownSubtitle => '此禮物代碼無效或已被領取。';
-
-  @override
-  String get embedGiftUnavailable => '禮物無法使用';
 
   @override
   String giftAcceptClaimSubscription(String productName) {
@@ -17791,9 +18373,6 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
 
   @override
   String get addFriendSheetTitle => '新增好友';
-
-  @override
-  String get addFriendUsernameHint => '使用者名稱#0000';
 
   @override
   String get addFriendUsernameLabel => '好友的使用者名稱';
@@ -20611,10 +21190,6 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
 
   @override
   String get matureCommunityUnavailableBody => '您的帳號無法使用此成人社群。';
-
-  @override
-  String get matureContentIosWebOptInBody =>
-      '請在瀏覽器中前往 sanalyer.com 或在桌面應用程式中開啟有年齡限制的社群和頻道。開啟之前，它們在 iOS 應用程式中會保持隱藏。';
 
   @override
   String get matureCategoryUnavailableBody => '您的帳號無法使用此成人內容類別。';
@@ -28020,6 +28595,9 @@ class FluxerLocalizationsZhHant extends FluxerLocalizationsZh {
 
   @override
   String get guildNavbarInvitesPaused => '此社群目前暫停邀請';
+
+  @override
+  String get guildNavbarInvitesPausedRaid => '因疑似突襲，邀請已暫停';
 
   @override
   String get guildNavbarDurationNever => '永不';

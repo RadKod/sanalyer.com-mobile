@@ -56,10 +56,6 @@
     "@splashIncidentHistory": {
         "description": "Link label to incident history when no active incident."
     },
-    "welcomeBack": "З поверненням",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "Електронна пошта",
     "@email": {
         "description": "Generic label for an email field."
@@ -631,10 +627,6 @@
     "unclaimedAccountDescriptionUsername": "Ваш обліковий запис ще не підтверджено. Без імені користувача та пароля ви не зможете входити з інших пристроїв і можете втратити доступ до свого облікового запису. Підтвердьте свій обліковий запис зараз, щоб захистити його.",
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
-    },
-    "addFriendUsernameOnlyHint": "Ім'я користувача",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
     },
     "registerTitle": "Створити обліковий запис",
     "@registerTitle": {
@@ -1240,10 +1232,6 @@
     "addFriendSheetTitle": "Додати в друзі",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "Ім'я користувача#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "Ім'я користувача друга",
     "@addFriendUsernameLabel": {
@@ -5901,15 +5889,6 @@
     "@personalNotesSubtitle": {
         "description": "Subtitle on the personal notes welcome empty state."
     },
-    "channelWelcomeHeading": "Ласкаво просимо до {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "Це початок {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -6763,6 +6742,10 @@
     "guildNavbarInvitesPaused": "Запрошення в цій спільноті наразі призупинено",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "Запрошення призупинено через підозру на рейд",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "ніколи",
     "@guildNavbarDurationNever": {
@@ -11865,10 +11848,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "Подарунок отримано",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "Зареєструвати обліковий запис для активації",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -11880,10 +11859,6 @@
     "embedGiftUnknownSubtitle": "Цей код подарунка недійсний або вже використаний.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "Подарунок недоступний",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "Активуйте свою підписку на {productName}, отримавши цей подарунок!",
     "@giftAcceptClaimSubscription": {
@@ -19895,10 +19870,6 @@
     "passkeyNoCredentialsForAccount": "На цьому пристрої немає ключа доступу для цього облікового запису. Скористайтеся пристроєм або менеджером паролів, де ви його зберегли.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "Увімкніть спільноти й канали з віковими обмеженнями на sanalyer.com у браузері або в застосунку для комп'ютера. До того часу вони залишаються прихованими в застосунку для iOS.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "Повідомлення",
     "@notificationChannelMessages": {

@@ -92,6 +92,8 @@ import 'package:fluxer_app/features/dm/providers/dm_providers.dart';
 import 'package:fluxer_app/features/guilds/services/guild_verification.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/advanced_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/interface_extras_preferences_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/synced_extras_preferences_provider.dart';
 import 'package:fluxer_app/features/shell/providers/nagbar/push_notification_permission_status_provider.dart';
 import 'package:fluxer_app/features/ui/input/inline_token_clipboard.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
@@ -99,6 +101,7 @@ import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/shared/providers/guild_user_display_provider.dart';
 import 'package:fluxer_app/shared/utils/api_error_presentation.dart';
+import 'package:fluxer_app/shared/utils/emoji/emoticon_conversion.dart';
 import 'package:fluxer_app/shared/utils/guild_member_prefetch.dart';
 import 'package:fluxer_app/shared/utils/message_member_load_utils.dart';
 import 'package:fluxer_app/shared/utils/snowflake_time.dart';
@@ -111,7 +114,7 @@ part 'chat_view_model.g.dart';
 
 const _kPageSize = 50;
 const _kInitialPageSize = 50;
-const _kMaxParkedWindows = 4;
+const _kMaxParkedWindows = 16;
 const _kJumpToPresentPageSize = 50;
 const Duration _kChannelNetworkRefreshTtl = Duration(seconds: 30);
 const Duration _kSyncRetryBaseDelay = Duration(seconds: 1);
@@ -664,6 +667,18 @@ class _WindowSwapCommit {
   final Completer<bool> done = Completer<bool>();
 }
 
+typedef _ComposerDraftMemo = ({
+  String text,
+  Message? reply,
+  bool replyMentioning,
+});
+
+const _ComposerDraftMemo _kEmptyComposerDraft = (
+  text: '',
+  reply: null,
+  replyMentioning: false,
+);
+
 /// Reading position: the message's top at `fraction` of the viewport height,
 /// scrolled by `offset` pixels when the message starts above the viewport.
 typedef ChannelScrollAnchor = ({
@@ -672,18 +687,22 @@ typedef ChannelScrollAnchor = ({
   double offset,
 });
 
+typedef _ResyncGenerations = ({int gateway, int foreground, int connectivity});
+
 class _ParkedChannelWindow {
   const _ParkedChannelWindow({
     required this.messages,
     required this.hasMoreMessages,
     required this.hasMoreNewerMessages,
     this.scrollAnchor,
+    this.verifiedAt,
   });
 
   final List<Message> messages;
   final bool hasMoreMessages;
   final bool hasMoreNewerMessages;
   final ChannelScrollAnchor? scrollAnchor;
+  final _ResyncGenerations? verifiedAt;
 }
 
 @Riverpod(keepAlive: true)
@@ -729,6 +748,10 @@ class ChatViewModel extends _$ChatViewModel {
   final LinkedHashMap<String, _ParkedChannelWindow> _parkedWindows =
       LinkedHashMap<String, _ParkedChannelWindow>();
   String? _forgottenLiveChannelId;
+  final Set<String> _channelPreloadsInFlight = <String>{};
+  final Map<String, _ComposerDraftMemo> _draftMemo =
+      <String, _ComposerDraftMemo>{};
+  ({String channelId, _ComposerDraftMemo draft})? _boundDraft;
   ({String channelId, String messageId})? _pendingTrimAround;
   final Map<String, ChannelScrollAnchor? Function()> _scrollAnchorSources =
       <String, ChannelScrollAnchor? Function()>{};
@@ -768,6 +791,8 @@ class ChatViewModel extends _$ChatViewModel {
     _channelSwitchGeneration++;
     _windowGeneration++;
     _parkedWindows.clear();
+    _draftMemo.clear();
+    _boundDraft = null;
     _restoredScrollAnchor = null;
     _forgottenLiveChannelId = null;
     _displayWarmer.releaseAll();
@@ -1590,6 +1615,7 @@ class ChatViewModel extends _$ChatViewModel {
     db.Message? prefetchedRow,
   ) {
     _dropDeletedFromParkedWindow(ev);
+    _appendCreatedToParkedWindow(ev);
     _settleDeliveredLocalSend(ev);
     final List<Message>? next = _nextMessagesForSync(
       ev,
@@ -1646,7 +1672,7 @@ class ChatViewModel extends _$ChatViewModel {
         } else {
           announceIncomingMessageIfEnabled(
             ref,
-            Message.fromSdk(
+            () => Message.fromSdk(
               ev.event.message,
               currentUserId: ref.read(currentUserIdProvider),
             ),
@@ -1801,6 +1827,37 @@ class ChatViewModel extends _$ChatViewModel {
     };
   }
 
+  void _appendCreatedToParkedWindow(MessageRealtimeEvent ev) {
+    if (ev is! MessageCreated) {
+      return;
+    }
+    final String channelId = ev.event.message.channelId;
+    final _ParkedChannelWindow? parked = _parkedWindows[channelId];
+    if (channelId == state.channelId ||
+        parked == null ||
+        parked.messages.isEmpty ||
+        parked.hasMoreNewerMessages) {
+      return;
+    }
+    final Message msg = _toDomain(
+      ev.event.message,
+    ).copyWith(isMentioned: ev.snapshot.mentionsCurrentUser);
+    if (compareSnowflakeIds(msg.id, parked.messages.last.id) <= 0) {
+      return;
+    }
+    final List<Message> appended = <Message>[...parked.messages, msg];
+    final bool trimOldest = appended.length > kTrimmedMessageWindowSize;
+    _parkedWindows[channelId] = _ParkedChannelWindow(
+      messages: List<Message>.unmodifiable(
+        trimOldest ? appended.sublist(1) : appended,
+      ),
+      hasMoreMessages: parked.hasMoreMessages || trimOldest,
+      hasMoreNewerMessages: false,
+      scrollAnchor: parked.scrollAnchor,
+      verifiedAt: parked.verifiedAt,
+    );
+  }
+
   void _dropDeletedFromParkedWindow(MessageRealtimeEvent ev) {
     final String channelId = switch (ev) {
       MessageDeleted(:final event) => event.channelId,
@@ -1834,6 +1891,7 @@ class ChatViewModel extends _$ChatViewModel {
       hasMoreMessages: parked.hasMoreMessages,
       hasMoreNewerMessages: parked.hasMoreNewerMessages,
       scrollAnchor: parked.scrollAnchor,
+      verifiedAt: parked.verifiedAt,
     );
   }
 
@@ -1847,7 +1905,7 @@ class ChatViewModel extends _$ChatViewModel {
             !_isMessageInLoadedWindow(messageId)) {
           return null;
         }
-        return dao.getMessage(event.message.channelId, messageId);
+        return await dao.getMessage(event.message.channelId, messageId);
       case MessageReactionsChanged(
         :final channelId,
         :final messageId,
@@ -1859,7 +1917,7 @@ class ChatViewModel extends _$ChatViewModel {
         if (reactionsJson != null) {
           return null;
         }
-        return dao.getMessage(channelId, messageId);
+        return await dao.getMessage(channelId, messageId);
       case MessageCreated():
       case MessageDeleted():
       case MessagesDeletedBulk():
@@ -2094,6 +2152,7 @@ class ChatViewModel extends _$ChatViewModel {
   }
 
   void forgetChannel(String channelId) {
+    _draftMemo.remove(channelId);
     if (channelId == state.channelId) {
       _forgottenLiveChannelId = channelId;
     }
@@ -2144,6 +2203,20 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
+  void releaseParkedDisplayWarmers() {
+    for (final String channelId in _parkedWindows.keys) {
+      if (channelId != state.channelId) {
+        _displayWarmer.release(channelId);
+      }
+    }
+  }
+
+  void releaseParkedWindows() {
+    for (final String channelId in _parkedWindows.keys.toList()) {
+      _dropParkedWindow(channelId);
+    }
+  }
+
   void _dropParkedWindow(String channelId) {
     _parkedWindows.remove(channelId);
     if (channelId == state.channelId) {
@@ -2155,17 +2228,36 @@ class ChatViewModel extends _$ChatViewModel {
 
   Future<void> _applyReadComposerDraft({
     required String channelId,
-    required Future<({String text, Message? reply, bool replyMentioning})>
-    draftFuture,
+    required Future<_ComposerDraftMemo> draftFuture,
     required bool Function() isCurrentSwitch,
     required void Function(String name) mark,
   }) async {
-    final ({String text, Message? reply, bool replyMentioning}) loaded =
-        await draftFuture;
-    if (!isCurrentSwitch()) {
+    final _ComposerDraftMemo loaded;
+    try {
+      loaded = await draftFuture;
+    } on Object catch (error, stack) {
+      talker.warning('[ChatViewModel] draft read failed', error, stack);
+      return;
+    }
+    if (!ref.mounted || !isCurrentSwitch()) {
+      return;
+    }
+    _draftMemo[channelId] = loaded;
+    final ({String channelId, _ComposerDraftMemo draft})? bound = _boundDraft;
+    if (bound != null &&
+        bound.channelId == channelId &&
+        state.channelId == channelId &&
+        (state.messageText != bound.draft.text ||
+            state.replyingTo?.id != bound.draft.reply?.id)) {
       return;
     }
     mark('draft');
+    _boundDraft = null;
+    if (state.messageText == loaded.text &&
+        state.replyingTo?.id == loaded.reply?.id &&
+        state.replyMentioning == loaded.replyMentioning) {
+      return;
+    }
     _applyComposerDraftIfCurrent(
       channelId: channelId,
       draft: (text: loaded.text, reply: loaded.reply),
@@ -2188,8 +2280,7 @@ class ChatViewModel extends _$ChatViewModel {
     );
   }
 
-  Future<({String text, Message? reply, bool replyMentioning})>
-  _readComposerDraft(String channelId) async {
+  Future<_ComposerDraftMemo> _readComposerDraft(String channelId) async {
     final ({String text, Message? reply, bool? replyMentioning}) draft =
         await _loadComposerDraft(channelId);
     return (
@@ -2240,7 +2331,7 @@ class ChatViewModel extends _$ChatViewModel {
     if (storedMentioning != null) {
       return storedMentioning;
     }
-    return _defaultReplyMentionFor(message: reply, channelId: channelId);
+    return await _defaultReplyMentionFor(message: reply, channelId: channelId);
   }
 
   Future<bool> _endEditRestoringDraft(Message editing) async {
@@ -2351,11 +2442,23 @@ class ChatViewModel extends _$ChatViewModel {
     required bool hasMoreMessages,
     required bool hasMoreNewerMessages,
   }) {
+    final bool keepLiveDraft =
+        state.channelId == channelId && state.editingMessage == null;
+    final _ComposerDraftMemo draft = keepLiveDraft
+        ? (
+            text: state.messageText,
+            reply: state.replyingTo,
+            replyMentioning: state.replyMentioning,
+          )
+        : _draftMemo[channelId] ?? _kEmptyComposerDraft;
+    if (!keepLiveDraft) {
+      _boundDraft = (channelId: channelId, draft: draft);
+    }
     state = _switchedChannelState(
       channelId: channelId,
       messages: messages,
-      draft: (text: '', reply: null),
-      replyMentioning: false,
+      draft: (text: draft.text, reply: draft.reply),
+      replyMentioning: draft.replyMentioning,
       scrollToBottomSignal: state.scrollToBottomSignal,
       isLoading: isLoading,
       isSyncingMessages: isSyncingMessages,
@@ -2466,6 +2569,69 @@ class ChatViewModel extends _$ChatViewModel {
     });
   }
 
+  Future<void> preloadChannel(String channelId) async {
+    if (channelId.isEmpty ||
+        state.channelId == channelId ||
+        _parkedWindows.containsKey(channelId) ||
+        !_channelPreloadsInFlight.add(channelId)) {
+      return;
+    }
+    final String? currentUserId = ref.read(currentUserIdProvider);
+    final _ResyncGenerations verifiedAt = _currentResyncGenerations();
+    bool parked = false;
+    try {
+      final (List<Message> cachedRows, bool hasUnread) = await (
+        ref
+            .read(messageRepositoryProvider)
+            .getCachedMessages(channelId, limit: _kInitialPageSize),
+        _channelHasNewUnreadMessages(channelId),
+      ).wait;
+      if (!ref.mounted || hasUnread || cachedRows.isEmpty) {
+        return;
+      }
+      final List<Message> cached = mergeMentionHighlightFlags(
+        cachedRows,
+        currentUserId: currentUserId,
+      );
+      final (String? lastMessageId, _) = await (
+        _channelLastMessagePointer(channelId),
+        _warmWindowDisplay(channelId, cached),
+      ).wait;
+      final bool present =
+          lastMessageId != null &&
+          lastMessageId.isNotEmpty &&
+          compareSnowflakeIds(lastMessageId, cached.last.id) == 0;
+      if (!ref.mounted ||
+          !present ||
+          state.channelId == channelId ||
+          _parkedWindows.containsKey(channelId) ||
+          ref.read(currentUserIdProvider) != currentUserId ||
+          _currentResyncGenerations() != verifiedAt) {
+        return;
+      }
+      parked = true;
+      _parkedWindows[channelId] = _ParkedChannelWindow(
+        messages: List<Message>.unmodifiable(cached),
+        hasMoreMessages: cached.first.type != messageTypeThreadStarterMessage,
+        hasMoreNewerMessages: false,
+        verifiedAt: verifiedAt,
+      );
+      while (_parkedWindows.length > _kMaxParkedWindows) {
+        _dropParkedWindow(_parkedWindows.keys.first);
+      }
+    } on Exception catch (e) {
+      talker.debug('[ChatViewModel] preloadChannel failed: $e');
+    } finally {
+      _channelPreloadsInFlight.remove(channelId);
+      if (!parked &&
+          ref.mounted &&
+          state.channelId != channelId &&
+          !_parkedWindows.containsKey(channelId)) {
+        _displayWarmer.release(channelId);
+      }
+    }
+  }
+
   Future<void> switchChannel(
     String channelId, {
     String? targetMessageId,
@@ -2569,6 +2735,11 @@ class ChatViewModel extends _$ChatViewModel {
           _clearManualUnread(previousChannelId);
           _clearLoadedUnreadBoundaryKeys(previousChannelId);
           if (state.editingMessage == null) {
+            _draftMemo[previousChannelId] = (
+              text: previousText,
+              reply: previousReply,
+              replyMentioning: previousReplyMentioning ?? false,
+            );
             unawaited(
               _persistComposerDraftForChannel(
                 channelId: previousChannelId,
@@ -2592,8 +2763,9 @@ class ChatViewModel extends _$ChatViewModel {
           targetMessageId: targetMessageId,
         );
       }
-      final Future<({String text, Message? reply, bool replyMentioning})>
-      draftFuture = _readComposerDraft(channelId);
+      final Future<_ComposerDraftMemo> draftFuture = _readComposerDraft(
+        channelId,
+      );
       if (!loadMessages) {
         final loadedDraft = await draftFuture;
         if (!isCurrentSwitch()) {
@@ -2624,6 +2796,12 @@ class ChatViewModel extends _$ChatViewModel {
         );
         return;
       }
+      final Future<void> draftApplied = _applyReadComposerDraft(
+        channelId: channelId,
+        draftFuture: draftFuture,
+        isCurrentSwitch: isCurrentSwitch,
+        mark: mark,
+      );
       if (targetMessageId != null) {
         if (state.channelId == channelId &&
             state.isLoading &&
@@ -2663,12 +2841,7 @@ class ChatViewModel extends _$ChatViewModel {
           targetMessageId: targetMessageId,
           shouldApplyResult: isCurrentSwitch,
         );
-        await _applyReadComposerDraft(
-          channelId: channelId,
-          draftFuture: draftFuture,
-          isCurrentSwitch: isCurrentSwitch,
-          mark: mark,
-        );
+        await draftApplied;
         if (isCurrentSwitch() && state.channelId == channelId) {
           talker.debug(
             '[ChatViewModel] target loaded; scrollToMessage '
@@ -2720,6 +2893,10 @@ class ChatViewModel extends _$ChatViewModel {
           .getChannelById(channelId);
       final _ParkedChannelWindow? parked = _parkedWindows[channelId];
       if (parked != null && parked.messages.isNotEmpty) {
+        final Future<void> parkedWarm = _warmWindowDisplay(
+          channelId,
+          parked.messages,
+        );
         final bool hasUnread = await unreadFuture;
         if (!isCurrentSwitch()) {
           return;
@@ -2733,7 +2910,7 @@ class ChatViewModel extends _$ChatViewModel {
             return;
           }
           if (restoreParked) {
-            await _warmWindowDisplay(channelId, parked.messages);
+            await parkedWarm;
             if (!isCurrentSwitch()) {
               return;
             }
@@ -2777,12 +2954,7 @@ class ChatViewModel extends _$ChatViewModel {
                 ),
               );
             }
-            await _applyReadComposerDraft(
-              channelId: channelId,
-              draftFuture: draftFuture,
-              isCurrentSwitch: isCurrentSwitch,
-              mark: mark,
-            );
+            await draftApplied;
             return;
           }
         }
@@ -2800,12 +2972,13 @@ class ChatViewModel extends _$ChatViewModel {
         currentUserId: currentUserId,
       );
       if (cached.isNotEmpty && !hasUnread) {
+        final Future<void> cachedWarm = _warmWindowDisplay(channelId, cached);
         final bool cachePresent = await _loadedWindowIsPresent(cached);
         if (!isCurrentSwitch() || state.channelId != channelId) {
           return;
         }
         if (cachePresent) {
-          await _warmWindowDisplay(channelId, cached);
+          await cachedWarm;
           if (!isCurrentSwitch() || state.channelId != channelId) {
             return;
           }
@@ -2838,12 +3011,7 @@ class ChatViewModel extends _$ChatViewModel {
               ),
             );
           }
-          await _applyReadComposerDraft(
-            channelId: channelId,
-            draftFuture: draftFuture,
-            isCurrentSwitch: isCurrentSwitch,
-            mark: mark,
-          );
+          await draftApplied;
           return;
         }
       }
@@ -2877,12 +3045,7 @@ class ChatViewModel extends _$ChatViewModel {
             shouldApplyResult: isCurrentSwitch,
           ),
         );
-        await _applyReadComposerDraft(
-          channelId: channelId,
-          draftFuture: draftFuture,
-          isCurrentSwitch: isCurrentSwitch,
-          mark: mark,
-        );
+        await draftApplied;
         return;
       }
       if (!_isBlankLoadingFor(channelId)) {
@@ -2918,12 +3081,7 @@ class ChatViewModel extends _$ChatViewModel {
         shouldApplyResult: isCurrentSwitch,
       );
       mark('net');
-      await _applyReadComposerDraft(
-        channelId: channelId,
-        draftFuture: draftFuture,
-        isCurrentSwitch: isCurrentSwitch,
-        mark: mark,
-      );
+      await draftApplied;
     } finally {
       if (cacheFetchOrdinal != null) {
         _endPageFetch(cacheFetchOrdinal);
@@ -4128,8 +4286,17 @@ class ChatViewModel extends _$ChatViewModel {
   }
 
   bool _canRestoreParkedWindow(_ParkedChannelWindow parked, String channelId) {
-    return parked.hasMoreNewerMessages || !_messagesNeedResync(channelId);
+    return parked.hasMoreNewerMessages ||
+        !_messagesNeedResync(channelId) ||
+        (parked.verifiedAt != null &&
+            parked.verifiedAt == _currentResyncGenerations());
   }
+
+  _ResyncGenerations _currentResyncGenerations() => (
+    gateway: ref.read(gatewayFullRecoveryProvider),
+    foreground: _foregroundResyncGeneration,
+    connectivity: _connectivityGapGeneration,
+  );
 
   Future<bool> _loadedWindowIsPresent(List<Message> messages) async {
     if (messages.isEmpty) {
@@ -5036,10 +5203,14 @@ class ChatViewModel extends _$ChatViewModel {
     if (text.isEmpty) {
       return text;
     }
+    final String converted =
+        ref.read(syncedExtrasPreferencesProvider).convertEmoticons
+        ? convertEmoticonsToEmoji(text)
+        : text;
     if (!ref.read(chatPreferencesProvider).sanitizeUrls) {
-      return text;
+      return converted;
     }
-    return sanitizeUrlsInContent(text);
+    return sanitizeUrlsInContent(converted);
   }
 
   ({String content, int flags}) _normalizeOutgoing(String text) {
@@ -5494,6 +5665,7 @@ class ChatViewModel extends _$ChatViewModel {
       );
     }
     if (clearMessageText) {
+      _draftMemo.remove(channelId);
       unawaited(
         ref
             .read(fluxerDatabaseProvider)
@@ -5601,6 +5773,31 @@ class ChatViewModel extends _$ChatViewModel {
     }
   }
 
+  final Map<String, Future<void>> _orderedAttachmentSends =
+      <String, Future<void>>{};
+
+  ({Future<void> ready, Completer<void> done}) _reserveOrderedAttachmentSend(
+    String channelId,
+  ) {
+    final Completer<void> done = Completer<void>();
+    if (!ref.read(
+      interfaceExtrasPreferencesProvider,
+    )[InterfaceExtraFlag.sequentialFileSend]) {
+      return (ready: Future<void>.value(), done: done);
+    }
+    final Future<void> ready =
+        _orderedAttachmentSends[channelId] ?? Future<void>.value();
+    _orderedAttachmentSends[channelId] = done.future;
+    return (ready: ready, done: done);
+  }
+
+  void _releaseOrderedAttachmentSend(String channelId, Completer<void> done) {
+    done.complete();
+    if (identical(_orderedAttachmentSends[channelId], done.future)) {
+      _orderedAttachmentSends.remove(channelId)?.ignore();
+    }
+  }
+
   Future<void> _completeSendWithAttachments({
     required String channelId,
     required String outgoingText,
@@ -5614,6 +5811,8 @@ class ChatViewModel extends _$ChatViewModel {
     int? messageFlags,
     bool tts = false,
   }) async {
+    final ({Future<void> ready, Completer<void> done}) orderedSlot =
+        _reserveOrderedAttachmentSend(channelId);
     final int fileCount =
         ref
             .read(
@@ -5649,6 +5848,7 @@ class ChatViewModel extends _$ChatViewModel {
             in prepared.attachmentMetadata ?? const <ApiAttachmentMetadata>[])
           attachment.filename,
       ];
+      await orderedSlot.ready;
       final DateTime sendStartedAt = DateTime.now();
       final Message sent = await _sendWithRateLimitRetry(
         () => ref
@@ -5732,6 +5932,7 @@ class ChatViewModel extends _$ChatViewModel {
       _handleSendFailure(optimisticMessageId, error);
       _parkFailedLocalSend(optimisticMessageId, clientNonce);
     } finally {
+      _releaseOrderedAttachmentSend(channelId, orderedSlot.done);
       _uploadKeepAlive.end();
     }
   }
@@ -6176,7 +6377,7 @@ class ChatViewModel extends _$ChatViewModel {
       return false;
     }
     _maybeCreatedSends[optimisticMessageId] = attachmentFilenames;
-    return _resolveMaybeCreatedSend(optimisticMessageId);
+    return await _resolveMaybeCreatedSend(optimisticMessageId);
   }
 
   Future<bool> _resolveMaybeCreatedSend(String optimisticMessageId) async {
@@ -6434,7 +6635,7 @@ class ChatViewModel extends _$ChatViewModel {
     }
     final pending = _pendingDeleteFutures[messageId];
     if (pending != null) {
-      return pending;
+      return await pending;
     }
     final String channelId = state.channelId;
     final int messageIndex = state.messages.indexWhere(
@@ -6497,7 +6698,7 @@ class ChatViewModel extends _$ChatViewModel {
       }
     }();
     _pendingDeleteFutures[messageId] = deleteFuture;
-    return deleteFuture;
+    return await deleteFuture;
   }
 
   Future<void> deleteMessageAttachment({
@@ -7049,8 +7250,6 @@ class ChatViewModel extends _$ChatViewModel {
     if (guildId == null) {
       return null;
     }
-    // One-off snapshot; read does not retain the autoDispose family.
-    // ignore: riverpod_lint/only_use_keep_alive_inside_keep_alive
     final GuildComposerAccess access = await ref.read(
       guildMemberComposerAccessProvider(guildId).future,
     );
@@ -7087,7 +7286,15 @@ class ChatViewModel extends _$ChatViewModel {
       (text ?? state.messageText).trim(),
     );
     final String editedContent = hasVisibleContent(sanitized) ? sanitized : '';
-    if (editedContent.isEmpty || editedContent == editingMessage.content) {
+    final bool keepAttachmentsOnly =
+        editedContent.isEmpty &&
+        editingMessage.content.isNotEmpty &&
+        editingMessage.attachments.isNotEmpty &&
+        ref.read(
+          interfaceExtrasPreferencesProvider,
+        )[InterfaceExtraFlag.keepAttachmentsOnEmptyEdit];
+    if ((editedContent.isEmpty && !keepAttachmentsOnly) ||
+        editedContent == editingMessage.content) {
       talker.debug(
         '[ChatViewModel] edit save noop messageId=${editingMessage.id}',
       );

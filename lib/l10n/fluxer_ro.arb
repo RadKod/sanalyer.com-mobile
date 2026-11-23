@@ -252,10 +252,6 @@
     "@nagbarEnableNotifications": {
         "description": "Push notification permission nagbar CTA."
     },
-    "welcomeBack": "Bine ai revenit",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "E-mail",
     "@email": {
         "description": "Generic label for an email field."
@@ -832,10 +828,6 @@
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
     },
-    "addFriendUsernameOnlyHint": "Nume de utilizator",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
-    },
     "registerTitle": "Creează un cont",
     "@registerTitle": {
         "description": "Title for the registration screen."
@@ -1192,10 +1184,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "Cadou revendicat",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "Revendică contul pentru a-l valorifica",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -1207,10 +1195,6 @@
     "embedGiftUnknownSubtitle": "Acest cod cadou este nevalid sau a fost deja revendicat.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "Cadou indisponibil",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "Revendică-ți cadoul pentru a-ți activa abonamentul la {productName}!",
     "@giftAcceptClaimSubscription": {
@@ -1709,10 +1693,6 @@
     "addFriendSheetTitle": "Adaugă prieten",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "Nume de utilizator#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "Numele de utilizator al prietenului",
     "@addFriendUsernameLabel": {
@@ -10294,15 +10274,6 @@
             }
         }
     },
-    "channelWelcomeHeading": "Bun venit în {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "Aceasta este începutul lui {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -12649,6 +12620,10 @@
     "guildNavbarInvitesPaused": "Invitațiile sunt momentan întrerupte în această comunitate",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "Invitațiile sunt întrerupte după un posibil raid",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "niciodată",
     "@guildNavbarDurationNever": {
@@ -19912,10 +19887,6 @@
     "passkeyNoCredentialsForAccount": "Acest dispozitiv nu are o cheie de acces pentru acest cont. Folosește dispozitivul sau managerul de parole în care ai salvat-o.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "Activează comunitățile și canalele cu restricție de vârstă pe sanalyer.com în browser sau în aplicația desktop. Până atunci, rămân ascunse în aplicația iOS.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "Mesaje",
     "@notificationChannelMessages": {

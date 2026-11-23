@@ -252,10 +252,6 @@
     "@nagbarEnableNotifications": {
         "description": "Push notification permission nagbar CTA."
     },
-    "welcomeBack": "Welkom terug",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "E-mail",
     "@email": {
         "description": "Generic label for an email field."
@@ -832,10 +828,6 @@
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
     },
-    "addFriendUsernameOnlyHint": "Gebruikersnaam",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
-    },
     "registerTitle": "Account aanmaken",
     "@registerTitle": {
         "description": "Title for the registration screen."
@@ -1192,10 +1184,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "Cadeau ingewisseld",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "Registratie voltooien om in te wisselen",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -1207,10 +1195,6 @@
     "embedGiftUnknownSubtitle": "Deze cadeaucode is ongeldig of al ingewisseld.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "Cadeau niet beschikbaar",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "Claim je cadeau om je {productName}-abonnement te activeren!",
     "@giftAcceptClaimSubscription": {
@@ -1709,10 +1693,6 @@
     "addFriendSheetTitle": "Vriend toevoegen",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "Gebruikersnaam#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "Gebruikersnaam van vriend",
     "@addFriendUsernameLabel": {
@@ -10294,15 +10274,6 @@
             }
         }
     },
-    "channelWelcomeHeading": "Welkom bij {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "Dit is het begin van {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -12649,6 +12620,10 @@
     "guildNavbarInvitesPaused": "Uitnodigingen zijn momenteel gepauzeerd in deze community",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "Uitnodigingen zijn gepauzeerd na een vermoedelijke raid",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "nooit",
     "@guildNavbarDurationNever": {
@@ -19912,10 +19887,6 @@
     "passkeyNoCredentialsForAccount": "Dit apparaat heeft geen passkey voor dit account. Gebruik het apparaat of de wachtwoordmanager waarin je hem hebt opgeslagen.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "Zet communities en kanalen met leeftijdsbeperking aan op sanalyer.com in je browser of in de desktop-app. Tot die tijd blijven ze verborgen in de iOS-app.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "Berichten",
     "@notificationChannelMessages": {

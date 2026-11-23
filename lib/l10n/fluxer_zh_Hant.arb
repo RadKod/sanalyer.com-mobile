@@ -56,10 +56,6 @@
     "@splashIncidentHistory": {
         "description": "Link label to incident history when no active incident."
     },
-    "welcomeBack": "歡迎回來",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "電子郵件",
     "@email": {
         "description": "Generic label for an email field."
@@ -631,10 +627,6 @@
     "unclaimedAccountDescriptionUsername": "您的帳戶尚未領取。沒有使用者名稱和密碼，您將無法從其他裝置登入，並且可能會遺失帳戶存取權。立即領取您的帳戶以確保安全。",
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
-    },
-    "addFriendUsernameOnlyHint": "使用者名稱",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
     },
     "registerTitle": "建立帳號",
     "@registerTitle": {
@@ -1240,10 +1232,6 @@
     "addFriendSheetTitle": "新增好友",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "使用者名稱#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "好友的使用者名稱",
     "@addFriendUsernameLabel": {
@@ -5901,15 +5889,6 @@
     "@personalNotesSubtitle": {
         "description": "Subtitle on the personal notes welcome empty state."
     },
-    "channelWelcomeHeading": "歡迎來到 {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "這是 {channelName} 的開頭。",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -6763,6 +6742,10 @@
     "guildNavbarInvitesPaused": "此社群目前暫停邀請",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "因疑似突襲，邀請已暫停",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "永不",
     "@guildNavbarDurationNever": {
@@ -11865,10 +11848,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "禮物已領取",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "認領帳號即可兌換",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -11880,10 +11859,6 @@
     "embedGiftUnknownSubtitle": "此禮物代碼無效或已被領取。",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "禮物無法使用",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "領取你的禮物以啟用你的 {productName} 訂閱！",
     "@giftAcceptClaimSubscription": {
@@ -19895,10 +19870,6 @@
     "passkeyNoCredentialsForAccount": "此裝置上沒有這個帳號的通行金鑰。請使用你儲存通行金鑰的裝置或密碼管理工具。",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "請在瀏覽器中前往 sanalyer.com 或在桌面應用程式中開啟有年齡限制的社群和頻道。開啟之前，它們在 iOS 應用程式中會保持隱藏。",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "訊息",
     "@notificationChannelMessages": {

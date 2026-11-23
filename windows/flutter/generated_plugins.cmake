@@ -12,10 +12,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   flutter_inappwebview_windows
   flutter_secure_storage_windows
-  flutter_tts
   flutter_webrtc
+  fluxer_clipboard
   gal
-  irondash_engine_context
   livekit_client
   local_auth_windows
   media_kit_libs_windows_video
@@ -25,10 +24,8 @@ list(APPEND FLUTTER_PLUGIN_LIST
   record_windows
   screen_retriever_windows
   share_plus
-  super_native_extensions
   tray_manager
   url_launcher_windows
-  webcrypto
   window_manager
   window_to_front
 )

@@ -56,10 +56,6 @@
     "@splashIncidentHistory": {
         "description": "Link label to incident history when no active incident."
     },
-    "welcomeBack": "Välkommen tillbaka",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "E-post",
     "@email": {
         "description": "Generic label for an email field."
@@ -631,10 +627,6 @@
     "unclaimedAccountDescriptionUsername": "Ditt konto är inte anslutet än. Utan ett användarnamn och lösenord kan du inte logga in från andra enheter och du kan förlora åtkomsten till ditt konto. Anslut ditt konto nu för att säkra det.",
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
-    },
-    "addFriendUsernameOnlyHint": "Användarnamn",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
     },
     "registerTitle": "Skapa ett konto",
     "@registerTitle": {
@@ -1240,10 +1232,6 @@
     "addFriendSheetTitle": "Lägg till vän",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "Användarnamn#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "Vännens användarnamn",
     "@addFriendUsernameLabel": {
@@ -5901,15 +5889,6 @@
     "@personalNotesSubtitle": {
         "description": "Subtitle on the personal notes welcome empty state."
     },
-    "channelWelcomeHeading": "Välkommen till {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "Det här är början på {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -6763,6 +6742,10 @@
     "guildNavbarInvitesPaused": "Inbjudningar är för närvarande pausade i den här communityn",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "Inbjudningar är pausade efter en misstänkt räd",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "aldrig",
     "@guildNavbarDurationNever": {
@@ -11865,10 +11848,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "Presenten är inlöst",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "Säkra kontot för att lösa in",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -11880,10 +11859,6 @@
     "embedGiftUnknownSubtitle": "Den här presentkoden är ogiltig eller har redan lösts in.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "Presenten är inte tillgänglig",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "Hämta din gåva för att aktivera din {productName}-prenumeration!",
     "@giftAcceptClaimSubscription": {
@@ -19895,10 +19870,6 @@
     "passkeyNoCredentialsForAccount": "Den här enheten har ingen lösennyckel för det här kontot. Använd enheten eller lösenordshanteraren där du sparade den.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "Slå på åldersbegränsade communities och kanaler på sanalyer.com i webbläsaren eller i datorappen. Tills dess förblir de dolda i iOS-appen.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "Meddelanden",
     "@notificationChannelMessages": {

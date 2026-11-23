@@ -56,10 +56,6 @@
     "@splashIncidentHistory": {
         "description": "Link label to incident history when no active incident."
     },
-    "welcomeBack": "أهلاً بعودتك",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "البريد الإلكتروني",
     "@email": {
         "description": "Generic label for an email field."
@@ -631,10 +627,6 @@
     "unclaimedAccountDescriptionUsername": "حسابك لم تتم المطالبة به بعد. بدون اسم مستخدم وكلمة مرور، لن تتمكن من تسجيل الدخول من أجهزة أخرى وقد تفقد الوصول إلى حسابك. طالب بحسابك الآن لتأمينه.",
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
-    },
-    "addFriendUsernameOnlyHint": "اسم المستخدم",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
     },
     "registerTitle": "إنشاء حساب",
     "@registerTitle": {
@@ -1240,10 +1232,6 @@
     "addFriendSheetTitle": "إضافة صديق",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "اسم المستخدم#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "اسم مستخدم الصديق",
     "@addFriendUsernameLabel": {
@@ -5901,15 +5889,6 @@
     "@personalNotesSubtitle": {
         "description": "Subtitle on the personal notes welcome empty state."
     },
-    "channelWelcomeHeading": "مرحباً بك في {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "هذه بداية {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -6763,6 +6742,10 @@
     "guildNavbarInvitesPaused": "تم إيقاف الدعوات مؤقتًا في هذا المجتمع",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "تم إيقاف الدعوات مؤقتًا بعد اشتباه في هجوم",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "أبدًا",
     "@guildNavbarDurationNever": {
@@ -11865,10 +11848,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "تم استلام الهدية",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "المطالبة بالحساب للاسترداد",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -11880,10 +11859,6 @@
     "embedGiftUnknownSubtitle": "رمز الهدية هذا غير صالح أو تم استلامه بالفعل.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "الهدية غير متاحة",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "طالب هديتك لتفعيل اشتراك {productName} الخاص بك!",
     "@giftAcceptClaimSubscription": {
@@ -19895,10 +19870,6 @@
     "passkeyNoCredentialsForAccount": "لا يحتوي هذا الجهاز على مفتاح مرور لهذا الحساب. استخدم الجهاز أو مدير كلمات المرور الذي حفظته فيه.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "فعّل المجتمعات والقنوات المقيدة بالعمر على sanalyer.com في متصفحك أو في تطبيق سطح المكتب. ستبقى مخفية في تطبيق iOS حتى تفعل ذلك.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "الرسائل",
     "@notificationChannelMessages": {

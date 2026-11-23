@@ -56,10 +56,6 @@
     "@splashIncidentHistory": {
         "description": "Link label to incident history when no active incident."
     },
-    "welcomeBack": "Καλώς ήρθες ξανά",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "Email",
     "@email": {
         "description": "Generic label for an email field."
@@ -631,10 +627,6 @@
     "unclaimedAccountDescriptionUsername": "Ο λογαριασμός σας δεν έχει διεκδικηθεί ακόμη. Χωρίς όνομα χρήστη και κωδικό πρόσβασης, δεν θα μπορείτε να συνδεθείτε από άλλες συσκευές και μπορεί να χάσετε την πρόσβαση στον λογαριασμό σας. Διεκδικήστε τώρα τον λογαριασμό σας για να τον ασφαλίσετε.",
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
-    },
-    "addFriendUsernameOnlyHint": "Όνομα χρήστη",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
     },
     "registerTitle": "Δημιουργία λογαριασμού",
     "@registerTitle": {
@@ -1240,10 +1232,6 @@
     "addFriendSheetTitle": "Προσθήκη φίλου",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "Όνομα χρήστη#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "Όνομα χρήστη φίλου",
     "@addFriendUsernameLabel": {
@@ -5901,15 +5889,6 @@
     "@personalNotesSubtitle": {
         "description": "Subtitle on the personal notes welcome empty state."
     },
-    "channelWelcomeHeading": "Καλώς ήρθατε στο {channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "Αυτή είναι η αρχή του {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -6763,6 +6742,10 @@
     "guildNavbarInvitesPaused": "Οι προσκλήσεις έχουν τεθεί σε παύση σε αυτήν την κοινότητα",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "Οι προσκλήσεις έχουν τεθεί σε παύση μετά από μια ύποπτη επιδρομή",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "ποτέ",
     "@guildNavbarDurationNever": {
@@ -11865,10 +11848,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "Το δώρο παραλήφθηκε",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "Διεκδίκηση λογαριασμού για εξαργύρωση",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -11880,10 +11859,6 @@
     "embedGiftUnknownSubtitle": "Αυτός ο κωδικός δώρου δεν είναι έγκυρος ή έχει ήδη παραληφθεί.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "Το δώρο δεν είναι διαθέσιμο",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "Διεκδίκησε το δώρο σου για να ενεργοποιήσεις τη συνδρομή σου στο {productName}!",
     "@giftAcceptClaimSubscription": {
@@ -19895,10 +19870,6 @@
     "passkeyNoCredentialsForAccount": "Αυτή η συσκευή δεν έχει κλειδί πρόσβασης για αυτόν τον λογαριασμό. Χρησιμοποιήστε τη συσκευή ή τη διαχείριση κωδικών πρόσβασης όπου το αποθηκεύσατε.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "Ενεργοποιήστε τις κοινότητες και τα κανάλια με περιορισμό ηλικίας στο sanalyer.com από το πρόγραμμα περιήγησης ή από την εφαρμογή για υπολογιστές. Μέχρι τότε παραμένουν κρυφά στην εφαρμογή iOS.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "Μηνύματα",
     "@notificationChannelMessages": {

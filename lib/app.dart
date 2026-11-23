@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/age/declared_age_range_lock.dart';
 import 'package:fluxer_app/core/assistant/assistant_binding.dart';
 import 'package:fluxer_app/core/desktop/window/desktop_main_window.dart';
+import 'package:fluxer_app/core/desktop/window/desktop_window.dart';
 import 'package:fluxer_app/core/instance/account_identity_sync.dart';
 import 'package:fluxer_app/core/platform/fluxer_platform.dart';
 import 'package:fluxer_app/core/providers/app/app_ui_lifecycle_provider.dart';
@@ -33,6 +34,7 @@ import 'package:fluxer_app/features/ui/input/fluxer_clipboard_scope.dart';
 import 'package:fluxer_app/features/ui/toast/fluxer_toast_overlay.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/incoming_voice_call_layer.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/pip/voice_pip_layer.dart';
+import 'package:fluxer_app/features/voice/presentation/widgets/pip/voice_system_pip_view.dart';
 import 'package:fluxer_app/features/voice/presentation/widgets/voice_call_accessibility_layer.dart';
 import 'package:fluxer_app/l10n/app_locale_provider.dart';
 import 'package:fluxer_app/l10n/fluxer_localizations_delegates.dart';
@@ -173,14 +175,16 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
               content = BetaBanner(child: overlayStack(layered));
             } else {
               content = overlayStack(
-                DragToResizeArea(
-                  child: Column(
-                    children: [
-                      const NativeTitlebar(),
-                      Expanded(child: layered),
-                    ],
-                  ),
-                ),
+                desktopUsesNativeTitleBar
+                    ? layered
+                    : DragToResizeArea(
+                        child: Column(
+                          children: [
+                            const NativeTitlebar(),
+                            Expanded(child: layered),
+                          ],
+                        ),
+                      ),
               );
             }
 
@@ -197,7 +201,9 @@ class _FluxerAppState extends ConsumerState<FluxerApp> {
               enabled: disableAnimations,
               child: FluxerAppTextScale(
                 child: DesktopPointerUiScope(
-                  child: AppLockGate(child: content),
+                  child: isFluxerNativeAndroid
+                      ? VoiceSystemPipHost(child: AppLockGate(child: content))
+                      : AppLockGate(child: content),
                 ),
               ),
             );

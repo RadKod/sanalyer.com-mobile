@@ -26,12 +26,12 @@ private const val DEVICE_REFRESH_DEBOUNCE_MS = 300L
 private const val OWN_CHANGE_GRACE_MS = 300L
 private const val SETTLED_REAPPLY_MS = 2_000L
 private const val FOCUS_RETRY_MS = 500L
-private const val FOCUS_REREQUEST_MS = 2_000L
 private const val SCO_TIMEOUT_MS = 4_000L
 private const val SCO_MAX_ATTEMPTS = 2
 private const val REASSERT_MAX_COUNT = 6
 private const val REASSERT_WINDOW_MS = 10_000L
 private const val EVENT_LOG_CAPACITY = 40
+private const val TELECOM_WATCH_MS = 1_000L
 
 private val externalCallModes = setOf(
     AudioManager.MODE_IN_CALL,
@@ -47,6 +47,7 @@ internal class VoiceAudioSession(
     private val connections: () -> List<CallkitConnection> = { telecomCallConnections(context) },
     private val registerPlatformListeners: Boolean = true,
     private val keepalive: VoiceKeepalive = SilentVoiceKeepalive(context),
+    private val wifiLock: VoiceWifiLock = SystemVoiceWifiLock(context),
 ) {
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val executor = Executor { handler.post(it) }
@@ -70,13 +71,11 @@ internal class VoiceAudioSession(
     private var appliedRoute: VoiceOutputRoute? = null
     private var appliedDeviceId: Int? = null
     private var ownChangeUntil = 0L
-    private var savedMode: Int = AudioManager.MODE_NORMAL
     private var savedMicMute = false
     private var appliedMode: Int? = null
     private var focusRequest: AudioFocusRequest? = null
     private var focusState: String = "none"
     private var focusLost = false
-    private var lastFocusRequestAt = 0L
     private var lastForcedApplyAt = Long.MIN_VALUE / 2
     private var telecomOwnsRoute = false
     private var waitingForExternalCall = false
@@ -87,6 +86,7 @@ internal class VoiceAudioSession(
     private var deferredReassert: Runnable? = null
     private var pendingDeviceRefresh: Runnable? = null
     private var settledReapply: Runnable? = null
+    private var telecomWatch: Runnable? = null
     private var scoTimeout: Runnable? = null
     private var scoRequested = false
     private var scoConnected = false
@@ -138,11 +138,6 @@ internal class VoiceAudioSession(
         val mode = audioManager.mode
         log("activate owner=$owner mode=$mode")
         appliedMode = mode
-        savedMode = if (mode == AudioManager.MODE_IN_COMMUNICATION || mode == AudioManager.MODE_IN_CALL) {
-            AudioManager.MODE_NORMAL
-        } else {
-            mode
-        }
         savedMicMute = audioManager.isMicrophoneMute
         FluxerRouteOwnership.holdsRoute = true
         limiter.reset()
@@ -154,6 +149,7 @@ internal class VoiceAudioSession(
         audioManager.isMicrophoneMute = false
         applyRoute("activate", force = true)
         startKeepalive()
+        wifiLock.acquire()
         scheduleSettledReapply()
     }
 
@@ -223,6 +219,7 @@ internal class VoiceAudioSession(
             " focusLost=$focusLost" +
             " waitingForExternalCall=$waitingForExternalCall" +
             " keepalive=${keepalive.isPlaying}" +
+            " wifiLock=${wifiLock.isHeld}" +
             " micSilenced=$micSilenced" +
             " sco=requested:$scoRequested/connected:$scoConnected/failed:$bluetoothFailed" +
             " devices=$devices" +
@@ -242,6 +239,9 @@ internal class VoiceAudioSession(
     )
 
     fun onActivityVisibilityChanged() {
+        if (isActive) {
+            setVolumeKeys(true)
+        }
         updateProximity()
     }
 
@@ -277,7 +277,16 @@ internal class VoiceAudioSession(
         log("modeChanged=$mode")
         when {
             mode == AudioManager.MODE_IN_COMMUNICATION -> {
-                if (!telecomOwnsRoute && !waitingForExternalCall && desiredExplicit && communicationDeviceDrifted()) {
+                if (reclaimIfTelecomEnded()) {
+                    return
+                }
+                if (waitingForExternalCall) {
+                    waitingForExternalCall = false
+                    limiter.reset()
+                    applyRoute("externalCallEnded", force = true)
+                    return
+                }
+                if (!telecomOwnsRoute && desiredExplicit && communicationDeviceDrifted()) {
                     scheduleReassert("modeConfirmed", force = true)
                 }
             }
@@ -285,11 +294,7 @@ internal class VoiceAudioSession(
                 waitingForExternalCall = true
                 cancelReasserts()
             }
-            telecomOwnsRoute -> {
-                if (connections().isEmpty()) {
-                    applyRoute("telecomEnded", force = true)
-                }
-            }
+            telecomOwnsRoute -> reclaimIfTelecomEnded()
             waitingForExternalCall -> {
                 waitingForExternalCall = false
                 limiter.reset()
@@ -301,6 +306,9 @@ internal class VoiceAudioSession(
 
     internal fun onCommunicationDeviceChanged(device: AudioDeviceInfo?) {
         if (!isActive) {
+            return
+        }
+        if (reclaimIfTelecomEnded()) {
             return
         }
         if (telecomOwnsRoute) {
@@ -363,13 +371,18 @@ internal class VoiceAudioSession(
         pendingDeviceRefresh = null
         cancel(settledReapply)
         settledReapply = null
+        cancel(telecomWatch)
+        telecomWatch = null
         releaseLegacySco()
         unregisterSessionListeners()
         keepalive.stop()
+        wifiLock.release()
         if (!telecomOwnsRoute) {
             releaseVoiceOutputRoute(audioManager)
         }
-        audioManager.mode = savedMode
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || audioManager.mode !in externalCallModes) {
+            audioManager.mode = AudioManager.MODE_NORMAL
+        }
         telecomOwnsRoute = false
         waitingForExternalCall = false
         abandonFocus()
@@ -388,6 +401,14 @@ internal class VoiceAudioSession(
         if (!isActive) {
             return
         }
+        try {
+            applyRouteUnguarded(reason, force, telecomForce)
+        } catch (error: SecurityException) {
+            log("apply reason=$reason denied: ${error.message}")
+        }
+    }
+
+    private fun applyRouteUnguarded(reason: String, force: Boolean, telecomForce: Boolean) {
         val calls = connections()
         if (calls.isNotEmpty()) {
             applyTelecomRoute(calls, reason, telecomForce)
@@ -396,6 +417,8 @@ internal class VoiceAudioSession(
         var forceApply = force
         if (telecomOwnsRoute) {
             telecomOwnsRoute = false
+            cancel(telecomWatch)
+            telecomWatch = null
             forceApply = true
             log("telecom ended, reclaiming route")
             requestFocus(retry = false)
@@ -403,9 +426,6 @@ internal class VoiceAudioSession(
         if (externalCallActive()) {
             log("defer $reason: external call")
             return
-        }
-        if (focusLost && clock() - lastFocusRequestAt >= FOCUS_REREQUEST_MS) {
-            requestFocus(retry = false)
         }
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -457,9 +477,14 @@ internal class VoiceAudioSession(
             safeClearCommunicationDevice(audioManager)
             abandonFocus()
             log("handoff to telecom calls=${calls.size}")
+            scheduleTelecomWatch()
         }
         if (desiredExplicit) {
-            val bluetoothAddress = requestedBluetoothAddress(audioManager, desiredRoute, desiredDeviceId)
+            val bluetoothAddress = if (hasBluetoothConnectPermission(context)) {
+                requestedBluetoothAddress(audioManager, desiredRoute, desiredDeviceId)
+            } else {
+                null
+            }
             for (connection in calls) {
                 applyTelecomCallRoute(connection, desiredRoute, bluetoothAddress, force = force || handingOff)
             }
@@ -469,6 +494,33 @@ internal class VoiceAudioSession(
         log("telecom apply reason=$reason explicit=$desiredExplicit route=${appliedRoute?.name}")
         updateProximity()
         emitState("routeChanged")
+    }
+
+    private fun reclaimIfTelecomEnded(): Boolean {
+        if (!telecomOwnsRoute || connections().isNotEmpty()) {
+            return false
+        }
+        limiter.reset()
+        applyRoute("telecomEnded", force = true)
+        return true
+    }
+
+    private fun scheduleTelecomWatch() {
+        cancel(telecomWatch)
+        val work = object : Runnable {
+            override fun run() {
+                if (!isActive || !telecomOwnsRoute) {
+                    telecomWatch = null
+                    return
+                }
+                if (reclaimIfTelecomEnded()) {
+                    return
+                }
+                handler.postDelayed(this, TELECOM_WATCH_MS)
+            }
+        }
+        telecomWatch = work
+        handler.postDelayed(work, TELECOM_WATCH_MS)
     }
 
     private fun telecomActualRoute(calls: List<CallkitConnection>): VoiceOutputRoute? {
@@ -488,8 +540,8 @@ internal class VoiceAudioSession(
     private fun externalCallActive(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             waitingForExternalCall = audioManager.mode in externalCallModes
-        } else if (appliedMode in externalCallModes) {
-            waitingForExternalCall = true
+        } else {
+            waitingForExternalCall = appliedMode in externalCallModes
         }
         return waitingForExternalCall
     }
@@ -572,10 +624,9 @@ internal class VoiceAudioSession(
     }
 
     private fun requestFocus(retry: Boolean) {
-        lastFocusRequestAt = clock()
         val result = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val request = focusRequest ?: AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                val request = focusRequest ?: AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
                     .setAudioAttributes(
                         AudioAttributes.Builder()
                             .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
@@ -592,7 +643,7 @@ internal class VoiceAudioSession(
                 audioManager.requestAudioFocus(
                     focusListener,
                     AudioManager.STREAM_VOICE_CALL,
-                    AudioManager.AUDIOFOCUS_GAIN,
+                    AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK,
                 )
             }
         } catch (_: SecurityException) {

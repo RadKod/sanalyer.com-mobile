@@ -1,5 +1,7 @@
 package com.fluxer.voice
 
+import android.Manifest
+import android.app.Application
 import android.content.Context
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -25,6 +27,18 @@ import org.robolectric.shadows.ShadowLooper
 import org.robolectric.util.ReflectionHelpers
 import java.util.concurrent.TimeUnit
 
+private class FakeWifiLock : VoiceWifiLock {
+    override var isHeld: Boolean = false
+
+    override fun acquire() {
+        isHeld = true
+    }
+
+    override fun release() {
+        isHeld = false
+    }
+}
+
 private class FakeKeepalive : VoiceKeepalive {
     override var isPlaying: Boolean = false
 
@@ -46,6 +60,7 @@ class VoiceAudioSessionTest {
     private lateinit var earpiece: AudioDeviceInfo
     private lateinit var session: VoiceAudioSession
     private val keepalive = FakeKeepalive()
+    private val wifiLock = FakeWifiLock()
     private var now = 0L
     private var calls: List<CallkitConnection> = emptyList()
     private val events = mutableListOf<NativeVoiceSessionState>()
@@ -67,6 +82,7 @@ class VoiceAudioSessionTest {
             connections = { calls },
             registerPlatformListeners = false,
             keepalive = keepalive,
+            wifiLock = wifiLock,
         )
     }
 
@@ -129,6 +145,10 @@ class VoiceAudioSessionTest {
         assertEquals(
             android.media.AudioAttributes.USAGE_VOICE_COMMUNICATION,
             shadowOf(audioManager).lastAudioFocusRequest.audioFocusRequest.audioAttributes.usage,
+        )
+        assertEquals(
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK,
+            shadowOf(audioManager).lastAudioFocusRequest.audioFocusRequest.focusGain,
         )
     }
 
@@ -256,6 +276,47 @@ class VoiceAudioSessionTest {
     }
 
     @Test
+    fun routingResumesWhenTheCellularCallHandsTheModeBackToUs() {
+        activate(VoiceOutputRoute.Earpiece)
+
+        session.onModeChanged(AudioManager.MODE_RINGTONE)
+        session.onModeChanged(AudioManager.MODE_IN_CALL)
+        session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
+        idle(400)
+        assertEquals(2, audioManager.communicationDevice?.id)
+
+        session.onModeChanged(AudioManager.MODE_IN_COMMUNICATION)
+        assertEquals(1, audioManager.communicationDevice?.id)
+        assertFalse(session.diagnostics().contains("waitingForExternalCall=true"))
+
+        session.setPreferredRoute(VoiceOutputRoute.Earpiece, null, true)
+        assertEquals(2, audioManager.communicationDevice?.id)
+    }
+
+    @Test
+    fun releaseRestoresNormalModeEvenIfActivatedWhileRinging() {
+        audioManager.mode = AudioManager.MODE_RINGTONE
+        session.acquire("call")
+        session.onModeChanged(AudioManager.MODE_NORMAL)
+        idle(400)
+
+        session.release("call")
+
+        assertEquals(AudioManager.MODE_NORMAL, audioManager.mode)
+    }
+
+    @Test
+    fun wifiLockIsHeldOnlyWhileTheSessionIsActive() {
+        assertFalse(wifiLock.isHeld)
+        activate(VoiceOutputRoute.Speaker)
+        assertTrue(wifiLock.isHeld)
+
+        session.release("call")
+
+        assertFalse(wifiLock.isHeld)
+    }
+
+    @Test
     fun cappedReassertIsRetriedAfterTheWindow() {
         activate(VoiceOutputRoute.Earpiece)
         repeat(10) { drift(speaker) }
@@ -274,6 +335,21 @@ class VoiceAudioSessionTest {
 
         session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
 
+        assertEquals(1, audioManager.communicationDevice?.id)
+    }
+
+    @Test
+    fun focusLostToAnotherAppIsNotTakenBack() {
+        activate(VoiceOutputRoute.Earpiece)
+        val claimed = shadowOf(audioManager).lastAudioFocusRequest
+        session.onFocusChange(AudioManager.AUDIOFOCUS_LOSS)
+
+        idle(3_000)
+        session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
+        session.refreshRoute("test")
+        idle(3_000)
+
+        assertTrue(claimed === shadowOf(audioManager).lastAudioFocusRequest)
         assertEquals(1, audioManager.communicationDevice?.id)
     }
 
@@ -317,6 +393,50 @@ class VoiceAudioSessionTest {
 
         assertEquals(AudioManager.MODE_IN_COMMUNICATION, audioManager.mode)
         assertEquals(2, audioManager.communicationDevice?.id)
+    }
+
+    @Test
+    fun routeIsReclaimedWhenTheTelecomCallVanishesWithoutAModeChange() {
+        activate(VoiceOutputRoute.Speaker)
+        calls = listOf(CallkitConnection(context, "live", Bundle()))
+        session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
+        assertTrue(session.diagnostics(), session.diagnostics().contains("telecomOwnsRoute=true"))
+        calls = emptyList()
+        audioManager.setCommunicationDevice(earpiece)
+
+        idle(1_500)
+
+        assertTrue(session.diagnostics(), session.diagnostics().contains("telecomOwnsRoute=false"))
+        assertEquals(AudioManager.MODE_IN_COMMUNICATION, audioManager.mode)
+        assertEquals(1, audioManager.communicationDevice?.id)
+    }
+
+    @Test
+    fun communicationDeviceChangeReclaimsTheRouteOnceTelecomIsGone() {
+        activate(VoiceOutputRoute.Speaker)
+        calls = listOf(CallkitConnection(context, "live", Bundle()))
+        session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
+        calls = emptyList()
+        audioManager.setCommunicationDevice(earpiece)
+
+        session.onCommunicationDeviceChanged(earpiece)
+
+        assertTrue(session.diagnostics(), session.diagnostics().contains("telecomEnded"))
+        assertEquals(1, audioManager.communicationDevice?.id)
+    }
+
+    @Test
+    fun telecomWatchStopsAfterRelease() {
+        activate(VoiceOutputRoute.Speaker)
+        calls = listOf(CallkitConnection(context, "live", Bundle()))
+        session.setPreferredRoute(VoiceOutputRoute.Speaker, null, true)
+        session.release("call")
+        calls = emptyList()
+
+        idle(2_000)
+
+        assertFalse(session.diagnostics(), session.diagnostics().contains("telecomEnded"))
+        assertNull(audioManager.communicationDevice)
     }
 
     @Test
@@ -404,5 +524,32 @@ class VoiceAudioSessionTest {
 
         assertTrue(audioManager.isBluetoothScoOn)
         assertTrue(session.diagnostics(), session.diagnostics().contains("requested:true/connected:false"))
+    }
+
+    @Test
+    fun bluetoothConnectPermissionFollowsTheRuntimeGrant() {
+        val app = context as Application
+        shadowOf(app).denyPermissions(Manifest.permission.BLUETOOTH_CONNECT)
+        assertFalse(hasBluetoothConnectPermission(context))
+
+        shadowOf(app).grantPermissions(Manifest.permission.BLUETOOTH_CONNECT)
+        assertTrue(hasBluetoothConnectPermission(context))
+    }
+
+    @Test
+    fun explicitBluetoothUnderTelecomSurvivesMissingBluetoothPermission() {
+        val car = device(AudioDeviceInfo.TYPE_BLUETOOTH_SCO, id = 7, name = "Car")
+        shadowOf(audioManager).setAvailableCommunicationDevices(listOf(speaker, earpiece, car))
+        shadowOf(context as Application).denyPermissions(Manifest.permission.BLUETOOTH_CONNECT)
+        session.setPreferredRoute(VoiceOutputRoute.Earpiece, null, false)
+        session.acquire("call")
+        idle(2_500)
+        calls = listOf(CallkitConnection(context, "live", Bundle()))
+
+        session.setPreferredRoute(VoiceOutputRoute.Bluetooth, 7, true)
+        idle(400)
+
+        assertTrue(session.isActive)
+        assertTrue(session.diagnostics(), session.diagnostics().contains("telecomOwnsRoute=true"))
     }
 }

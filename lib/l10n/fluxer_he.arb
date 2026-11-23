@@ -252,10 +252,6 @@
     "@nagbarEnableNotifications": {
         "description": "Push notification permission nagbar CTA."
     },
-    "welcomeBack": "ברוך שובך",
-    "@welcomeBack": {
-        "description": "Greeting on the login screen; usable wherever returning users are welcomed."
-    },
     "email": "אימייל",
     "@email": {
         "description": "Generic label for an email field."
@@ -832,10 +828,6 @@
     "@unclaimedAccountDescriptionUsername": {
         "description": "Description for the unclaimed account warning on instances where people sign in with a username."
     },
-    "addFriendUsernameOnlyHint": "שם משתמש",
-    "@addFriendUsernameOnlyHint": {
-        "description": "Placeholder for the add friend field on instances where usernames have no tag."
-    },
     "registerTitle": "צור חשבון",
     "@registerTitle": {
         "description": "Title for the registration screen."
@@ -1192,10 +1184,6 @@
     "@embedGiftClaim": {
         "description": "Primary button on a redeemable gift embed."
     },
-    "embedGiftClaimed": "המתנה התקבלה",
-    "@embedGiftClaimed": {
-        "description": "Disabled button label after a gift is claimed."
-    },
     "embedGiftClaimAccount": "תבע את החשבון כדי לממש",
     "@embedGiftClaimAccount": {
         "description": "Button on a gift embed for unclaimed accounts."
@@ -1207,10 +1195,6 @@
     "embedGiftUnknownSubtitle": "קוד המתנה הזה שגוי או שכבר מומש.",
     "@embedGiftUnknownSubtitle": {
         "description": "Subtitle when a gift code cannot be resolved."
-    },
-    "embedGiftUnavailable": "המתנה אינה זמינה",
-    "@embedGiftUnavailable": {
-        "description": "Disabled button when a gift cannot be claimed."
     },
     "giftAcceptClaimSubscription": "קבל את המתנה שלך כדי להפעיל את המנוי שלך ל-{productName}!",
     "@giftAcceptClaimSubscription": {
@@ -1709,10 +1693,6 @@
     "addFriendSheetTitle": "הוסף חבר",
     "@addFriendSheetTitle": {
         "description": "Title for the mobile add friends bottom sheet."
-    },
-    "addFriendUsernameHint": "שם משתמש#0000",
-    "@addFriendUsernameHint": {
-        "description": "Placeholder for the add friend username input."
     },
     "addFriendUsernameLabel": "שם המשתמש של החבר",
     "@addFriendUsernameLabel": {
@@ -10294,15 +10274,6 @@
             }
         }
     },
-    "channelWelcomeHeading": "ברוכים הבאים ל-{channelName}",
-    "@channelWelcomeHeading": {
-        "description": "Heading on the start-of-channel welcome shown at the top of a guild channel's loaded message history and as its empty state. {channelName} already includes the leading # (e.g. #general).",
-        "placeholders": {
-            "channelName": {
-                "type": "String"
-            }
-        }
-    },
     "channelWelcomeDescription": "זה ההתחלה של {channelName}.",
     "@channelWelcomeDescription": {
         "description": "Body text on the start-of-channel welcome. {channelName} already includes the leading # (e.g. #general).",
@@ -12649,6 +12620,10 @@
     "guildNavbarInvitesPaused": "ההזמנות מושהות כרגע בקהילה זו",
     "@guildNavbarInvitesPaused": {
         "description": "Guild tooltip when invites are disabled."
+    },
+    "guildNavbarInvitesPausedRaid": "ההזמנות מושהות לאחר חשד לפשיטה",
+    "@guildNavbarInvitesPausedRaid": {
+        "description": "Guild tooltip when invites are paused after a suspected raid."
     },
     "guildNavbarDurationNever": "לעולם לא",
     "@guildNavbarDurationNever": {
@@ -19912,10 +19887,6 @@
     "passkeyNoCredentialsForAccount": "למכשיר הזה אין מפתח גישה לחשבון הזה. השתמש במכשיר או במנהל הסיסמאות שבו שמרת אותו.",
     "@passkeyNoCredentialsForAccount": {
         "description": "Error on the two-factor step when the account needs a passkey and none for it is available on this device."
-    },
-    "matureContentIosWebOptInBody": "הפעל קהילות וערוצים עם הגבלת גיל ב-sanalyer.com בדפדפן או באפליקציה למחשב. עד אז הם יישארו מוסתרים באפליקציית iOS.",
-    "@matureContentIosWebOptInBody": {
-        "description": "Body when mature access must be enabled on web or desktop instead of in the iOS app."
     },
     "notificationChannelMessages": "הודעות",
     "@notificationChannelMessages": {

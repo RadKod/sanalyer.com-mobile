@@ -853,9 +853,6 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
       'Hesabınız henüz alınmamış. Kullanıcı adı ve şifre olmadan başka cihazlardan giriş yapamazsınız ve hesabınıza erişimi kaybedebilirsiniz. Hesabınızı güvence altına almak için şimdi alın.';
 
   @override
-  String get addFriendUsernameOnlyHint => 'Kullanıcı adı';
-
-  @override
   String get registerTitle => 'Hesap oluştur';
 
   @override
@@ -1158,9 +1155,6 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get embedGiftClaim => 'Hediyeyi al';
 
   @override
-  String get embedGiftClaimed => 'Hediye alındı';
-
-  @override
   String get embedGiftClaimAccount => 'Kullanmak için hesabı sahiplen';
 
   @override
@@ -1169,9 +1163,6 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   @override
   String get embedGiftUnknownSubtitle =>
       'Bu hediye kodu geçersiz veya zaten alınmış.';
-
-  @override
-  String get embedGiftUnavailable => 'Hediye mevcut değil';
 
   @override
   String giftAcceptClaimSubscription(String productName) {
@@ -1386,6 +1377,12 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get incomingVoiceCallLabel => 'Gelen arama';
 
   @override
+  String get incomingVoiceCallNotificationChannel => 'Incoming calls';
+
+  @override
+  String get missedVoiceCallNotificationChannel => 'Missed calls';
+
+  @override
   String get incomingVoiceCallIgnore => 'Yok say';
 
   @override
@@ -1551,9 +1548,6 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get addFriendSheetTitle => 'Arkadaş ekle';
-
-  @override
-  String get addFriendUsernameHint => 'KullanıcıAdı#0000';
 
   @override
   String get addFriendUsernameLabel => 'Arkadaşınızın kullanıcı adı';
@@ -4521,8 +4515,9 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
       'Bu yetişkinlere özel topluluk hesabınız için kullanılamıyor.';
 
   @override
-  String get matureContentIosWebOptInBody =>
-      'Yaş kısıtlamalı toplulukları ve kanalları tarayıcınızda sanalyer.com adresinden veya masaüstü uygulamasından açın. Siz açana kadar iOS uygulamasında gizli kalırlar.';
+  String matureContentIosWebOptInInstanceBody(String webAddress) {
+    return 'Turn on age-restricted communities and channels at $webAddress in your browser or in the desktop app. They stay hidden in the iOS app until you do.';
+  }
 
   @override
   String get matureCategoryUnavailableBody =>
@@ -4846,6 +4841,33 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get connectionEnterDomain => 'Bir alan adı girin.';
+
+  @override
+  String get connectionsEmptyDescriptionAccounts =>
+      'Link your accounts or verify domain ownership to display them on your profile.';
+
+  @override
+  String connectionsAddProviderAriaLabel(String providerName) {
+    return 'Add $providerName connection';
+  }
+
+  @override
+  String connectionConnectWithProvider(String providerName) {
+    return 'Connect with $providerName';
+  }
+
+  @override
+  String connectionProviderInstructions(String providerName) {
+    return '$providerName opens in your browser. Sign in there to connect your account.';
+  }
+
+  @override
+  String connectionProviderAuthorizeFailed(String providerName) {
+    return 'Couldn\'t start $providerName authorization.';
+  }
+
+  @override
+  String get connectionUnavailable => 'No longer available';
 
   @override
   String get lookAndFeelThemeSectionTitle => 'Tema';
@@ -6248,6 +6270,27 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get voiceControlVideo => 'Video';
+
+  @override
+  String get voiceControlMoreOptions => 'More options';
+
+  @override
+  String get voiceControlInputSettings => 'Input settings';
+
+  @override
+  String get voiceControlOutputSettings => 'Output settings';
+
+  @override
+  String get voiceControlCameraSettings => 'Camera settings';
+
+  @override
+  String get voiceControlScreenShareSettings => 'Screen share settings';
+
+  @override
+  String get voiceControlStartScreenShare => 'Share your screen';
+
+  @override
+  String get voiceControlStopScreenShare => 'Stop sharing';
 
   @override
   String get voiceControlFlipCamera => 'Kamerayı çevir';
@@ -12140,6 +12183,16 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get discoveryFilterByLanguage => 'Dile göre filtrele';
 
   @override
+  String discoveryFilteringByLanguage(String language) {
+    return 'Filtering by $language';
+  }
+
+  @override
+  String discoverySearchResultsFor(String query) {
+    return 'Search results for “$query”';
+  }
+
+  @override
   String get discoveryAllLanguages => 'Tüm diller';
 
   @override
@@ -12177,6 +12230,17 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
 
   @override
   String get discoveryJoinCommunity => 'Topluluğa katıl';
+
+  @override
+  String get discoveryOpenCommunity => 'Open community';
+
+  @override
+  String get discoveryPublicCommunity => 'Public community';
+
+  @override
+  String discoveryPreviewCommunity(String communityName) {
+    return 'Preview $communityName';
+  }
 
   @override
   String get discoveryJoined => 'Katılundu';
@@ -12686,6 +12750,10 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   @override
   String get guildNavbarInvitesPaused =>
       'Bu toplulukta davetler şu anda duraklatıldı';
+
+  @override
+  String get guildNavbarInvitesPausedRaid =>
+      'Davetler şüpheli bir baskından sonra duraklatıldı';
 
   @override
   String get guildNavbarDurationNever => 'asla';
@@ -17342,6 +17410,11 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get oxygenUpdating => 'Updating…';
 
   @override
+  String oxygenUpdatingProgress(int percent) {
+    return 'Updating… $percent%';
+  }
+
+  @override
   String desktopTrayShow(String productName) {
     return 'Show $productName';
   }
@@ -17349,6 +17422,15 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   @override
   String desktopTrayHide(String productName) {
     return 'Hide $productName';
+  }
+
+  @override
+  String desktopBadgeUnreadMessages(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'Unread messages: $countString';
   }
 
   @override
@@ -17426,6 +17508,516 @@ class FluxerLocalizationsTr extends FluxerLocalizations {
   String get desktopSettingsCloseToMenuBar => 'Close to menu bar';
 
   @override
-  String get operatorPassWallReleaseListHint =>
-      'Once a year, we publish a list of Operators in the notes of a sanalyer release and in its source code. Your wall name is only on it if you turn this on.';
+  String get desktopSettingsLaunchAtLogin => 'Launch at login';
+
+  @override
+  String get desktopSettingsStartMinimized => 'Start minimized';
+
+  @override
+  String get desktopSettingsStartMinimizedTrayDescription =>
+      'When launched at login, start in the system tray instead of opening the window';
+
+  @override
+  String get desktopSettingsStartMinimizedMenuBarDescription =>
+      'When launched at login, start in the menu bar instead of opening the window';
+
+  @override
+  String get desktopSettingsRememberWindowState =>
+      'Remember window size and position';
+
+  @override
+  String get desktopSettingsColoredTrayIcon => 'Use colored tray icon';
+
+  @override
+  String get desktopSettingsColoredTrayIconDescription =>
+      'Show the full-color icon instead of a monochrome one that matches your taskbar.';
+
+  @override
+  String get desktopSettingsUnreadLauncherBadge =>
+      'Badge the app icon for unread messages';
+
+  @override
+  String get desktopSettingsUnreadLauncherBadgeDescription =>
+      'Linux taskbars can only show a number, so unread messages without mentions show as 1. Mentions always show their count.';
+
+  @override
+  String get desktopSettingsDarkTaskbarBadge => 'Use dark taskbar badge';
+
+  @override
+  String get desktopSettingsDarkTaskbarBadgeDescription =>
+      'Draw the unread badge on the taskbar button in dark gray instead of red.';
+
+  @override
+  String get desktopSettingsUseNativeTitleBar => 'Use native title bar';
+
+  @override
+  String get desktopSettingsRestartRequiredDescription =>
+      'Takes effect after you restart the app.';
+
+  @override
+  String get desktopSettingsTrayIconColorTitle => 'Tray icon color';
+
+  @override
+  String get desktopSettingsTrayIconColorColoredNotice =>
+      'Turn off the colored tray icon to choose a color here.';
+
+  @override
+  String get desktopSettingsTrayIconColorAuto => 'Match the taskbar';
+
+  @override
+  String get desktopSettingsTrayIconColorAutoDescription =>
+      'Pick white or black from the color of your taskbar or panel.';
+
+  @override
+  String get desktopSettingsTrayIconColorWhite => 'White';
+
+  @override
+  String get desktopSettingsTrayIconColorBlack => 'Black';
+
+  @override
+  String get desktopBadgeUnreadMessagesNoCount => 'Unread messages';
+
+  @override
+  String get notificationsUnreadMessageBadgeLabel =>
+      'Enable unread message badge';
+
+  @override
+  String get keybindActionPushToTalk => 'Push to talk';
+
+  @override
+  String get keybindActionPushToMute => 'Push to mute';
+
+  @override
+  String get keybindActionToggleVoiceActivity =>
+      'Toggle voice activity / push-to-talk';
+
+  @override
+  String get keybindRecorderSemanticLabel => 'Record keybind';
+
+  @override
+  String get keybindRecorderRecording => 'Press a key combination…';
+
+  @override
+  String get keybindRecorderUnassigned => 'Not assigned';
+
+  @override
+  String get keybindsCustomSectionTitle => 'Custom keybinds';
+
+  @override
+  String get keybindsCustomSectionDescription =>
+      'Add your own keybinds. A custom keybind replaces the built-in shortcut for the same action.';
+
+  @override
+  String get keybindsAddKeybind => 'Add keybind';
+
+  @override
+  String get keybindsRemoveKeybind => 'Remove keybind';
+
+  @override
+  String get keybindsChooseAction => 'Choose an action';
+
+  @override
+  String get keybindsDisableBuiltinLabel => 'Disable built-in shortcuts';
+
+  @override
+  String get keybindsDisableBuiltinDescription =>
+      'Only your custom keybinds will work.';
+
+  @override
+  String get keybindsSyncAcrossDevicesLabel => 'Sync keybinds across devices';
+
+  @override
+  String get keybindsSyncAcrossDevicesDescription =>
+      'Use the same custom keybinds and push-to-talk settings on every device signed in to this account.';
+
+  @override
+  String get audioAndVideoInputModeTitle => 'Input mode';
+
+  @override
+  String get audioAndVideoPushToTalkLabel => 'Push-to-talk';
+
+  @override
+  String get audioAndVideoPushToTalkDescription =>
+      'Your microphone only transmits while you hold the push-to-talk key and the app is focused.';
+
+  @override
+  String get audioAndVideoPushToTalkKeybindLabel => 'Push-to-talk keybind';
+
+  @override
+  String get audioAndVideoReleaseDelayLabel => 'Release delay';
+
+  @override
+  String get audioAndVideoReleaseDelayDescription =>
+      'How long your microphone stays on after you let go of the key.';
+
+  @override
+  String audioAndVideoReleaseDelayMilliseconds(int milliseconds) {
+    return '$milliseconds ms';
+  }
+
+  @override
+  String audioAndVideoReleaseDelaySeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String get audioAndVideoAutoActivityThresholdLabel =>
+      'Auto-set activity threshold';
+
+  @override
+  String get audioAndVideoAutoActivityThresholdDescription =>
+      'Turn off to choose how loud you need to be before your microphone transmits.';
+
+  @override
+  String get audioAndVideoActivityThresholdLabel => 'Activity threshold';
+
+  @override
+  String get audioAndVideoActivityThresholdDescription =>
+      'Your microphone transmits when your input is above this level. Use the mic test to check your levels.';
+
+  @override
+  String get audioAndVideoShowConnectionIdsLabel => 'Show connection IDs';
+
+  @override
+  String get audioAndVideoShowConnectionIdsDescription =>
+      'Show the connection ID in the voice connection panel, useful when reporting call problems.';
+
+  @override
+  String get advancedSettingDisableScreenSharePipLabel =>
+      'Disable picture-in-picture popout for screen shares';
+
+  @override
+  String get advancedSettingScreenShareAv1OptInLabel =>
+      'Allow AV1 screen sharing';
+
+  @override
+  String get advancedSettingScreenShareHevcOptInLabel =>
+      'Allow H.265 (HEVC) screen sharing';
+
+  @override
+  String get advancedSettingScreenShareOptInDescription =>
+      'Off by default because it may cause compatibility issues for viewers.';
+
+  @override
+  String get entranceSoundSectionTitle => 'Entrance sound';
+
+  @override
+  String get entranceSoundSectionDescription =>
+      'Play a short sound for everyone when you join a voice channel.';
+
+  @override
+  String get entranceSoundUnavailable =>
+      'Custom entrance sounds aren\'t available on your account.';
+
+  @override
+  String get entranceSoundLoadFailed => 'Couldn\'t load your entrance sounds.';
+
+  @override
+  String get entranceSoundUploadFailed =>
+      'Couldn\'t upload that sound. Use an MP3, OGG, M4A or WAV clip up to 5.2 seconds.';
+
+  @override
+  String get entranceSoundUpdateFailed =>
+      'Couldn\'t update your entrance sound.';
+
+  @override
+  String get entranceSoundTooLarge => 'That file is larger than 1 MB.';
+
+  @override
+  String get entranceSoundAppliesTo => 'Applies to';
+
+  @override
+  String get entranceSoundScopeGlobal => 'All communities and DMs';
+
+  @override
+  String get entranceSoundScopeGlobalDescription =>
+      'Used by default unless a community or DM sound overrides it.';
+
+  @override
+  String get entranceSoundScopeGuilds => 'All communities';
+
+  @override
+  String get entranceSoundScopeGuildsDescription =>
+      'Used in communities that do not have their own sound.';
+
+  @override
+  String get entranceSoundScopeDms => 'Direct messages';
+
+  @override
+  String get entranceSoundScopeDmsDescription =>
+      'Used for all direct-message calls.';
+
+  @override
+  String get entranceSoundScopeGuildDescription =>
+      'Used only in this community.';
+
+  @override
+  String get entranceSoundNone => 'No sound';
+
+  @override
+  String entranceSoundDuration(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String get entranceSoundPreview => 'Play sound';
+
+  @override
+  String get entranceSoundDelete => 'Delete from library';
+
+  @override
+  String get entranceSoundUpload => 'Upload new';
+
+  @override
+  String entranceSoundLibraryCount(int count, int max) {
+    return 'Library: $count of $max';
+  }
+
+  @override
+  String get streamerModeSectionTitle => 'Streamer mode';
+
+  @override
+  String get streamerModeSectionDescription =>
+      'Hide personal details and quiet the app while you stream or share your screen.';
+
+  @override
+  String get streamerModeEnableLabel => 'Enable streamer mode';
+
+  @override
+  String get streamerModeAutoEnableLabel =>
+      'Automatically enable streamer mode';
+
+  @override
+  String get streamerModeAutoEnableDescription =>
+      'Turns on when OBS or XSplit is running.';
+
+  @override
+  String get streamerModeHidePersonalLabel => 'Hide personal information';
+
+  @override
+  String get streamerModeHidePersonalDescription =>
+      'Hides your email, profile connections and notes.';
+
+  @override
+  String get streamerModeHideInviteLinksLabel => 'Hide invite links';
+
+  @override
+  String get streamerModeHideInviteLinksDescription =>
+      'Invite links are hidden but can still be copied.';
+
+  @override
+  String get streamerModeDisableSoundsLabel => 'Disable all sound effects';
+
+  @override
+  String get streamerModeDisableNotificationsLabel => 'Disable notifications';
+
+  @override
+  String get streamerModeNagbarMessage =>
+      'Streamer mode is on. Personal details are hidden.';
+
+  @override
+  String get streamerModeNagbarDisable => 'Turn off';
+
+  @override
+  String get languageAndTimeRegionalFormatTitle => 'Regional format';
+
+  @override
+  String get languageAndTimeRegionalFormatDescription =>
+      'Dates, times and numbers follow this format. Prices stay in the currency of your billing country.';
+
+  @override
+  String get languageAndTimeRegionalFormatSearch => 'Search formats…';
+
+  @override
+  String get languageAndTimeRegionalFormatSameAsLanguage => 'Same as language';
+
+  @override
+  String get languageAndTimeRegionalFormatSystem => 'System format';
+
+  @override
+  String get languageAndTimeDateFormatTitle => 'Date format';
+
+  @override
+  String get languageAndTimeDateFormatAuto => 'Auto';
+
+  @override
+  String get languageAndTimeDateFormatIso => 'ISO 8601';
+
+  @override
+  String get languageAndTimeDateFormatDayFirst => 'Day first';
+
+  @override
+  String get languageAndTimeDateFormatMonthFirst => 'Month first';
+
+  @override
+  String get languageAndTimeFormatSyncFailed =>
+      'Couldn\'t save your format. Try again.';
+
+  @override
+  String get advancedSettingSequentialFileSendLabel =>
+      'Send file messages in order';
+
+  @override
+  String get advancedSettingSequentialFileSendDescription =>
+      'Wait for earlier uploads to finish so messages with files arrive in the order you sent them.';
+
+  @override
+  String get advancedSettingKeepAttachmentsOnEmptyEditLabel =>
+      'Keep attachments when clearing an edit';
+
+  @override
+  String get advancedSettingKeepAttachmentsOnEmptyEditDescription =>
+      'Saving an edit with no text keeps the attachments instead of doing nothing.';
+
+  @override
+  String get advancedSettingDoubleClickActionsLabel =>
+      'Double-click a message to edit or reply';
+
+  @override
+  String get advancedSettingDoubleClickActionsDescription =>
+      'Double-click your own message to edit it, or someone else\'s to reply.';
+
+  @override
+  String get messagesMediaConvertEmoticonsLabel => 'Convert emoticons to emoji';
+
+  @override
+  String get messagesMediaConvertEmoticonsDescription =>
+      'Turns text like :) into 🙂 when you send a message.';
+
+  @override
+  String get languageAndTimeSpellcheckTitle => 'Spellcheck';
+
+  @override
+  String get languageAndTimeSpellcheckLabel => 'Enable spellcheck';
+
+  @override
+  String get languageAndTimeSpellcheckDescription =>
+      'Underline misspelled words while you type messages.';
+
+  @override
+  String get securityPasskeyTwoFactorLabel =>
+      'Require a passkey as your second factor';
+
+  @override
+  String get securityPasskeyTwoFactorDescription =>
+      'Ask for a passkey after your password when you sign in.';
+
+  @override
+  String get securityPasskeyTwoFactorFailed =>
+      'Couldn\'t update passkey two-factor authentication.';
+
+  @override
+  String get advancedSettingShowHelpButtonLabel => 'Show help center button';
+
+  @override
+  String get advancedSettingShowHelpButtonDescription =>
+      'Show the question mark button at the bottom of the community list.';
+
+  @override
+  String get advancedSettingsCategoryExperimental => 'Experimental';
+
+  @override
+  String get advancedSettingHideBlockedMessagesLabel =>
+      'Hide messages from blocked users';
+
+  @override
+  String get advancedSettingHideBlockedMessagesDescription =>
+      'Blocked messages are removed from the chat instead of showing a collapsed row.';
+
+  @override
+  String get accessibilityAnimateGifPickerLabel =>
+      'Play GIFs in the GIF picker';
+
+  @override
+  String get guildVanityUrlTitle => 'Vanity URL';
+
+  @override
+  String get guildVanityUrlDescription =>
+      'Give your community a custom invite link. Leave it empty to remove it.';
+
+  @override
+  String get guildVanityUrlHint => 'your-community';
+
+  @override
+  String get guildVanityUrlSave => 'Save';
+
+  @override
+  String guildVanityUrlUses(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uses',
+      one: '1 use',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guildVanityUrlSaved => 'Vanity URL saved.';
+
+  @override
+  String get guildVanityUrlRemoved => 'Your vanity URL has been removed.';
+
+  @override
+  String get guildVanityUrlSaveFailed =>
+      'Couldn\'t save the vanity URL. It may already be taken.';
+
+  @override
+  String get guildVanityUrlLoadFailed =>
+      'Failed to load vanity URL. Try again.';
+
+  @override
+  String get guildVanityUrlTooShort =>
+      'Vanity URL must be at least 2 characters long.';
+
+  @override
+  String get guildVanityUrlTooLong =>
+      'Vanity URL must be no more than 32 characters long.';
+
+  @override
+  String get guildVanityUrlInvalidCharacters =>
+      'Vanity URL can only contain letters, numbers and hyphens between them.';
+
+  @override
+  String get operatorPassWallTitle => 'Operators\' wall';
+
+  @override
+  String get operatorPassWallShowMeLabel => 'Show me on the wall';
+
+  @override
+  String get operatorPassWallSendChangesLabel =>
+      'Send profile changes to the wall';
+
+  @override
+  String get operatorPassWallReleaseListLabel =>
+      'Add my name to the yearly Operators list';
+
+  @override
+  String get operatorPassWallReleaseListDescription =>
+      'Each yearly list goes into the notes of a Fluxer release and a file in its source code. Earlier versions and copies others made can\'t be recalled.';
+
+  @override
+  String get operatorPassLabsTitle => 'Fluxer Labs';
+
+  @override
+  String get operatorPassLabsDescription =>
+      'Your pass opens #operators in Fluxer Labs, where you can talk about self-hosting, bots and the API.';
+
+  @override
+  String get operatorPassShowOperatorsLabel => 'Show #operators';
+
+  @override
+  String get operatorPassShowOperatorsDescription =>
+      'Turning this off takes away your access to #operators until you turn it on again.';
+
+  @override
+  String get operatorPassGreetingLabel => 'Welcome me in #operators';
+
+  @override
+  String get operatorPassGreetingDescription =>
+      'We welcome you by name in #operators once, soon after your pass is delivered or you turn this on.';
+
+  @override
+  String get operatorPassUpdateFailed =>
+      'Couldn\'t update your Operator Pass settings.';
 }

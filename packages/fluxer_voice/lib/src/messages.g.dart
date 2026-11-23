@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -46,8 +46,9 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -96,13 +97,7 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
-enum NativeVoiceRoute {
-  speaker,
-  earpiece,
-  headset,
-  bluetooth,
-}
+enum NativeVoiceRoute { speaker, earpiece, headset, bluetooth }
 
 enum NativeVoiceDeviceKind {
   earpiece,
@@ -113,6 +108,8 @@ enum NativeVoiceDeviceKind {
   bluetoothLe,
   hearingAid,
 }
+
+enum NativePipVideoSourceKind { webRtcTrack }
 
 class NativeVoiceDevice {
   NativeVoiceDevice({
@@ -131,16 +128,12 @@ class NativeVoiceDevice {
   bool active;
 
   List<Object?> _toList() {
-    return <Object?>[
-      id,
-      kind,
-      name,
-      active,
-    ];
+    return <Object?>[id, kind, name, active];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeVoiceDevice decode(Object result) {
     result as List<Object?>;
@@ -161,7 +154,10 @@ class NativeVoiceDevice {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(id, other.id) && _deepEquals(kind, other.kind) && _deepEquals(name, other.name) && _deepEquals(active, other.active);
+    return _deepEquals(id, other.id) &&
+        _deepEquals(kind, other.kind) &&
+        _deepEquals(name, other.name) &&
+        _deepEquals(active, other.active);
   }
 
   @override
@@ -216,7 +212,8 @@ class NativeVoiceSessionState {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeVoiceSessionState decode(Object result) {
     result as List<Object?>;
@@ -241,7 +238,14 @@ class NativeVoiceSessionState {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) && _deepEquals(active, other.active) && _deepEquals(route, other.route) && _deepEquals(routes, other.routes) && _deepEquals(devices, other.devices) && _deepEquals(activeDeviceId, other.activeDeviceId) && _deepEquals(telecom, other.telecom) && _deepEquals(micSilenced, other.micSilenced);
+    return _deepEquals(type, other.type) &&
+        _deepEquals(active, other.active) &&
+        _deepEquals(route, other.route) &&
+        _deepEquals(routes, other.routes) &&
+        _deepEquals(devices, other.devices) &&
+        _deepEquals(activeDeviceId, other.activeDeviceId) &&
+        _deepEquals(telecom, other.telecom) &&
+        _deepEquals(micSilenced, other.micSilenced);
   }
 
   @override
@@ -255,24 +259,19 @@ class NativeVoiceSessionState {
 }
 
 class NativeVoiceActiveRoute {
-  NativeVoiceActiveRoute({
-    required this.route,
-    this.name,
-  });
+  NativeVoiceActiveRoute({required this.route, this.name});
 
   NativeVoiceRoute route;
 
   String? name;
 
   List<Object?> _toList() {
-    return <Object?>[
-      route,
-      name,
-    ];
+    return <Object?>[route, name];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static NativeVoiceActiveRoute decode(Object result) {
     result as List<Object?>;
@@ -304,6 +303,232 @@ class NativeVoiceActiveRoute {
   }
 }
 
+class NativePipVideoSource {
+  NativePipVideoSource({required this.kind, this.trackId});
+
+  NativePipVideoSourceKind kind;
+
+  String? trackId;
+
+  List<Object?> _toList() {
+    return <Object?>[kind, trackId];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativePipVideoSource decode(Object result) {
+    result as List<Object?>;
+    return NativePipVideoSource(
+      kind: result[0]! as NativePipVideoSourceKind,
+      trackId: result[1] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativePipVideoSource || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(kind, other.kind) && _deepEquals(trackId, other.trackId);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativePipVideoSource(kind: $kind, trackId: $trackId)';
+  }
+}
+
+class NativePipRect {
+  NativePipRect({
+    required this.left,
+    required this.top,
+    required this.width,
+    required this.height,
+  });
+
+  double left;
+
+  double top;
+
+  double width;
+
+  double height;
+
+  List<Object?> _toList() {
+    return <Object?>[left, top, width, height];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativePipRect decode(Object result) {
+    result as List<Object?>;
+    return NativePipRect(
+      left: result[0]! as double,
+      top: result[1]! as double,
+      width: result[2]! as double,
+      height: result[3]! as double,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativePipRect || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(left, other.left) &&
+        _deepEquals(top, other.top) &&
+        _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativePipRect(left: $left, top: $top, width: $width, height: $height)';
+  }
+}
+
+class NativePipConfig {
+  NativePipConfig({
+    required this.source,
+    required this.aspectWidth,
+    required this.aspectHeight,
+    this.sourceRect,
+    required this.mirror,
+  });
+
+  NativePipVideoSource source;
+
+  int aspectWidth;
+
+  int aspectHeight;
+
+  NativePipRect? sourceRect;
+
+  bool mirror;
+
+  List<Object?> _toList() {
+    return <Object?>[source, aspectWidth, aspectHeight, sourceRect, mirror];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativePipConfig decode(Object result) {
+    result as List<Object?>;
+    return NativePipConfig(
+      source: result[0]! as NativePipVideoSource,
+      aspectWidth: result[1]! as int,
+      aspectHeight: result[2]! as int,
+      sourceRect: result[3] as NativePipRect?,
+      mirror: result[4]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativePipConfig || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(source, other.source) &&
+        _deepEquals(aspectWidth, other.aspectWidth) &&
+        _deepEquals(aspectHeight, other.aspectHeight) &&
+        _deepEquals(sourceRect, other.sourceRect) &&
+        _deepEquals(mirror, other.mirror);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativePipConfig(source: $source, aspectWidth: $aspectWidth, aspectHeight: $aspectHeight, sourceRect: $sourceRect, mirror: $mirror)';
+  }
+}
+
+class NativePipEvent {
+  NativePipEvent({
+    required this.active,
+    required this.restoreRequested,
+    this.width,
+    this.height,
+  });
+
+  bool active;
+
+  bool restoreRequested;
+
+  double? width;
+
+  double? height;
+
+  List<Object?> _toList() {
+    return <Object?>[active, restoreRequested, width, height];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativePipEvent decode(Object result) {
+    result as List<Object?>;
+    return NativePipEvent(
+      active: result[0]! as bool,
+      restoreRequested: result[1]! as bool,
+      width: result[2] as double?,
+      height: result[3] as double?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativePipEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(active, other.active) &&
+        _deepEquals(restoreRequested, other.restoreRequested) &&
+        _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativePipEvent(active: $active, restoreRequested: $restoreRequested, width: $width, height: $height)';
+  }
+}
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -312,20 +537,35 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is NativeVoiceRoute) {
+    } else if (value is NativeVoiceRoute) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NativeVoiceDeviceKind) {
+    } else if (value is NativeVoiceDeviceKind) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is NativeVoiceDevice) {
+    } else if (value is NativePipVideoSourceKind) {
       buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    }    else if (value is NativeVoiceSessionState) {
+      writeValue(buffer, value.index);
+    } else if (value is NativeVoiceDevice) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is NativeVoiceActiveRoute) {
+    } else if (value is NativeVoiceSessionState) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeVoiceActiveRoute) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is NativePipVideoSource) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is NativePipRect) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is NativePipConfig) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is NativePipEvent) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -342,26 +582,43 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : NativeVoiceDeviceKind.values[value];
       case 131:
-        return NativeVoiceDevice.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : NativePipVideoSourceKind.values[value];
       case 132:
-        return NativeVoiceSessionState.decode(readValue(buffer)!);
+        return NativeVoiceDevice.decode(readValue(buffer)!);
       case 133:
+        return NativeVoiceSessionState.decode(readValue(buffer)!);
+      case 134:
         return NativeVoiceActiveRoute.decode(readValue(buffer)!);
+      case 135:
+        return NativePipVideoSource.decode(readValue(buffer)!);
+      case 136:
+        return NativePipRect.decode(readValue(buffer)!);
+      case 137:
+        return NativePipConfig.decode(readValue(buffer)!);
+      case 138:
+        return NativePipEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 class VoiceAudioSessionHostApi {
   /// Constructor for [VoiceAudioSessionHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  VoiceAudioSessionHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  VoiceAudioSessionHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -369,61 +626,72 @@ class VoiceAudioSessionHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> acquire(String owner) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.acquire$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.acquire$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[owner]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[owner],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<void> release(String owner) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.release$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.release$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[owner]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[owner],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
-  Future<void> setPreferredRoute(NativeVoiceRoute route, {required bool explicit, int? deviceId, }) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.setPreferredRoute$pigeonVar_messageChannelSuffix';
+  Future<void> setPreferredRoute(
+    NativeVoiceRoute route, {
+    required bool explicit,
+    int? deviceId,
+  }) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.setPreferredRoute$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[route, explicit, deviceId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[route, explicit, deviceId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<void> refreshRoute() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.refreshRoute$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.refreshRoute$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -433,15 +701,15 @@ class VoiceAudioSessionHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<NativeVoiceSessionState> state() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.state$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.state$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -451,16 +719,16 @@ class VoiceAudioSessionHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as NativeVoiceSessionState;
   }
 
   Future<String> diagnostics() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.diagnostics$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.diagnostics$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -470,16 +738,16 @@ class VoiceAudioSessionHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as String;
   }
 
   Future<List<NativeVoiceRoute>> availableRoutes() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.availableRoutes$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.availableRoutes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -489,16 +757,16 @@ class VoiceAudioSessionHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return (pigeonVar_replyValue! as List<Object?>).cast<NativeVoiceRoute>();
   }
 
   Future<List<NativeVoiceDevice>> outputDevices() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.outputDevices$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionHostApi.outputDevices$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -508,11 +776,10 @@ class VoiceAudioSessionHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return (pigeonVar_replyValue! as List<Object?>).cast<NativeVoiceDevice>();
   }
 }
@@ -521,9 +788,13 @@ class VoiceActiveRouteHostApi {
   /// Constructor for [VoiceActiveRouteHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  VoiceActiveRouteHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  VoiceActiveRouteHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -531,7 +802,8 @@ class VoiceActiveRouteHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<NativeVoiceActiveRoute?> activeRoute() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.VoiceActiveRouteHostApi.activeRoute$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceActiveRouteHostApi.activeRoute$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -541,11 +813,10 @@ class VoiceActiveRouteHostApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
     return pigeonVar_replyValue as NativeVoiceActiveRoute?;
   }
 }
@@ -554,9 +825,13 @@ class SystemVoiceCallGuardHostApi {
   /// Constructor for [SystemVoiceCallGuardHostApi]. The [binaryMessenger] named argument is
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  SystemVoiceCallGuardHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  SystemVoiceCallGuardHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -564,22 +839,155 @@ class SystemVoiceCallGuardHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<bool> isExternalCallActive({required bool fluxerOwnsVoice}) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.fluxer_voice.SystemVoiceCallGuardHostApi.isExternalCallActive$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.SystemVoiceCallGuardHostApi.isExternalCallActive$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[fluxerOwnsVoice]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[fluxerOwnsVoice],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as bool;
+  }
+}
+
+class VoicePipHostApi {
+  /// Constructor for [VoicePipHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  VoicePipHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  Future<bool> isSupported() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoicePipHostApi.isSupported$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  Future<void> arm(NativePipConfig config) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoicePipHostApi.arm$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[config],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  Future<void> disarm() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoicePipHostApi.disarm$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  Future<void> stop() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoicePipHostApi.stop$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+}
+
+class VoiceRoutePickerHostApi {
+  /// Constructor for [VoiceRoutePickerHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  VoiceRoutePickerHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  Future<void> setValue(String? value) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.fluxer_voice.VoiceRoutePickerHostApi.setValue$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[value],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 }
 
@@ -589,31 +997,59 @@ class SystemVoiceCallGuardHostApi {
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeVoiceSessionState> voiceSessionStates( {String instanceName = ''}) {
+Stream<NativeVoiceSessionState> voiceSessionStates({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel voiceSessionStatesChannel =
-      EventChannel('dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionEventApi.voiceSessionStates$instanceName', pigeonMethodCodec);
-  return voiceSessionStatesChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel voiceSessionStatesChannel = EventChannel(
+    'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionEventApi.voiceSessionStates$instanceName',
+    pigeonMethodCodec,
+  );
+  return voiceSessionStatesChannel.receiveBroadcastStream().map((
+    dynamic event,
+  ) {
     return event as NativeVoiceSessionState;
   });
 }
-    
+
 /// Returns a broadcast [Stream] of events from the `voiceActiveRouteChanges` event channel.
 ///
 /// Each call to this method creates a new [EventChannel], so it should
 /// not be called multiple times for the same `instanceName`. To deliver
 /// events to multiple listeners, call this method once and listen to the
 /// returned broadcast stream multiple times instead.
-Stream<NativeVoiceActiveRoute> voiceActiveRouteChanges( {String instanceName = ''}) {
+Stream<NativeVoiceActiveRoute> voiceActiveRouteChanges({
+  String instanceName = '',
+}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel voiceActiveRouteChangesChannel =
-      EventChannel('dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionEventApi.voiceActiveRouteChanges$instanceName', pigeonMethodCodec);
-  return voiceActiveRouteChangesChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel voiceActiveRouteChangesChannel = EventChannel(
+    'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionEventApi.voiceActiveRouteChanges$instanceName',
+    pigeonMethodCodec,
+  );
+  return voiceActiveRouteChangesChannel.receiveBroadcastStream().map((
+    dynamic event,
+  ) {
     return event as NativeVoiceActiveRoute;
   });
 }
-    
+
+/// Returns a broadcast [Stream] of events from the `voicePipEvents` event channel.
+///
+/// Each call to this method creates a new [EventChannel], so it should
+/// not be called multiple times for the same `instanceName`. To deliver
+/// events to multiple listeners, call this method once and listen to the
+/// returned broadcast stream multiple times instead.
+Stream<NativePipEvent> voicePipEvents({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel voicePipEventsChannel = EventChannel(
+    'dev.flutter.pigeon.fluxer_voice.VoiceAudioSessionEventApi.voicePipEvents$instanceName',
+    pigeonMethodCodec,
+  );
+  return voicePipEventsChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as NativePipEvent;
+  });
+}

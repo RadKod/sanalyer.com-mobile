@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluxer_app/core/router/fluxer_router.dart';
 import 'package:fluxer_app/core/router/route_state_providers.dart';
 import 'package:fluxer_app/features/friends/providers/blocked_user_ids_provider.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/voice_settings_provider.dart';
 import 'package:fluxer_app/features/shell/providers/drawer/drawer_providers.dart';
 import 'package:fluxer_app/features/ui/voice/voice_participant_media_tile.dart';
 import 'package:fluxer_app/features/voice/domain/voice_media_participant.dart';
+import 'package:fluxer_app/features/voice/domain/voice_settings_state.dart';
 import 'package:fluxer_app/features/voice/providers/voice_active_speakers_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_call_layout_provider.dart';
 import 'package:fluxer_app/features/voice/providers/voice_call_overlay_provider.dart';
@@ -49,11 +51,26 @@ String? voiceSessionParticipantsKey(VoiceSessionState voice) {
   return voiceChannelParticipantsFamilyKey(guildId, channelId);
 }
 
+typedef VoicePipSessionInputs = ({
+  String? participantsKey,
+  VoiceMediaRoom? media,
+  String? localConnectionId,
+});
+
+VoicePipSessionInputs voicePipSessionInputs(VoiceSessionState voice) {
+  return (
+    participantsKey: voiceSessionParticipantsKey(voice),
+    media: voice.media,
+    localConnectionId: voice.activeConnectionId,
+  );
+}
+
 List<VoicePipCandidate> buildVoicePipCandidates({
   required List<VoiceChannelParticipantData> participants,
   required VoiceMediaRoom? media,
   required String? currentUserId,
   required String? localConnectionId,
+  bool includeScreenShares = true,
 }) {
   final List<VoicePipCandidate> tiles = <VoicePipCandidate>[];
   for (final VoiceChannelParticipantData participant in participants) {
@@ -69,8 +86,13 @@ List<VoicePipCandidate> buildVoicePipCandidates({
         participant.voice.connectionId ??
         participant.voice.sessionId ??
         participant.userId;
+    final String? connectionId = participant.voice.connectionId;
     final bool isLocal =
-        currentUserId != null && participant.userId == currentUserId;
+        currentUserId != null &&
+        participant.userId == currentUserId &&
+        (localConnectionId == null ||
+            connectionId == null ||
+            connectionId == localConnectionId);
     final bool muted =
         participant.voice.selfMute ||
         participant.voice.mute ||
@@ -95,7 +117,7 @@ List<VoicePipCandidate> buildVoicePipCandidates({
     final bool hasScreen =
         participant.voice.selfStream ||
         (mediaParticipant != null && mediaParticipant.hasScreenShare);
-    if (hasScreen) {
+    if (hasScreen && includeScreenShares) {
       tiles.add(
         VoicePipCandidate(
           tileId: voiceParticipantTileId(
@@ -128,8 +150,10 @@ class VoicePipFeatured extends Notifier<String?> {
   }
 
   String? _compute() {
-    final VoiceSessionState voice = ref.watch(voiceSessionProvider);
-    final String? key = voiceSessionParticipantsKey(voice);
+    final VoicePipSessionInputs voice = ref.watch(
+      voiceSessionProvider.select(voicePipSessionInputs),
+    );
+    final String? key = voice.participantsKey;
     if (key == null) {
       _result = const VoicePipFeaturedResult();
       _hysteresisTimer?.cancel();
@@ -143,7 +167,12 @@ class VoicePipFeatured extends Notifier<String?> {
       participants: participants,
       media: voice.media,
       currentUserId: ref.watch(currentUserIdProvider),
-      localConnectionId: voice.activeConnectionId,
+      localConnectionId: voice.localConnectionId,
+      includeScreenShares: !ref.watch(
+        voiceSettingsProvider.select(
+          (VoiceSettingsState s) => s.disableScreenSharePip,
+        ),
+      ),
     );
     final VoicePipFeaturedResult next = selectVoicePipFeatured(
       previous: _result,
@@ -194,8 +223,10 @@ final voicePipFeaturedHasVideoProvider = Provider<bool>((Ref ref) {
   if (featured == null) {
     return false;
   }
-  final VoiceSessionState voice = ref.watch(voiceSessionProvider);
-  final String? key = voiceSessionParticipantsKey(voice);
+  final VoicePipSessionInputs voice = ref.watch(
+    voiceSessionProvider.select(voicePipSessionInputs),
+  );
+  final String? key = voice.participantsKey;
   if (key == null) {
     return false;
   }
@@ -204,7 +235,7 @@ final voicePipFeaturedHasVideoProvider = Provider<bool>((Ref ref) {
     participants: ref.watch(voiceChannelParticipantsProvider(key)),
     media: voice.media,
     currentUserId: ref.watch(currentUserIdProvider),
-    localConnectionId: voice.activeConnectionId,
+    localConnectionId: voice.localConnectionId,
   );
   for (final VoicePipCandidate tile in tiles) {
     if (tile.tileId == featured) {
@@ -222,8 +253,8 @@ final voicePipFeaturedBlockedProvider = Provider<bool>((Ref ref) {
   if (parsed == null) {
     return false;
   }
-  final String? key = voiceSessionParticipantsKey(
-    ref.watch(voiceSessionProvider),
+  final String? key = ref.watch(
+    voiceSessionProvider.select(voiceSessionParticipantsKey),
   );
   if (key == null) {
     return false;
@@ -253,14 +284,18 @@ final voicePipCallViewObscuredProvider = Provider<bool>((Ref ref) {
 });
 
 final voicePipOnSessionCallRouteProvider = Provider<bool>((Ref ref) {
-  final VoiceSessionState voice = ref.watch(voiceSessionProvider);
   final RouteState route = ref.watch(routeStateProvider);
-  return voicePipIsOnSessionCallRoute(
-    voice: voice,
-    location: route.location,
-    routeGuildId: route.guildId,
-    routeChannelId: route.channelId,
-    callViewObscured: ref.watch(voicePipCallViewObscuredProvider),
+  final bool callViewObscured = ref.watch(voicePipCallViewObscuredProvider);
+  return ref.watch(
+    voiceSessionProvider.select(
+      (VoiceSessionState voice) => voicePipIsOnSessionCallRoute(
+        voice: voice,
+        location: route.location,
+        routeGuildId: route.guildId,
+        routeChannelId: route.channelId,
+        callViewObscured: callViewObscured,
+      ),
+    ),
   );
 });
 

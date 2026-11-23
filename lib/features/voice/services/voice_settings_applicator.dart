@@ -246,7 +246,7 @@ class VoiceSettingsApplicator {
     required Future<T> Function() action,
   }) async {
     if (publishOptions == null) {
-      return action();
+      return await action();
     }
     final RoomOptions roomOptions = room.roomOptions;
     // setMicrophoneEnabled has no publishOptions param.
@@ -291,6 +291,8 @@ class VoiceSettingsApplicator {
     return VideoPublishOptions(
       videoCodec: preferredScreenShareVideoCodec(
         settings.preferredScreenShareCodec,
+        av1OptIn: settings.screenShareAv1OptIn,
+        hevcOptIn: settings.screenShareHevcOptIn,
       ),
       screenShareEncoding: screenShareVideoParameters(
         resolution: settings.screenshareResolution,
@@ -442,7 +444,9 @@ class VoiceSettingsApplicator {
     }
   }
 
-  void _clearPendingIosBroadcast() {
+  static void clearPendingIosBroadcast() => _clearPendingIosBroadcast();
+
+  static void _clearPendingIosBroadcast() {
     final VoidCallback? listener = _pendingIosBroadcastListener;
     if (listener == null) {
       return;

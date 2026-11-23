@@ -1,5 +1,6 @@
 package com.fluxer.voice
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioDeviceInfo
@@ -143,8 +144,17 @@ internal fun voiceOutputDevices(
             )
         }
         .filter { it.kind.route.name.lowercase() in routeNames }
-        .distinctBy { it.kind to it.name }
+        .distinctBy(::outputDeviceKey)
         .sortedWith(compareBy({ it.kind.ordinal }, { it.name?.contains(" Watch", ignoreCase = true) == true }))
+}
+
+private fun outputDeviceKey(device: VoiceOutputDevice): Pair<VoiceOutputDeviceKind, String> {
+    return when {
+        device.kind == VoiceOutputDeviceKind.Earpiece || device.kind == VoiceOutputDeviceKind.Speaker ->
+            device.kind to ""
+        device.name == null || device.name == Build.MODEL -> device.kind to "#${device.id}"
+        else -> device.kind to device.name
+    }
 }
 
 internal fun bluetoothAddressesMatch(first: String?, second: String?): Boolean {
@@ -249,6 +259,14 @@ internal fun activeCommunicationDeviceId(audioManager: AudioManager): Int? {
     return safeCommunicationDeviceId(audioManager)
 }
 
+internal fun hasBluetoothConnectPermission(context: Context): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        return true
+    }
+    return context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) ==
+        PackageManager.PERMISSION_GRANTED
+}
+
 internal fun requestedBluetoothAddress(
     audioManager: AudioManager,
     route: VoiceOutputRoute,
@@ -260,7 +278,11 @@ internal fun requestedBluetoothAddress(
     ) {
         return null
     }
-    return outputDevices(audioManager).firstOrNull { it.id == deviceId }?.address
+    return try {
+        outputDevices(audioManager).firstOrNull { it.id == deviceId }?.address
+    } catch (_: SecurityException) {
+        null
+    }
 }
 
 internal fun applyVoiceOutputRoute(
@@ -280,10 +302,11 @@ internal fun applyVoiceOutputRoute(
         deviceId,
     )
     for (device in candidates) {
-        if (!force && safeCommunicationDeviceId(audioManager) == device.id) {
+        val current = safeCommunicationDeviceId(audioManager)
+        if (!force && current == device.id) {
             return device.id
         }
-        if (force) {
+        if (force && current != null && current != device.id) {
             safeClearCommunicationDevice(audioManager)
         }
         if (safeSetCommunicationDevice(audioManager, device)) {
@@ -414,20 +437,26 @@ internal fun applyTelecomCallRoute(
     val state = connection.callAudioState
     val target = telecomRouteForVoiceOutput(route)
     if (bluetoothAddress != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && state != null) {
-        val bluetoothDevice = state.supportedBluetoothDevices.firstOrNull {
-            bluetoothAddressesMatch(it.address, bluetoothAddress)
-        }
-        if (bluetoothDevice != null) {
-            val alreadyActive = state.route == CallAudioState.ROUTE_BLUETOOTH &&
-                bluetoothAddressesMatch(state.activeBluetoothDevice?.address, bluetoothAddress)
-            if (force || !alreadyActive) {
-                connection.requestBluetoothAudio(bluetoothDevice)
+        try {
+            val bluetoothDevice = state.supportedBluetoothDevices.firstOrNull {
+                bluetoothAddressesMatch(it.address, bluetoothAddress)
             }
-            return
+            if (bluetoothDevice != null) {
+                val alreadyActive = state.route == CallAudioState.ROUTE_BLUETOOTH &&
+                    bluetoothAddressesMatch(state.activeBluetoothDevice?.address, bluetoothAddress)
+                if (force || !alreadyActive) {
+                    connection.requestBluetoothAudio(bluetoothDevice)
+                }
+                return
+            }
+        } catch (_: SecurityException) {
         }
     }
     if (telecomRouteRequestNeeded(target, state?.route, state?.supportedRouteMask, force)) {
-        connection.setAudioRoute(target)
+        try {
+            connection.setAudioRoute(target)
+        } catch (_: SecurityException) {
+        }
     }
 }
 

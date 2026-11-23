@@ -9,6 +9,7 @@ import 'package:fluxer_app/features/chat/presentation/widgets/message_actions/do
 import 'package:fluxer_app/features/settings/presentation/widgets/wide_settings_content_layout.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/chat_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/preferences/message_ui_preferences_providers.dart';
+import 'package:fluxer_app/features/settings/providers/preferences/synced_extras_preferences_provider.dart';
 import 'package:fluxer_app/features/settings/providers/view_models/user_settings_view_model.dart';
 import 'package:fluxer_app/features/settings/utils/user_settings/user_settings_domain_actions.dart';
 import 'package:fluxer_app/features/ui/ui.dart';
@@ -16,6 +17,7 @@ import 'package:fluxer_app/l10n/generated/fluxer_localizations.dart';
 import 'package:fluxer_app/material_ui.dart';
 import 'package:fluxer_app/shared/external_links/external_link_utils.dart';
 import 'package:fluxer_app/shared/icons/phosphor.dart';
+import 'package:fluxer_app/shared/providers/input_modality_provider.dart';
 import 'package:fluxer_dart/export.dart';
 
 class UserMessagesMedia extends ConsumerWidget {
@@ -38,6 +40,8 @@ class UserMessagesMedia extends ConsumerWidget {
       doubleTapActionPreferencesProvider.notifier,
     );
     final l10n = FluxerLocalizations.of(context);
+    final bool showGestures =
+        isFluxerNativeMobileOs && ref.watch(inputModalityProvider);
     final doubleTapAction =
         doubleTapActionPrefs.action == DoubleTapActionPreference.unspecified
         ? DoubleTapActionPreference.react
@@ -215,7 +219,7 @@ class UserMessagesMedia extends ConsumerWidget {
                 ),
             ],
           ),
-          if (isFluxerNativeMobileOs)
+          if (showGestures)
             FluxerSettingsSection(
               sectionId: 'gestures',
               title: l10n.messagesMediaGesturesSectionTitle,
@@ -307,6 +311,18 @@ class UserMessagesMedia extends ConsumerWidget {
             title: l10n.messagesMediaInputGroupTitle,
             description: l10n.messagesMediaInputGroupDescription,
             children: [
+              FluxerSettingsSwitchItem(
+                label: l10n.messagesMediaConvertEmoticonsLabel,
+                description: l10n.messagesMediaConvertEmoticonsDescription,
+                value: ref.watch(
+                  syncedExtrasPreferencesProvider.select(
+                    (SyncedExtrasState state) => state.convertEmoticons,
+                  ),
+                ),
+                onChanged: (value) => ref
+                    .read(syncedExtrasPreferencesProvider.notifier)
+                    .setConvertEmoticons(value: value),
+              ),
               FluxerSettingsSubsection(
                 title: l10n.messagesMediaAutocompleteSectionTitle,
                 description: l10n.messagesMediaAutocompleteSectionDescription,
